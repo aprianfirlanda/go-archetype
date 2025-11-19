@@ -5,6 +5,7 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/spf13/viper"
 
 	"github.com/spf13/cobra"
 )
@@ -19,8 +20,12 @@ and usage of using your command. For example:
 Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
-	Run: func(cmd *cobra.Command, args []string) {
+	RunE: func(cmd *cobra.Command, args []string) error {
 		fmt.Println("http called")
+		port := viper.GetInt("port")
+		fmt.Printf("Starting server on port: %d\\n", port)
+
+		return nil
 	},
 }
 
@@ -35,5 +40,5 @@ func init() {
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	// httpCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	httpCmd.Flags().Int("port", 8080, "Port to run the server on")
 }
