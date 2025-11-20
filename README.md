@@ -83,5 +83,41 @@ httpCmd.Flags().Int("port", 8080, "HTTP server port")
 ```
 This becomes the lowest-priority default.
 
+## ✅ Setup Logger using Logrus
+
+This project uses Logrus as the logging library, with full support for:
+- Environment variables
+- Configuration file (YAML)
+- Cobra flags
+- Automatic merging of config priority:
+  
+  flags > env > config file > default
+
+1. Install Logrus
+```shell
+go get -u github.com/sirupsen/logrus
+```
+
+2. Add Logger Configuration Options
+
+Logging can be configured from:
+
+- Environment Variables
+```shell
+export GOARCHETYPE_LOG_FORMAT=json     # text | json
+export GOARCHETYPE_LOG_LEVEL=debug     # trace | debug | info | warn | error | fatal | panic
+```
+
+- Configuration File (config.yaml)
+```yaml
+log:
+  format: json   # text or json
+  level: debug   # trace | debug | info | warn | error | fatal | panic
+```
+
+- Cobra Flags
+```shell
+go-archetype http --log-format=json --log-level=debug
+```
 
 
