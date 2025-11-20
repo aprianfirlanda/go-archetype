@@ -2,17 +2,17 @@ package logging
 
 import (
 	"github.com/sirupsen/logrus"
-	"github.com/spf13/viper"
+	"go-archetype/internal/config"
 	"strings"
 )
 
-func NewLogger() *logrus.Logger {
+func NewLogger(logConfig config.Log) *logrus.Logger {
 	log := logrus.New()
 
 	// =========================
 	// Set formatter
 	// =========================
-	format := strings.ToLower(viper.GetString("log.format"))
+	format := strings.ToLower(logConfig.Format)
 	switch format {
 	case "json":
 		log.SetFormatter(&logrus.JSONFormatter{})
@@ -25,7 +25,7 @@ func NewLogger() *logrus.Logger {
 	// =========================
 	// Set log level
 	// =========================
-	level := strings.ToLower(viper.GetString("log.level"))
+	level := strings.ToLower(logConfig.Level)
 
 	switch level {
 	case "trace":

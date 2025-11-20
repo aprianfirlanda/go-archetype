@@ -4,8 +4,6 @@ Copyright © 2025 APRIAN FIRLANDA IMANI <aprianfirlanda@gmail.com>
 package cmd
 
 import (
-	"github.com/spf13/viper"
-
 	"github.com/spf13/cobra"
 )
 
@@ -20,7 +18,7 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		logger.Infof("Starting HTTP server on port %d", viper.GetInt("port"))
+		logger.Infof("Starting HTTP server on port %d", cfg.Http.Port)
 
 		return nil
 	},
@@ -37,5 +35,5 @@ func init() {
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	httpCmd.Flags().Int("port", 8080, "Port to run the server on")
+	httpCmd.Flags().Int("http-port", 8080, "Port to run the server on")
 }

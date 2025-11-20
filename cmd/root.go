@@ -15,6 +15,7 @@ import (
 var (
 	appName = "go-archetype"
 	cfgFile string
+	cfg     *config.Config
 	logger  *logrus.Logger
 	// rootCmd represents the base command when called without any subcommands
 	rootCmd = &cobra.Command{
@@ -27,12 +28,21 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 		PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
-			if err := config.Initialize(appName, cfgFile, cmd); err != nil {
+			err := config.Initialize(appName, cfgFile, cmd)
+			if err != nil {
+				return err
+			}
+			cfg, err = config.Load()
+			if err != nil {
 				return err
 			}
 
-			logger = logging.NewLogger()
-			logger.Tracef("Configuration initialized. Using config file: %s", viper.ConfigFileUsed())
+			logger = logging.NewLogger(cfg.Log)
+
+			logger.WithFields(logrus.Fields{
+				"config_file":  viper.ConfigFileUsed(),
+				"config_value": cfg,
+			}).Debug("Configuration loaded")
 
 			return nil
 		},

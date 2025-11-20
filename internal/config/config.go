@@ -2,6 +2,7 @@ package config
 
 import (
 	"errors"
+	"fmt"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
@@ -67,4 +68,14 @@ func Initialize(appName, cfgFile string, cmd *cobra.Command) error {
 	}
 
 	return nil
+}
+
+func Load() (*Config, error) {
+	var cfg Config
+
+	if err := viper.Unmarshal(&cfg); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal config: %w", err)
+	}
+
+	return &cfg, nil
 }

@@ -49,8 +49,8 @@ Viper automatically merges values from multiple sources and applies the followin
 
 Examples:
 ```shell
-go-archetype http --port 3000
-go run . http --port 3000
+go-archetype http --http-port 3000
+go run . http --http-port 3000
 go-archetype http --storage-s3-accesskey 3000
 go run . http --storage-s3-accesskey 3000
 ```
@@ -60,7 +60,7 @@ Flags must be defined on the root command or the subcommand.
 
 For this project, environment variables use the prefix derived from the project name:
 ```shell
-GOARCHETYPE_PORT=9000
+GOARCHETYPE_HTTP_PORT=9000
 GOARCHETYPE_STORAGE_S3_ACCESSKEY=from_env_var
 ```
 
@@ -75,7 +75,8 @@ Viper automatically searches for a configuration file in these locations:
 
 Example file:
 ```yaml
-port: 8081
+http:
+  port: 8081
 storage:
   s3:
     accessKey: "from_config"
@@ -87,7 +88,7 @@ If flags, environment variables, or config files don’t provide a value, Viper 
 
 Subcommand(http) local flag:
 ```go
-httpCmd.Flags().Int("port", 8080, "HTTP server port")
+httpCmd.Flags().Int("http-port", 8080, "HTTP server port")
 ```
 or
 
@@ -100,7 +101,7 @@ This becomes the lowest-priority default.
 
 After that, the value can be called with viper, e.g.:
 ```go
-viper.GetInt("port")
+viper.GetInt("http.port")
 viper.GetString("storage.s3.accesskey")
 ```
 

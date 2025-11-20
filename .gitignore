@@ -1,1 +1,6 @@
+# IDE
 .idea
+
+# Config / Env File
+config.yaml
+internal/config/config.yaml
