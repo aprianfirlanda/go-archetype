@@ -71,7 +71,7 @@ Environment variables override values from the config file.
 Viper automatically searches for a configuration file in these locations:
 •	Current directory → ./config.yaml
 •	Home directory → $HOME/.go-archetype/config.yaml
-•	Custom path → via --config config/config.yaml
+•	Custom path → via --config internal/config/config.yaml
 
 Example file:
 ```yaml

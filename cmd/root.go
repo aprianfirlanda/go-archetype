@@ -4,14 +4,12 @@ Copyright © 2025 APRIAN FIRLANDA IMANI <aprianfirlanda@gmail.com>
 package cmd
 
 import (
-	"errors"
 	"github.com/sirupsen/logrus"
-	"github.com/spf13/pflag"
-	"github.com/spf13/viper"
-	"os"
-	"strings"
-
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
+	"go-archetype/internal/config"
+	"go-archetype/internal/logging"
+	"os"
 )
 
 var (
@@ -29,11 +27,11 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 		PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
-			err := initializeConfig(cmd)
-			if err != nil {
+			if err := config.Initialize(appName, cfgFile, cmd); err != nil {
 				return err
 			}
-			logger = initializeLogger()
+
+			logger = logging.NewLogger()
 			logger.Tracef("Configuration initialized. Using config file: %s", viper.ConfigFileUsed())
 
 			return nil
@@ -65,105 +63,4 @@ func init() {
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
 	//rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
-}
-
-func initializeConfig(cmd *cobra.Command) error {
-	// 1. Set up Viper to use environment variables.
-	viper.SetEnvPrefix(strings.ToUpper(strings.ReplaceAll(appName, "-", "")))
-	// Allow for nested keys in environment variables (e.g. `GOARCHETYPE_DATABASE_HOST`)
-	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_", "-", "_"))
-	viper.AutomaticEnv()
-
-	// 2. Handle the configuration file.
-	if cfgFile != "" {
-		// Use the config file from the flag.
-		viper.SetConfigFile(cfgFile)
-	} else {
-		// Search for a config file in default locations.
-		home, err := os.UserHomeDir()
-		// Only panic if we can't get the home directory.
-		cobra.CheckErr(err)
-
-		// Search for a config file with the name "config" (without extension).
-		viper.AddConfigPath(".")
-		viper.AddConfigPath(home + "/." + appName)
-		viper.SetConfigName("config")
-		viper.SetConfigType("yaml")
-	}
-
-	// 3. Read the configuration file.
-	// If a config file is found, read it in. We use a robust error check
-	// to ignore "file not found" errors, but panic on any other error.
-	if err := viper.ReadInConfig(); err != nil {
-		// It's okay if the config file doesn't exist.
-		var configFileNotFoundError viper.ConfigFileNotFoundError
-		if !errors.As(err, &configFileNotFoundError) {
-			return err
-		}
-	}
-
-	// 4. Bind Cobra flags to Viper.
-	// This is the magic that makes the flag values available through Viper.
-	// It binds the full flag set of the command passed in.
-	bindSet := func(fs *pflag.FlagSet) error {
-		var err error
-
-		fs.VisitAll(func(f *pflag.Flag) {
-			// convert: log-format → log.format
-			key := strings.ReplaceAll(f.Name, "-", ".")
-
-			if e := viper.BindPFlag(key, f); e != nil && err == nil {
-				err = e
-			}
-		})
-
-		return err
-	}
-	err := bindSet(cmd.Flags())
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func initializeLogger() *logrus.Logger {
-	log := logrus.New()
-
-	// =========================
-	// Set formatter
-	// =========================
-	format := strings.ToLower(viper.GetString("log.format"))
-	switch format {
-	case "json":
-		log.SetFormatter(&logrus.JSONFormatter{})
-	default:
-		log.SetFormatter(&logrus.TextFormatter{
-			FullTimestamp: true,
-		})
-	}
-
-	// =========================
-	// Set log level
-	// =========================
-	level := strings.ToLower(viper.GetString("log.level"))
-
-	switch level {
-	case "trace":
-		log.SetLevel(logrus.TraceLevel)
-	case "debug":
-		log.SetLevel(logrus.DebugLevel)
-	case "warn":
-		log.SetLevel(logrus.WarnLevel)
-	case "error":
-		log.SetLevel(logrus.ErrorLevel)
-	case "fatal":
-		log.SetLevel(logrus.FatalLevel)
-	case "panic":
-		log.SetLevel(logrus.PanicLevel)
-	default:
-		log.SetLevel(logrus.InfoLevel)
-	}
-
-	return log
 }
