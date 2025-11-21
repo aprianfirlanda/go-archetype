@@ -105,6 +105,27 @@ viper.GetInt("http.port")
 viper.GetString("storage.s3.accesskey")
 ```
 
+But in this app, The config is automatically loaded on Config struct.
+Please see the code on persistence pre-run of root command. Update the struct base on config that you add.
+This is the struct example:
+```go
+package config
+
+type Config struct {
+	Http Http `mapstructure:"http"`
+	Log  Log  `mapstructure:"log"`
+}
+
+type Http struct {
+	Port int `mapstructure:"port"`
+}
+
+type Log struct {
+	Format string `mapstructure:"format"`
+	Level  string `mapstructure:"level"`
+}
+```
+
 ## ✅ Setup Logger using Logrus
 
 This project uses Logrus as the logging library, with full support for:

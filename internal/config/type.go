@@ -1,5 +1,10 @@
 package config
 
+type Config struct {
+	Http Http `mapstructure:"http"`
+	Log  Log  `mapstructure:"log"`
+}
+
 type Http struct {
 	Port int `mapstructure:"port"`
 }
@@ -7,9 +12,4 @@ type Http struct {
 type Log struct {
 	Format string `mapstructure:"format"`
 	Level  string `mapstructure:"level"`
-}
-
-type Config struct {
-	Http Http `mapstructure:"http"`
-	Log  Log  `mapstructure:"log"`
 }
