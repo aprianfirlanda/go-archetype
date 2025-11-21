@@ -208,3 +208,9 @@ Install Fiber library
 ```shell
 go get -u github.com/gofiber/fiber/v2
 ```
+
+The fiber app implements this middleware
+
+- RequestID: The middleware will set context value `requestid` from request header `X-Request-ID`. If does not have that header, it creates its own.
+- Recover: if the application that runs under fiber is got panic, the app will not stop.
+- CORS: Make the browser block request to api that has different origin.
