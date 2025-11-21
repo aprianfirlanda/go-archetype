@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
+	recoverPanic "github.com/gofiber/fiber/v2/middleware/recover"
 	"github.com/gofiber/fiber/v2/middleware/requestid"
 	"github.com/sirupsen/logrus"
 	"go-archetype/internal/config"
@@ -16,7 +17,7 @@ func StartServer(appName string, httpConfig config.Http, logger *logrus.Logger) 
 
 	// Global middlewares
 	app.Use(requestid.New())
-	//app.Use(recover.New()) // recover from panic
+	app.Use(recoverPanic.New())
 	app.Use(cors.New())
 
 	// Register routes
