@@ -7,6 +7,45 @@ go mod init go-archetype
 
 This project was created using Go version 1.25.4.
 
+Folder Structure
+```text
+.
+├── cmd/
+│   ├── root.go          # cobra root cmd, config + logger init
+│   └── http.go          # "http" subcommand -> start Fiber server
+│
+├── internal/
+│   ├── config/
+│   │   └── config.go
+│   ├── logging/
+│   │   └── logging.go
+│   ├── database/
+│   │   └── gorm.go
+│   │
+│   ├── domain/          # pure domain & ports (hexagonal core)
+│   │   └── customer/
+│   │       ├── entity.go          # structs, domain rules
+│   │       ├── port_repository.go # interfaces
+│   │       └── service.go         # usecase / application service
+│   │
+│   ├── adapter/
+│   │   ├── repository/
+│   │   │   └── customer_gorm.go   # implements domain ports using GORM
+│   │   └── http/
+│   │       └── fiber/
+│   │           ├── server.go      # create Fiber app, middlewares, start listen
+│   │           ├── router.go      # grouping routes by module
+│   │           ├── middleware.go  # CORS, logger, recover, etc.
+│   │           └── handler/
+│   │               └── customer_handler.go  # Fiber handler -> call usecase
+│   │
+│   └── pkg/             # optional shared helpers, errors, response wrapper, etc.
+│       └── response/
+│           └── api_response.go
+│
+└── go.mod
+```
+
 ⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻
 
 ## 🏗️ Scaffold Application Using Cobra CLI
@@ -163,4 +202,9 @@ log:
 go-archetype http --log-format=json --log-level=debug
 ```
 
+## Setup Web Framework (Fiber)
 
+Install Fiber library
+```shell
+go get -u github.com/gofiber/fiber/v2
+```

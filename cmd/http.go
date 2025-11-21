@@ -5,6 +5,7 @@ package cmd
 
 import (
 	"github.com/spf13/cobra"
+	fiberhttp "go-archetype/internal/adapter/http/fiber"
 )
 
 // httpCmd represents the http command
@@ -18,9 +19,7 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		logger.Infof("Starting HTTP server on port %d", cfg.Http.Port)
-
-		return nil
+		return fiberhttp.StartServer(appName, cfg.Http, logger)
 	},
 }
 
