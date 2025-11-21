@@ -3,11 +3,12 @@ package logging
 import (
 	"github.com/sirupsen/logrus"
 	"go-archetype/internal/config"
+	"os"
 	"strings"
 )
 
 func NewLogger(logConfig config.Log) *logrus.Logger {
-	log := logrus.New()
+	logger := logrus.New()
 
 	// =========================
 	// Set formatter
@@ -15,9 +16,9 @@ func NewLogger(logConfig config.Log) *logrus.Logger {
 	format := strings.ToLower(logConfig.Format)
 	switch format {
 	case "json":
-		log.SetFormatter(&logrus.JSONFormatter{})
+		logger.SetFormatter(&logrus.JSONFormatter{})
 	default:
-		log.SetFormatter(&logrus.TextFormatter{
+		logger.SetFormatter(&logrus.TextFormatter{
 			FullTimestamp: true,
 		})
 	}
@@ -29,20 +30,22 @@ func NewLogger(logConfig config.Log) *logrus.Logger {
 
 	switch level {
 	case "trace":
-		log.SetLevel(logrus.TraceLevel)
+		logger.SetLevel(logrus.TraceLevel)
 	case "debug":
-		log.SetLevel(logrus.DebugLevel)
+		logger.SetLevel(logrus.DebugLevel)
 	case "warn":
-		log.SetLevel(logrus.WarnLevel)
+		logger.SetLevel(logrus.WarnLevel)
 	case "error":
-		log.SetLevel(logrus.ErrorLevel)
+		logger.SetLevel(logrus.ErrorLevel)
 	case "fatal":
-		log.SetLevel(logrus.FatalLevel)
+		logger.SetLevel(logrus.FatalLevel)
 	case "panic":
-		log.SetLevel(logrus.PanicLevel)
+		logger.SetLevel(logrus.PanicLevel)
 	default:
-		log.SetLevel(logrus.InfoLevel)
+		logger.SetLevel(logrus.InfoLevel)
 	}
 
-	return log
+	logger.SetOutput(os.Stdout)
+
+	return logger
 }
