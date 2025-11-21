@@ -5,7 +5,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-func RegisterRoutes(app *fiber.App, logger *logrus.Logger) {
+func RegisterRoutes(app *fiber.App, logger *logrus.Logger, dependencies Dependencies) {
 	// Health check
 	app.Get("/health", func(c *fiber.Ctx) error {
 		logger.WithFields(logrus.Fields{

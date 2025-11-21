@@ -11,7 +11,9 @@ import (
 	"go-archetype/internal/config"
 )
 
-func StartServer(appName string, httpConfig config.Http, logger *logrus.Logger) error {
+type Dependencies struct{}
+
+func StartServer(appName string, httpConfig config.Http, logger *logrus.Logger, dependencies Dependencies) error {
 	app := fiber.New(fiber.Config{
 		AppName: appName,
 	})
@@ -27,7 +29,8 @@ func StartServer(appName string, httpConfig config.Http, logger *logrus.Logger) 
 	app.Use(cors.New())
 
 	// Register routes
-	RegisterRoutes(app, logger)
+	RegisterRoutes(app, logger, dependencies)
 
+	logger.Infof("Starting HTTP server on port %d", httpConfig.Port)
 	return app.Listen(fmt.Sprintf(":%d", httpConfig.Port))
 }
