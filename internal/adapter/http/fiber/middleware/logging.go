@@ -29,6 +29,7 @@ func Logging(logger *logrus.Logger) fiber.Handler {
 			"method":     method,
 			"path":       path,
 			"latency_ms": float64(latency.Microseconds()) / 1000.0,
+			"ip":         c.IP(),
 		})
 
 		if err != nil {

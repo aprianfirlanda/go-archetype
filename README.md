@@ -35,7 +35,10 @@ Folder Structure
 │   │       └── fiber/
 │   │           ├── server.go      # create Fiber app, middlewares, start listen
 │   │           ├── router.go      # grouping routes by module
-│   │           ├── middleware.go  # CORS, logger, recover, etc.
+│   │           ├── middleware  # logger, recover, health check.
+│   │           │   ├──  health_check.go
+│   │           │   ├──  logging.go
+│   │           │   └──  recover.go
 │   │           └── handler/
 │   │               └── customer_handler.go  # Fiber handler -> call usecase
 │   │
@@ -209,8 +212,55 @@ Install Fiber library
 go get -u github.com/gofiber/fiber/v2
 ```
 
-The fiber app implements this middleware
+The Fiber application in this project uses several global middlewares to ensure observability, stability, and browser compatibility.
 
-- RequestID: The middleware will set context value `requestid` from request header `X-Request-ID`. If does not have that header, it creates its own.
-- Recover: if the application that runs under fiber is got panic, the app will not stop.
-- CORS: Make the browser block request to api that has different origin.
+🔹 Middleware Implemented
+
+1. RequestID
+   Adds a unique request ID to every incoming request.
+   - Reads X-Request-ID from the request header if provided.
+   - If the header is missing, it generates a new UUID.
+   - Stores the value in c.Locals("requestid") so it can be used by:
+   - Logging middleware
+   - Error recover middleware
+   - Handlers
+
+   This improves tracing and debugging across distributed systems.
+                      
+2. Logging (custom middleware)
+   Logs every request using the application’s shared Logrus logger. The log entry includes structured fields such as:
+   - request_id
+   - status
+   - method
+   - path
+   - latency
+   - ip
+
+   This makes the log output consistent and easy to search in log aggregation systems (e.g., Loki, Elasticsearch, OpenSearch).
+
+3. Recover (custom Fiber wrapper)
+   Prevents the application from crashing due to panics.
+   - Catches any panic in handlers or other middleware
+   - Logs the error and full stack trace using Logrus
+   - Returns a safe 500 Internal Server Error response
+   - Ensures the server continues running even when unexpected errors occur
+
+   This provides fault tolerance and better observability during debugging.
+
+4. CORS
+   Enables Cross-Origin Resource Sharing.
+   - Allows frontend applications on different domains/ports to access the API
+   - Prevents browser CORS errors during local development
+   - Configurable for production environments
+
+   This is required when the frontend runs on localhost:5173 (Vite) and the backend runs on another port.
+
+5. Health Check (custom middleware) (if included)
+   Provides lightweight liveness/readiness endpoints for:
+   - Kubernetes
+   - Docker health checks
+   - Load balancers
+
+   Example endpoints:
+   - GET /live → checks if the process is alive
+   - GET /ready → checks if the service is ready (e.g., DB connection)
