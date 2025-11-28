@@ -18,6 +18,8 @@ func StartServer(appName string, httpConfig config.Http, logger *logrus.Logger, 
 	})
 
 	// Global middlewares
+	// 0. Health Check, live: is the application up, ready: is the application ready to accept traffic
+	app.Use(middleware.HealthCheck())
 	// 1. Generate request ID first so everyone can use it
 	app.Use(requestid.New())
 	// 2. Logging wraps everything below (including recover + cors + handlers)
