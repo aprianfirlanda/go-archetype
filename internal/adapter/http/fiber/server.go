@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
-	recoverPanic "github.com/gofiber/fiber/v2/middleware/recover"
 	"github.com/gofiber/fiber/v2/middleware/requestid"
 	"github.com/sirupsen/logrus"
 	"go-archetype/internal/adapter/http/fiber/middleware"
@@ -24,7 +23,7 @@ func StartServer(appName string, httpConfig config.Http, logger *logrus.Logger, 
 	// 2. Logging wraps everything below (including recover + cors + handlers)
 	app.Use(middleware.Logging(logger))
 	// 3. Recover from panic so we don't crash the server
-	app.Use(recoverPanic.New())
+	app.Use(middleware.Recover(logger))
 	// 4. CORS – mostly for browser / frontend
 	app.Use(cors.New())
 

@@ -13,4 +13,13 @@ func RegisterRoutes(app *fiber.App, logger *logrus.Logger, dependencies Dependen
 		}).Info("Health check")
 		return c.JSON(fiber.Map{"status": "ok"})
 	})
+	app.Get("/panic", func(c *fiber.Ctx) error {
+		logger.Info("About to panic with nil pointer")
+
+		var x *int
+		// this will cause: panic: runtime error: invalid memory address or nil pointer dereference
+		_ = *x
+
+		return nil
+	})
 }
