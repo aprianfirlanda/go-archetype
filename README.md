@@ -217,6 +217,7 @@ The Fiber application in this project uses several global middlewares to ensure 
 🔹 Middleware Implemented
 
 1. RequestID
+
    Adds a unique request ID to every incoming request.
    - Reads X-Request-ID from the request header if provided.
    - If the header is missing, it generates a new UUID.
@@ -228,6 +229,7 @@ The Fiber application in this project uses several global middlewares to ensure 
    This improves tracing and debugging across distributed systems.
                       
 2. Logging (custom middleware)
+
    Logs every request using the application’s shared Logrus logger. The log entry includes structured fields such as:
    - request_id
    - status
@@ -239,6 +241,7 @@ The Fiber application in this project uses several global middlewares to ensure 
    This makes the log output consistent and easy to search in log aggregation systems (e.g., Loki, Elasticsearch, OpenSearch).
 
 3. Recover (custom Fiber wrapper)
+
    Prevents the application from crashing due to panics.
    - Catches any panic in handlers or other middleware
    - Logs the error and full stack trace using Logrus
@@ -248,6 +251,7 @@ The Fiber application in this project uses several global middlewares to ensure 
    This provides fault tolerance and better observability during debugging.
 
 4. CORS
+
    Enables Cross-Origin Resource Sharing.
    - Allows frontend applications on different domains/ports to access the API
    - Prevents browser CORS errors during local development
@@ -256,6 +260,7 @@ The Fiber application in this project uses several global middlewares to ensure 
    This is required when the frontend runs on localhost:5173 (Vite) and the backend runs on another port.
 
 5. Health Check (custom middleware) (if included)
+
    Provides lightweight liveness/readiness endpoints for:
    - Kubernetes
    - Docker health checks
@@ -264,3 +269,22 @@ The Fiber application in this project uses several global middlewares to ensure 
    Example endpoints:
    - GET /live → checks if the process is alive
    - GET /ready → checks if the service is ready (e.g., DB connection)
+
+6. Metrics (Fiber Monitor)
+
+   The application exposes a built-in metrics dashboard using Fiber’s monitor middleware.
+   - Accessible via: 
+   
+     `GET /metrics`
+   
+     Using Browser or curl `-H "Accept: application/json"`
+   - Displays:
+     - Total requests
+     - Status code counts
+     - Average latency
+     - Memory usage
+     - Goroutine count
+     - Uptime
+     - Per-route performance
+
+This endpoint is useful for basic diagnostics and local performance monitoring.

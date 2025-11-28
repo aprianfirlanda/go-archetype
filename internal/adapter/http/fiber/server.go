@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
+	"github.com/gofiber/fiber/v2/middleware/monitor"
 	"github.com/gofiber/fiber/v2/middleware/requestid"
 	"github.com/sirupsen/logrus"
 	"go-archetype/internal/adapter/http/fiber/middleware"
@@ -20,6 +21,7 @@ func StartServer(appName string, httpConfig config.Http, logger *logrus.Logger, 
 	// Global middlewares
 	// 0. Health Check, live: is the application up, ready: is the application ready to accept traffic
 	app.Use(middleware.HealthCheck())
+	app.Get("/metrics", monitor.New())
 	// 1. Generate request ID first so everyone can use it
 	app.Use(requestid.New())
 	// 2. Logging wraps everything below (including recover + cors + handlers)
