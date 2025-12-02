@@ -1,10 +1,10 @@
 package middleware
 
 import "github.com/gofiber/fiber/v2"
-import fiberhealthcheck "github.com/gofiber/fiber/v2/middleware/healthcheck"
+import "github.com/gofiber/fiber/v2/middleware/healthcheck"
 
 func HealthCheck() fiber.Handler {
-	return fiberhealthcheck.New(fiberhealthcheck.Config{
+	return healthcheck.New(healthcheck.Config{
 		LivenessProbe: func(c *fiber.Ctx) bool {
 			return true
 		},

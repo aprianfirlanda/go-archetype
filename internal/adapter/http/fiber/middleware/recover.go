@@ -2,13 +2,13 @@ package middleware
 
 import (
 	"github.com/gofiber/fiber/v2"
-	fiberrecover "github.com/gofiber/fiber/v2/middleware/recover"
+	"github.com/gofiber/fiber/v2/middleware/recover"
 	"github.com/sirupsen/logrus"
 	"runtime/debug"
 )
 
 func Recover(logger *logrus.Logger) fiber.Handler {
-	return fiberrecover.New(fiberrecover.Config{
+	return recover.New(recover.Config{
 		EnableStackTrace: true,
 		StackTraceHandler: func(c *fiber.Ctx, e interface{}) {
 			// get request id
