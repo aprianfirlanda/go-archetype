@@ -11,9 +11,11 @@ import (
 	"go-archetype/internal/config"
 )
 
-type Dependencies struct{}
+type Dependencies struct {
+	APIKeyMiddleware fiber.Handler
+}
 
-func StartServer(appName string, httpConfig config.Http, logger *logrus.Logger, dependencies Dependencies) error {
+func StartServer(appName string, cfg *config.Config, logger *logrus.Logger, dependencies Dependencies) error {
 	app := fiber.New(fiber.Config{
 		AppName: appName,
 	})
@@ -31,9 +33,13 @@ func StartServer(appName string, httpConfig config.Http, logger *logrus.Logger, 
 	// 4. CORS – mostly for browser / frontend
 	app.Use(cors.New())
 
+	// Auth Middleware
+	apiKeyMiddleware := middleware.AuthAPIKey(cfg.Services.General.APIKey)
+	dependencies.APIKeyMiddleware = apiKeyMiddleware
+
 	// Register routes
 	RegisterRoutes(app, logger, dependencies)
 
-	logger.Infof("Starting HTTP server on port %d", httpConfig.Port)
-	return app.Listen(fmt.Sprintf(":%d", httpConfig.Port))
+	logger.Infof("Starting HTTP server on port %d", cfg.Http.Port)
+	return app.Listen(fmt.Sprintf(":%d", cfg.Http.Port))
 }

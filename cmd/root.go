@@ -69,7 +69,8 @@ func init() {
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/."+appName+"/config.yaml)")
 	rootCmd.PersistentFlags().String("log-format", "text", "log format (text, json)")
 	rootCmd.PersistentFlags().String("log-level", "info", "log level (trace, debug, info, warn, error, fatal, panic)")
-
+	rootCmd.PersistentFlags().String("services-general-baseurl", "http://localhost:8080", "Base URL of the General Service API")
+	rootCmd.PersistentFlags().String("services-general-apikey", "Entwt4/uwQtnD2LqMdho4cPTmFEkGAzBytS4UsO0f8g=", "SHA-256 hashed API key for General Service authentication")
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
 	//rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")

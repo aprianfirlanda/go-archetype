@@ -6,6 +6,10 @@ import (
 )
 
 func RegisterRoutes(app *fiber.App, logger *logrus.Logger, dependencies Dependencies) {
+
+	app.Get("/protected-by-api-key", dependencies.APIKeyMiddleware, func(c *fiber.Ctx) error {
+		return c.SendString("Hello from protected route by API key!")
+	})
 	app.Get("/panic", func(c *fiber.Ctx) error {
 		logger.Info("About to panic with nil pointer")
 

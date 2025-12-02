@@ -3,3 +3,7 @@ http:
 log:
   format: "json"
   level: "trace"
+services:
+  general:
+    baseURL: http://localhost:3002
+    apiKey: Entwt4/uwQtnD2LqMdho4cPTmFEkGAzBytS4UsO0f8g=

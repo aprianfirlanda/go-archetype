@@ -287,4 +287,14 @@ The Fiber application in this project uses several global middlewares to ensure 
      - Uptime
      - Per-route performance
 
-This endpoint is useful for basic diagnostics and local performance monitoring.
+   This endpoint is useful for basic diagnostics and local performance monitoring.
+
+7. Auth API Key
+
+   Create random text for API Key:
+   ```shell
+   openssl rand -base64 32
+   ```
+
+   If required, the API Key should send on request header `Authorization: Bearer <API_KEY>`.
+   To Generate API Key, use this command.
