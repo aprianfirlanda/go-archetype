@@ -26,6 +26,7 @@ func StartServer(appName string, cfg *config.Config, logger *logrus.Logger, depe
 	app.Get("/metrics", monitor.New())
 	// 1. Generate request ID first so everyone can use it
 	app.Use(requestid.New())
+	app.Use(middleware.RequestIDLoggerContext(logger))
 	// 2. Logging wraps everything below (including recover + cors + handlers)
 	app.Use(middleware.Logging(logger))
 	// 3. Recover from panic so we don't crash the server
@@ -34,7 +35,7 @@ func StartServer(appName string, cfg *config.Config, logger *logrus.Logger, depe
 	app.Use(cors.New())
 
 	// Auth Middleware
-	apiKeyMiddleware := middleware.AuthAPIKey(cfg.Services.General.APIKey)
+	apiKeyMiddleware := middleware.AuthAPIKey(logger, cfg.Services.General.APIKey)
 	dependencies.APIKeyMiddleware = apiKeyMiddleware
 
 	// Register routes

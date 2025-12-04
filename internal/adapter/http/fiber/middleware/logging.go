@@ -15,16 +15,13 @@ func Logging(logger *logrus.Logger) fiber.Handler {
 
 		latency := time.Since(start)
 
-		// Get request ID from locals (must match your requestid middleware ContextKey)
-		requestID, _ := c.Locals("requestid").(string)
-
 		status := c.Response().StatusCode()
 		method := c.Method()
 		path := c.OriginalURL()
 
 		// Build structured log entry
-		entry := logger.WithFields(logrus.Fields{
-			"request_id": requestID,
+		log := RequestLogger(c, logger)
+		log.WithFields(logrus.Fields{
 			"status":     status,
 			"method":     method,
 			"path":       path,
@@ -33,17 +30,17 @@ func Logging(logger *logrus.Logger) fiber.Handler {
 		})
 
 		if err != nil {
-			entry = entry.WithError(err)
+			log.WithError(err)
 		}
 
 		// Log level based on status
 		switch {
 		case status >= 500:
-			entry.Error("HTTP request completed")
+			log.Error("HTTP request completed")
 		case status >= 400:
-			entry.Warn("HTTP request completed")
+			log.Warn("HTTP request completed")
 		default:
-			entry.Info("HTTP request completed")
+			log.Info("HTTP request completed")
 		}
 
 		return err
