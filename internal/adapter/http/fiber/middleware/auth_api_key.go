@@ -31,16 +31,11 @@ func AuthAPIKey(logger *logrus.Logger, apiKey string) fiber.Handler {
 			status := fiber.StatusUnauthorized
 
 			// get requestId from fiber/middleware/requestid
-			var requestID string
-			if v := c.Locals("requestid"); v != nil {
-				if id, ok := v.(string); ok {
-					requestID = id
-				}
-			}
+			rid := GetRequestID(c)
 
 			resp := response.ErrorResponse{
 				Message:   "invalid or missing API key",
-				RequestID: requestID,
+				RequestID: rid,
 			}
 
 			c.Type("json", "utf-8")

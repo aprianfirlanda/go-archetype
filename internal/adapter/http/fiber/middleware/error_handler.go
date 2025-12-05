@@ -18,17 +18,12 @@ func ErrorHandler() fiber.ErrorHandler {
 		}
 
 		// Get request ID (from requestid middleware)
-		var requestID string
-		if v := c.Locals("requestid"); v != nil {
-			if id, ok := v.(string); ok {
-				requestID = id
-			}
-		}
+		rid := GetRequestID(c)
 
 		// Build JSON error response
 		resp := response.ErrorResponse{
 			Message:   err.Error(),
-			RequestID: requestID,
+			RequestID: rid,
 		}
 
 		// Ensure the content type is JSON and send a response

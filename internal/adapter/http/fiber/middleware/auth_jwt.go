@@ -55,16 +55,11 @@ func AuthJWT(logger *logrus.Logger, jwtSecret string) fiber.Handler {
 			status := fiber.StatusUnauthorized
 
 			// get requestId from fiber/middleware/requestid
-			var requestID string
-			if v := c.Locals("requestid"); v != nil {
-				if id, ok := v.(string); ok {
-					requestID = id
-				}
-			}
+			rid := GetRequestID(c)
 
 			resp := response.ErrorResponse{
 				Message:   "invalid or missing JWT",
-				RequestID: requestID,
+				RequestID: rid,
 			}
 
 			c.Type("json", "utf-8")

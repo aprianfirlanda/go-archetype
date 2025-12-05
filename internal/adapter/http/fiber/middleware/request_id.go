@@ -23,3 +23,12 @@ func RequestLogger(c *fiber.Ctx, fallback *logrus.Logger) *logrus.Entry {
 	}
 	return logrus.NewEntry(fallback)
 }
+
+func GetRequestID(c *fiber.Ctx) string {
+	if v := c.Locals("requestid"); v != nil {
+		if id, ok := v.(string); ok {
+			return id
+		}
+	}
+	return ""
+}
