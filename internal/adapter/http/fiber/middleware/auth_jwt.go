@@ -44,16 +44,7 @@ func AuthJWT(logger *logrus.Logger, jwtSecret string) fiber.Handler {
 			// Store claims in context so handlers can use it
 			c.Locals("user", claims)
 
-			// Enrich Logger: add user detail on the SAME log entry
-			updatedLog := log.WithFields(logrus.Fields{
-				"subject": claims.Subject,
-				"roles":   claims.Roles,
-			})
-
-			// overwrite contextual logger for downstream
-			c.Locals("logger", updatedLog)
-
-			updatedLog.Info("jwt validated successfully")
+			log.Info("jwt validated successfully")
 
 			return true, nil
 		},
