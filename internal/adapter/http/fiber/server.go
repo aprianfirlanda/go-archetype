@@ -2,13 +2,14 @@ package fiberhttp
 
 import (
 	"fmt"
+	"go-archetype/internal/adapter/http/fiber/middleware"
+	"go-archetype/internal/config"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/monitor"
 	"github.com/gofiber/fiber/v2/middleware/requestid"
 	"github.com/sirupsen/logrus"
-	"go-archetype/internal/adapter/http/fiber/middleware"
-	"go-archetype/internal/config"
 )
 
 type Dependencies struct {
@@ -18,7 +19,8 @@ type Dependencies struct {
 
 func StartServer(cfg *config.Config, logger *logrus.Logger, dependencies Dependencies) error {
 	app := fiber.New(fiber.Config{
-		AppName: cfg.AppName,
+		AppName:      cfg.AppName,
+		ErrorHandler: middleware.ErrorHandler(),
 	})
 
 	// Global middlewares
