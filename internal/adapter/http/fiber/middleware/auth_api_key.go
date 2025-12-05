@@ -3,6 +3,8 @@ package middleware
 import (
 	"crypto/sha256"
 	"crypto/subtle"
+	"go-archetype/internal/adapter/http/fiber/response"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/sirupsen/logrus"
 )
@@ -24,6 +26,25 @@ func AuthAPIKey(logger *logrus.Logger, apiKey string) fiber.Handler {
 				"reason": "invalid API key",
 			}).Error("unauthorized request")
 			return false, keyauth.ErrMissingOrMalformedAPIKey
+		},
+		ErrorHandler: func(c *fiber.Ctx, err error) error {
+			status := fiber.StatusUnauthorized
+
+			// get requestId from fiber/middleware/requestid
+			var requestID string
+			if v := c.Locals("requestid"); v != nil {
+				if id, ok := v.(string); ok {
+					requestID = id
+				}
+			}
+
+			resp := response.ErrorResponse{
+				Message:   "invalid or missing API key",
+				RequestID: requestID,
+			}
+
+			c.Type("json", "utf-8")
+			return c.Status(status).JSON(resp)
 		},
 	})
 }
