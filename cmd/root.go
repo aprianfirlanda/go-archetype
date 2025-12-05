@@ -16,7 +16,7 @@ var (
 	appName = "go-archetype"
 	cfgFile string
 	cfg     *config.Config
-	logger  *logrus.Logger
+	logger  *logrus.Entry
 	// rootCmd represents the base command when called without any subcommands
 	rootCmd = &cobra.Command{
 		Use:   "go-archetype",

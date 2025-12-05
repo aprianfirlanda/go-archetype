@@ -1,13 +1,16 @@
 package middleware
 
 import (
+	"go-archetype/internal/domain/auth"
+	"go-archetype/internal/logging"
+	"time"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/sirupsen/logrus"
-	"go-archetype/internal/domain/auth"
-	"time"
 )
 
-func Logging(logger *logrus.Logger) fiber.Handler {
+func Logging(logger *logrus.Entry) fiber.Handler {
+	logWithComponent := logging.WithComponent(logger, "middleware.Logging")
 	return func(c *fiber.Ctx) error {
 		start := time.Now()
 
@@ -21,7 +24,7 @@ func Logging(logger *logrus.Logger) fiber.Handler {
 		path := c.OriginalURL()
 
 		// Build structured log entry
-		log := RequestLogger(c, logger).WithFields(logrus.Fields{
+		log := RequestLogger(c, logWithComponent).WithFields(logrus.Fields{
 			"status":     status,
 			"method":     method,
 			"path":       path,

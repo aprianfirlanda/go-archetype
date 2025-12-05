@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"go-archetype/internal/adapter/http/fiber/middleware"
 	"go-archetype/internal/config"
+	"go-archetype/internal/logging"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
@@ -17,7 +18,8 @@ type Dependencies struct {
 	JWTMiddleware    fiber.Handler
 }
 
-func StartServer(cfg *config.Config, logger *logrus.Logger, dependencies Dependencies) error {
+func StartServer(cfg *config.Config, logger *logrus.Entry, dependencies Dependencies) error {
+	log := logging.WithComponent(logger, "http.server")
 	app := fiber.New(fiber.Config{
 		AppName:      cfg.AppName,
 		ErrorHandler: middleware.ErrorHandler(),
@@ -29,23 +31,23 @@ func StartServer(cfg *config.Config, logger *logrus.Logger, dependencies Depende
 	app.Get("/metrics", monitor.New())
 	// 1. Generate request ID first so everyone can use it
 	app.Use(requestid.New())
-	app.Use(middleware.RequestIDLoggerContext(logger))
+	app.Use(middleware.RequestIDLoggerContext(log))
 	// 2. Logging wraps everything below (including recover + cors + handlers)
-	app.Use(middleware.Logging(logger))
+	app.Use(middleware.Logging(log))
 	// 3. Recover from panic so we don't crash the server
-	app.Use(middleware.Recover(logger))
+	app.Use(middleware.Recover(log))
 	// 4. CORS – mostly for browser / frontend
 	app.Use(cors.New())
 
 	// Auth Middleware
-	apiKeyMiddleware := middleware.AuthAPIKey(logger, cfg.Services.General.APIKey)
+	apiKeyMiddleware := middleware.AuthAPIKey(log, cfg.Services.General.APIKey)
 	dependencies.APIKeyMiddleware = apiKeyMiddleware
-	jwtMiddleware := middleware.AuthJWT(logger, cfg.JWT.Secret)
+	jwtMiddleware := middleware.AuthJWT(log, cfg.JWT.Secret)
 	dependencies.JWTMiddleware = jwtMiddleware
 
 	// Register routes
-	RegisterRoutes(app, cfg, logger, dependencies)
+	RegisterRoutes(app, cfg, log, dependencies)
 
-	logger.Infof("Starting HTTP server on port %d", cfg.Http.Port)
+	log.Infof("Starting HTTP server on port %d", cfg.Http.Port)
 	return app.Listen(fmt.Sprintf(":%d", cfg.Http.Port))
 }

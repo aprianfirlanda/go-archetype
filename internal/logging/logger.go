@@ -1,13 +1,14 @@
 package logging
 
 import (
-	"github.com/sirupsen/logrus"
 	"go-archetype/internal/config"
 	"os"
 	"strings"
+
+	"github.com/sirupsen/logrus"
 )
 
-func NewLogger(logConfig config.Log) *logrus.Logger {
+func NewLogger(logConfig config.Log) *logrus.Entry {
 	logger := logrus.New()
 
 	// =========================
@@ -47,5 +48,5 @@ func NewLogger(logConfig config.Log) *logrus.Logger {
 
 	logger.SetOutput(os.Stdout)
 
-	return logger
+	return logrus.NewEntry(logger)
 }

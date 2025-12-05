@@ -4,13 +4,15 @@ import (
 	"crypto/sha256"
 	"crypto/subtle"
 	"go-archetype/internal/adapter/http/fiber/response"
+	"go-archetype/internal/logging"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/sirupsen/logrus"
 )
 import "github.com/gofiber/fiber/v2/middleware/keyauth"
 
-func AuthAPIKey(logger *logrus.Logger, apiKey string) fiber.Handler {
+func AuthAPIKey(logger *logrus.Entry, apiKey string) fiber.Handler {
+	logWithComponent := logging.WithComponent(logger, "middleware.AuthAPIKey")
 	hashedAPIKey := sha256.Sum256([]byte(apiKey))
 
 	return keyauth.New(keyauth.Config{
@@ -21,10 +23,10 @@ func AuthAPIKey(logger *logrus.Logger, apiKey string) fiber.Handler {
 				return true, nil
 			}
 
-			log := RequestLogger(c, logger)
+			log := RequestLogger(c, logWithComponent)
 			log.WithFields(logrus.Fields{
 				"reason": "invalid API key",
-			}).Error("unauthorized request")
+			}).Warn("unauthorized request")
 			return false, keyauth.ErrMissingOrMalformedAPIKey
 		},
 		ErrorHandler: func(c *fiber.Ctx, err error) error {

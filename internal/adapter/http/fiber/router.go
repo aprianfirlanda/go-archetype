@@ -1,24 +1,27 @@
 package fiberhttp
 
 import (
+	"go-archetype/internal/adapter/http/fiber/middleware"
+	"go-archetype/internal/config"
+	"go-archetype/internal/domain/auth"
+	"go-archetype/internal/logging"
+	"time"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
-	"go-archetype/internal/adapter/http/fiber/middleware"
-	"go-archetype/internal/config"
-	"go-archetype/internal/domain/auth"
-	"time"
 )
 
-func RegisterRoutes(app *fiber.App, cfg *config.Config, logger *logrus.Logger, dependencies Dependencies) {
+func RegisterRoutes(app *fiber.App, cfg *config.Config, logger *logrus.Entry, dependencies Dependencies) {
+	log := logging.WithComponent(logger, "http.router")
 	app.Get("/protected-by-api-key", dependencies.APIKeyMiddleware, func(c *fiber.Ctx) error {
-		log := middleware.RequestLogger(c, logger)
+		log := middleware.RequestLogger(c, log)
 		log.Info("Hello from protected route by API key!")
 		return c.SendString("Hello from protected route by API key!")
 	})
 	app.Get("/generate-token", func(c *fiber.Ctx) error {
-		log := middleware.RequestLogger(c, logger)
+		log := middleware.RequestLogger(c, log)
 
 		claims := auth.CustomClaims{}
 		claims.Roles = []string{"admin"}
@@ -47,7 +50,7 @@ func RegisterRoutes(app *fiber.App, cfg *config.Config, logger *logrus.Logger, d
 		return c.SendString("Hello from protected route by JWT!")
 	})
 	app.Get("/panic", func(c *fiber.Ctx) error {
-		logger.Info("About to panic with nil pointer")
+		log.Info("About to panic with nil pointer")
 
 		var x *int
 		// this will cause: panic: runtime error: invalid memory address or nil pointer dereference
