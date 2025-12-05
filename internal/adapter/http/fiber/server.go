@@ -13,11 +13,12 @@ import (
 
 type Dependencies struct {
 	APIKeyMiddleware fiber.Handler
+	JWTMiddleware    fiber.Handler
 }
 
-func StartServer(appName string, cfg *config.Config, logger *logrus.Logger, dependencies Dependencies) error {
+func StartServer(cfg *config.Config, logger *logrus.Logger, dependencies Dependencies) error {
 	app := fiber.New(fiber.Config{
-		AppName: appName,
+		AppName: cfg.AppName,
 	})
 
 	// Global middlewares
@@ -37,9 +38,11 @@ func StartServer(appName string, cfg *config.Config, logger *logrus.Logger, depe
 	// Auth Middleware
 	apiKeyMiddleware := middleware.AuthAPIKey(logger, cfg.Services.General.APIKey)
 	dependencies.APIKeyMiddleware = apiKeyMiddleware
+	jwtMiddleware := middleware.AuthJWT(logger, cfg.JWT.Secret)
+	dependencies.JWTMiddleware = jwtMiddleware
 
 	// Register routes
-	RegisterRoutes(app, logger, dependencies)
+	RegisterRoutes(app, cfg, logger, dependencies)
 
 	logger.Infof("Starting HTTP server on port %d", cfg.Http.Port)
 	return app.Listen(fmt.Sprintf(":%d", cfg.Http.Port))

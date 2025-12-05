@@ -1,8 +1,10 @@
 package config
 
 type Config struct {
+	AppName  string
 	Http     Http     `mapstructure:"http"`
 	Log      Log      `mapstructure:"log"`
+	JWT      JWT      `mapstructure:"jwt"`
 	Services Services `mapstructure:"services"`
 }
 
@@ -13,6 +15,10 @@ type Http struct {
 type Log struct {
 	Format string `mapstructure:"format"`
 	Level  string `mapstructure:"level"`
+}
+
+type JWT struct {
+	Secret string `mapstructure:"secret"`
 }
 
 type Services struct {

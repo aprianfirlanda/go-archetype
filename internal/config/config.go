@@ -70,12 +70,14 @@ func Initialize(appName, cfgFile string, cmd *cobra.Command) error {
 	return nil
 }
 
-func Load() (*Config, error) {
+func Load(appName string) (*Config, error) {
 	var cfg Config
 
 	if err := viper.Unmarshal(&cfg); err != nil {
 		return nil, fmt.Errorf("failed to unmarshal config: %w", err)
 	}
+
+	cfg.AppName = appName
 
 	return &cfg, nil
 }

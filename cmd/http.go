@@ -19,7 +19,7 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		return fiberhttp.StartServer(appName, cfg, logger, fiberhttp.Dependencies{})
+		return fiberhttp.StartServer(cfg, logger, fiberhttp.Dependencies{})
 	},
 }
 
@@ -35,4 +35,5 @@ func init() {
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
 	httpCmd.Flags().Int("http-port", 8080, "Port to run the server on")
+	httpCmd.Flags().String("jwt-secret", "your-jwt-secret", "Secret key used to sign and validate JWT tokens")
 }

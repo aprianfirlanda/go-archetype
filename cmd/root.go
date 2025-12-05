@@ -32,7 +32,7 @@ to quickly create a Cobra application.`,
 			if err != nil {
 				return err
 			}
-			cfg, err = config.Load()
+			cfg, err = config.Load(appName)
 			if err != nil {
 				return err
 			}

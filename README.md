@@ -36,6 +36,8 @@ Folder Structure
 │   │           ├── server.go      # create Fiber app, middlewares, start listen
 │   │           ├── router.go      # grouping routes by module
 │   │           ├── middleware  # logger, recover, health check.
+│   │           │   ├──  auth_api_key.go
+│   │           │   ├──  auth_jwt.go
 │   │           │   ├──  health_check.go
 │   │           │   ├──  logging.go
 │   │           │   └──  recover.go
