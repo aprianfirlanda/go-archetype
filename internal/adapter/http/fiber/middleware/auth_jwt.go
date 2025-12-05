@@ -2,12 +2,15 @@ package middleware
 
 import (
 	"fmt"
+
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/keyauth"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/sirupsen/logrus"
+
+	"go-archetype/internal/adapter/http/fiber/response"
 	"go-archetype/internal/domain/auth"
 )
-import "github.com/gofiber/fiber/v2/middleware/keyauth"
 
 func AuthJWT(logger *logrus.Logger, jwtSecret string) fiber.Handler {
 	jwtSecretBytes := []byte(jwtSecret)
@@ -47,6 +50,25 @@ func AuthJWT(logger *logrus.Logger, jwtSecret string) fiber.Handler {
 			log.Info("jwt validated successfully")
 
 			return true, nil
+		},
+		ErrorHandler: func(c *fiber.Ctx, err error) error {
+			status := fiber.StatusUnauthorized
+
+			// get requestId from fiber/middleware/requestid
+			var requestID string
+			if v := c.Locals("requestid"); v != nil {
+				if id, ok := v.(string); ok {
+					requestID = id
+				}
+			}
+
+			resp := response.ErrorResponse{
+				Message:   "invalid or missing JWT",
+				RequestID: requestID,
+			}
+
+			c.Type("json", "utf-8")
+			return c.Status(status).JSON(resp)
 		},
 	})
 }
