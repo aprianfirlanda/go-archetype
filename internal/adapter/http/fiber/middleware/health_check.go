@@ -1,18 +1,33 @@
 package middleware
 
-import "github.com/gofiber/fiber/v2"
+import (
+	"go-archetype/internal/domain/health"
+	"go-archetype/internal/logging"
+
+	"github.com/gofiber/fiber/v2"
+	"github.com/sirupsen/logrus"
+)
 import "github.com/gofiber/fiber/v2/middleware/healthcheck"
 
-func HealthCheck() fiber.Handler {
+func HealthCheck(logger *logrus.Entry, dbPinger health.DBPinger) fiber.Handler {
+	log := logging.WithComponent(logger, "middleware.HealthCheck")
+
 	return healthcheck.New(healthcheck.Config{
 		LivenessProbe: func(c *fiber.Ctx) bool {
 			return true
 		},
 		LivenessEndpoint: "/live",
 		ReadinessProbe: func(c *fiber.Ctx) bool {
-			// TODO: in future check db, redis, kafka/rabbitmq, or external service
-			// TODO: put on log the app that not ready
-			return true
+			// TODO: in future redis, kafka/rabbitmq, or external service
+			var errDBPing error
+			if dbPinger != nil {
+				errDBPing = dbPinger.Ping(c.UserContext())
+				if errDBPing != nil {
+					log.WithError(errDBPing).Error("failed to ping db")
+				}
+			}
+
+			return errDBPing == nil
 		},
 		ReadinessEndpoint: "/ready",
 	})

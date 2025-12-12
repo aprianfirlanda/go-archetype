@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"go-archetype/internal/adapter/http/fiber/middleware"
 	"go-archetype/internal/config"
+	"go-archetype/internal/domain/health"
 	"go-archetype/internal/logging"
 
 	"github.com/gofiber/fiber/v2"
@@ -16,6 +17,7 @@ import (
 type Dependencies struct {
 	APIKeyMiddleware fiber.Handler
 	JWTMiddleware    fiber.Handler
+	DBPinger         health.DBPinger
 }
 
 func StartServer(cfg *config.Config, logger *logrus.Entry, dependencies Dependencies) error {
@@ -27,7 +29,7 @@ func StartServer(cfg *config.Config, logger *logrus.Entry, dependencies Dependen
 
 	// Global middlewares
 	// 0. Health Check, live: is the application up, ready: is the application ready to accept traffic
-	app.Use(middleware.HealthCheck())
+	app.Use(middleware.HealthCheck(log, dependencies.DBPinger))
 	app.Get("/metrics", monitor.New())
 	// 1. Generate request ID first so everyone can use it
 	app.Use(requestid.New())

@@ -18,7 +18,6 @@ import (
 // configures connection pool & logging, optionally runs AutoMigrate.
 func InitPostgres(dbCfg config.Database, logger *logrus.Entry, autoMigrateModels []any) (*gorm.DB, error) {
 	log := logging.WithComponent(logger, "db.gorm")
-	log.Infof("config value: %+v", dbCfg)
 
 	dsn := buildPostgresDSN(dbCfg)
 
