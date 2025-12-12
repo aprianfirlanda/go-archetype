@@ -19,7 +19,7 @@ Folder Structure
 │   │   └── config.go
 │   ├── logging/
 │   │   └── logging.go
-│   ├── database/
+│   ├── db/
 │   │   └── gorm.go
 │   │
 │   ├── domain/          # pure domain & ports (hexagonal core)
@@ -300,3 +300,63 @@ The Fiber application in this project uses several global middlewares to ensure 
 
    If required, the API Key should send on request header `Authorization: Bearer <API_KEY>`.
    To Generate API Key, use this command.
+
+## Setup Database (GORM)
+
+install dependency
+```shell
+go get -u gorm.io/gorm@lates
+go get -u gorm.io/driver/postgres@latest   # or mysql / sqlite / sqlserver
+```
+
+setup config using the cobra flag
+```shell
+go run . http \
+--db-host=localhost \
+--db-port=5432 \
+--db-user=app \
+--db-password=change_me \
+--db-name=app \
+--db-sslmode=disable \
+--db-timezone=UTC \
+--db-maxopenconns=25 \
+--db-maxidleconns=25 \
+--db-connmaxlifetime=10h \
+--db-connmaxidletime=15m \
+--db-loglevel=warn
+```
+
+setup config using env
+```shell
+export GOARCHETYPE_DB_HOST=localhost
+export GOARCHETYPE_DB_PORT=5432
+export GOARCHETYPE_DB_USER=app
+export GOARCHETYPE_DB_PASSWORD=change_me
+export GOARCHETYPE_DB_NAME=app
+export GOARCHETYPE_DB_SSLMODE=disable
+export GOARCHETYPE_DB_TIMEZONE=UTC
+export GOARCHETYPE_DB_MAXOPENCONNS=25
+export GOARCHETYPE_DB_MAXIDLECONNS=25
+export GOARCHETYPE_DB_CONNMAXLIFETIME=10h
+export GOARCHETYPE_DB_CONNMAXIDLETIME=15m
+export GOARCHETYPE_DB_LOGLEVEL=warn
+```
+
+setup config using config file
+```yaml
+db:
+  host: localhost
+  port: 5432
+  user: app
+  password: change_me
+  name: app
+  sslMode: disable
+  timezone: UTC
+  maxOpenConns: 25
+  maxIdleConns: 25
+  connMaxLifetime: 10h
+  connMaxIdleTime: 15m
+  logLevel: warn
+```
+
+

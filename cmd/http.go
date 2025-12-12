@@ -1,11 +1,13 @@
+package cmd
+
 /*
 Copyright © 2025 APRIAN FIRLANDA IMANI <aprianfirlanda@gmail.com>
 */
-package cmd
 
 import (
-	"github.com/spf13/cobra"
 	fiberhttp "go-archetype/internal/adapter/http/fiber"
+
+	"github.com/spf13/cobra"
 )
 
 // httpCmd represents the http command
