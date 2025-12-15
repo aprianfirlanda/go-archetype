@@ -40,7 +40,7 @@ func InitPostgres(dbCfg config.Database, logger *logrus.Entry, autoMigrateModels
 
 	configureConnectionPool(sqlDB, dbCfg)
 
-	if err := Ping(sqlDB, 5*time.Second); err != nil {
+	if err := Ping(context.Background(), sqlDB); err != nil {
 		log.WithError(err).Error("failed to ping postgres")
 		return nil, fmt.Errorf("ping postgres: %w", err)
 	}
@@ -107,16 +107,16 @@ func configureConnectionPool(sqlDB *sql.DB, dbCfg config.Database) {
 
 // Ping checks database reachability with a timeout.
 // Exported so it can be reused by other packages (e.g., readiness checks).
-func Ping(sqlDB *sql.DB, timeout time.Duration) error {
+func Ping(ctx context.Context, sqlDB *sql.DB) error {
 	if sqlDB == nil {
 		return fmt.Errorf("sqlDB is nil")
 	}
-	if timeout <= 0 {
-		timeout = 5 * time.Second
-	}
 
-	ctx, cancel := context.WithTimeout(context.Background(), timeout)
-	defer cancel()
+	if _, ok := ctx.Deadline(); !ok {
+		var cancel context.CancelFunc
+		ctx, cancel = context.WithTimeout(ctx, 5*time.Second)
+		defer cancel()
+	}
 
 	if err := sqlDB.PingContext(ctx); err != nil {
 		return fmt.Errorf("ping failed: %w", err)

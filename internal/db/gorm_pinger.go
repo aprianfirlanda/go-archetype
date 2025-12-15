@@ -15,5 +15,5 @@ func (p GormPinger) Ping(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
-	return sqlDB.PingContext(ctx)
+	return Ping(ctx, sqlDB)
 }
