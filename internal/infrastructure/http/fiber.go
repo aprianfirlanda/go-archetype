@@ -1,29 +1,22 @@
-package fiberhttp
+package http
 
 import (
 	"fmt"
-	"go-archetype/internal/adapter/http/fiber/middleware"
-	"go-archetype/internal/config"
-	"go-archetype/internal/domain/health"
-	"go-archetype/internal/logging"
+	"go-archetype/internal/adapter/inbound/http/fiber"
+	"go-archetype/internal/adapter/inbound/http/fiber/middleware"
+	"go-archetype/internal/bootstrap"
+	"go-archetype/internal/infrastructure/logging"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/monitor"
 	"github.com/gofiber/fiber/v2/middleware/requestid"
-	"github.com/sirupsen/logrus"
 )
 
-type Dependencies struct {
-	APIKeyMiddleware fiber.Handler
-	JWTMiddleware    fiber.Handler
-	DBPinger         health.DBPinger
-}
-
-func StartServer(cfg *config.Config, logger *logrus.Entry, dependencies Dependencies) error {
-	log := logging.WithComponent(logger, "http.server")
+func StartServer(dependencies bootstrap.HttpApp) error {
+	log := logging.WithComponent(dependencies.Log, "http.server")
 	app := fiber.New(fiber.Config{
-		AppName:      cfg.AppName,
+		AppName:      dependencies.Config.AppName,
 		ErrorHandler: middleware.ErrorHandler(),
 	})
 
@@ -42,14 +35,14 @@ func StartServer(cfg *config.Config, logger *logrus.Entry, dependencies Dependen
 	app.Use(cors.New())
 
 	// Auth Middleware
-	apiKeyMiddleware := middleware.AuthAPIKey(log, cfg.Services.General.APIKey)
+	apiKeyMiddleware := middleware.AuthAPIKey(log, dependencies.Config.Services.General.APIKey)
 	dependencies.APIKeyMiddleware = apiKeyMiddleware
-	jwtMiddleware := middleware.AuthJWT(log, cfg.JWT.Secret)
+	jwtMiddleware := middleware.AuthJWT(log, dependencies.Config.JWT.Secret)
 	dependencies.JWTMiddleware = jwtMiddleware
 
 	// Register routes
-	RegisterRoutes(app, cfg, log, dependencies)
+	fiberhttp.RegisterRoutes(app, dependencies)
 
-	log.Infof("Starting HTTP server on port %d", cfg.Http.Port)
-	return app.Listen(fmt.Sprintf(":%d", cfg.Http.Port))
+	log.Infof("Starting HTTP server on port %d", dependencies.Config.Http.Port)
+	return app.Listen(fmt.Sprintf(":%d", dependencies.Config.Http.Port))
 }

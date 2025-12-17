@@ -1,27 +1,33 @@
 ### Test Protected API by API Key (Success)
-GET http://localhost:8080/protected-by-api-key
+GET http://localhost:3002/protected-by-api-key
 Authorization: Bearer Entwt4/uwQtnD2LqMdho4cPTmFEkGAzBytS4UsO0f8g=
 
 ### Test Protected API by API Key (Failed Wrong)
-GET http://localhost:8080/protected-by-api-key
+GET http://localhost:3002/protected-by-api-key
 Authorization: Bearer Entwt4/uwQtnD2LqMdho4cPTmFEkGAzBytS4UsO0f8g
 
 ### Test Protected API by API Key (Failed Empty)
-GET http://localhost:8080/protected-by-api-key
+GET http://localhost:3002/protected-by-api-key
 
 ### Generate token
-GET http://localhost:8080/generate-token
+GET http://localhost:3002/generate-token
 
 ### Test Protected API by JWT (Success)
-GET http://localhost:8080/protected-by-jwt
+GET http://localhost:3002/protected-by-jwt
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlcyI6WyJhZG1pbiJdLCJpc3MiOiJnby1hcmNoZXR5cGUiLCJzdWIiOiJ1c2VyLTEyMyIsImV4cCI6MTc2NDk4NzM5MSwibmJmIjoxNzY0OTAwOTkxLCJpYXQiOjE3NjQ5MDA5OTEsImp0aSI6IjY3NjlmNzY0LWY4ZWEtNDFhZS1iYjMzLWE4YTA1ZjAzNTMwYyJ9.t-iICKVZMnc0WirLbrjrvMYQJCyHJNemFc3ZCuHJjlE
 
 ### Test Protected API by JWT (Failed Wrong)
-GET http://localhost:8080/protected-by-jwt
+GET http://localhost:3002/protected-by-jwt
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlcyI6WyJhZG1pbiJdLCJpc3MiOiJnby1hcmNoZXR5cGUiLCJzdWIiOiJ1c2VyLTEyMyIsImV4cCI6MTc2NDk4NzM5MSwibmJmIjoxNzY0OTAwOTkxLCJpYXQiOjE3NjQ5MDA5OTEsImp0aSI6IjY3NjlmNzY0LWY4ZWEtNDFhZS1iYjMzLWE4YTA1ZjAzNTMwYyJ9.t-iICKVZMnc0WirLbrjrvMYQJCyHJNemFc3ZCuHJjl
 
 ### Test Protected API by JWT (Failed Empty)
-GET http://localhost:8080/protected-by-jwt
+GET http://localhost:3002/protected-by-jwt
 
 ### Test Panic
-GET http://localhost:8080/panic
+GET http://localhost:3002/panic
+
+### Health Check - Live
+GET http://localhost:3002/live
+
+### Health Check - Ready
+GET http://localhost:3002/ready

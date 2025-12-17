@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	"go-archetype/internal/logging"
+	"go-archetype/internal/infrastructure/logging"
 	"runtime/debug"
 
 	"github.com/gofiber/fiber/v2"

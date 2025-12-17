@@ -9,46 +9,80 @@ This project was created using Go version 1.25.4.
 
 Folder Structure
 ```text
-.
+task-manager/
 ├── cmd/
-│   ├── root.go          # cobra root cmd, config + logger init
-│   └── http.go          # "http" subcommand -> start Fiber server
+│   ├── root.go                # cobra root command
+│   ├── serve.go               # start HTTP server
+│   └── migrate.go             # db migration command
 │
 ├── internal/
-│   ├── config/
-│   │   └── config.go
-│   ├── logging/
-│   │   └── logging.go
-│   ├── db/
-│   │   └── gorm.go
+│   ├── domain/
+│   │   └── task/
+│   │       ├── entity.go      # Task entity
+│   │       ├── value.go       # Value objects (Status, Priority)
+│   │       └── errors.go
 │   │
-│   ├── domain/          # pure domain & ports (hexagonal core)
-│   │   └── customer/
-│   │       ├── entity.go          # structs, domain rules
-│   │       ├── port_repository.go # interfaces
-│   │       └── service.go         # usecase / application service
+│   ├── application/
+│   │   └── task/
+│   │       ├── create.go      # CreateTask use case
+│   │       ├── update.go
+│   │       ├── list.go
+│   │       └── delete.go
 │   │
-│   ├── adapter/
-│   │   ├── repository/
-│   │   │   └── customer_gorm.go   # implements domain ports using GORM
-│   │   └── http/
-│   │       └── fiber/
-│   │           ├── server.go      # create Fiber app, middlewares, start listen
-│   │           ├── router.go      # grouping routes by module
-│   │           ├── middleware  # logger, recover, health check.
-│   │           │   ├──  auth_api_key.go
-│   │           │   ├──  auth_jwt.go
-│   │           │   ├──  health_check.go
-│   │           │   ├──  logging.go
-│   │           │   └──  recover.go
-│   │           └── handler/
-│   │               └── customer_handler.go  # Fiber handler -> call usecase
+│   ├── ports/
+│   │   ├── inbound/
+│   │   │   └── task_service.go
+│   │   └── outbound/
+│   │       └── task_repository.go
 │   │
-│   └── pkg/             # optional shared helpers, errors, response wrapper, etc.
-│       └── response/
-│           └── api_response.go
+│   ├── adapters/
+│   │   ├── inbound/
+│   │   │   └── http/
+│   │   │       └── fiber/
+│   │   │           ├── router.go
+│   │   │           ├── handler/
+│   │   │           │   ├── task_handler.go
+│   │   │           │   └── health_handler.go
+│   │   │           ├── middleware/
+│   │   │           │   ├── auth_apikey.go
+│   │   │           │   ├── auth_jwt.go
+│   │   │           │   ├── logging.go
+│   │   │           │   ├── recover.go
+│   │   │           │   ├── request_id.go
+│   │   │           │   └── error_handler.go
+│   │   │           └── dto/
+│   │   │               ├── request.go
+│   │   │               ├── response.go
+│   │   │               └── error.go
+│   │   │
+│   │   └── outbound/
+│   │       └── persistence/
+│   │           ├── gorm/
+│   │           │   ├── model.go
+│   │           │   └── repository.go
+│   │           └── migration.go
+│   │
+│   ├── infrastructure/
+│   │   ├── config/
+│   │   │   └── config.go      # viper
+│   │   ├── database/
+│   │   │   └── gorm.go
+│   │   ├── logger/
+│   │   │   └── logrus.go
+│   │   └── server/
+│   │       └── fiber.go
+│   │
+│   └── bootstrap/
+│       └── http_app.go             # dependency wiring for http
 │
-└── go.mod
+├── configs/
+│   └── config.yaml
+│
+├── migrations/
+│
+├── go.mod
+└── main.go
+
 ```
 
 ⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻

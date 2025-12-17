@@ -1,7 +1,7 @@
 package logging
 
 import (
-	"go-archetype/internal/config"
+	"go-archetype/internal/infrastructure/config"
 	"os"
 	"strings"
 

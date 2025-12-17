@@ -5,8 +5,9 @@ Copyright © 2025 APRIAN FIRLANDA IMANI <aprianfirlanda@gmail.com>
 */
 
 import (
-	fiberhttp "go-archetype/internal/adapter/http/fiber"
-	"go-archetype/internal/db"
+	"go-archetype/internal/adapter/outbound/persistance/gorm"
+	"go-archetype/internal/bootstrap"
+	"go-archetype/internal/infrastructure/http"
 
 	"github.com/spf13/cobra"
 )
@@ -22,9 +23,11 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		dbPinger := db.GormPinger{DB: dbConn}
+		dbPinger := gorm.Pinger{DB: dbConn}
 
-		return fiberhttp.StartServer(cfg, logger, fiberhttp.Dependencies{
+		return http.StartServer(bootstrap.HttpApp{
+			Config:   cfg,
+			Log:      logger,
 			DBPinger: dbPinger,
 		})
 	},

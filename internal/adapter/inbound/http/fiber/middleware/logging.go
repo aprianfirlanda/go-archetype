@@ -2,7 +2,7 @@ package middleware
 
 import (
 	"go-archetype/internal/domain/auth"
-	"go-archetype/internal/logging"
+	"go-archetype/internal/infrastructure/logging"
 	"time"
 
 	"github.com/gofiber/fiber/v2"

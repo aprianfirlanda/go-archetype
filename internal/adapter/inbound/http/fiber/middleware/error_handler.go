@@ -1,7 +1,8 @@
 package middleware
 
 import (
-	"go-archetype/internal/adapter/http/fiber/response"
+	"errors"
+	"go-archetype/internal/adapter/inbound/http/fiber/response"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -13,7 +14,8 @@ func ErrorHandler() fiber.ErrorHandler {
 		status := fiber.StatusInternalServerError
 
 		// If it's a *fiber.Error, use its status code
-		if fe, ok := err.(*fiber.Error); ok {
+		var fe *fiber.Error
+		if errors.As(err, &fe) {
 			status = fe.Code
 		}
 

@@ -1,11 +1,11 @@
-package db
+package database
 
 import (
 	"context"
 	"database/sql"
 	"fmt"
-	"go-archetype/internal/config"
-	"go-archetype/internal/logging"
+	"go-archetype/internal/infrastructure/config"
+	"go-archetype/internal/infrastructure/logging"
 	"time"
 
 	"github.com/sirupsen/logrus"

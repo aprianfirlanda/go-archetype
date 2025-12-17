@@ -1,20 +1,19 @@
 package fiberhttp
 
 import (
-	"go-archetype/internal/adapter/http/fiber/middleware"
-	"go-archetype/internal/config"
+	"go-archetype/internal/adapter/inbound/http/fiber/middleware"
+	"go-archetype/internal/bootstrap"
 	"go-archetype/internal/domain/auth"
-	"go-archetype/internal/logging"
+	"go-archetype/internal/infrastructure/logging"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
-	"github.com/sirupsen/logrus"
 )
 
-func RegisterRoutes(app *fiber.App, cfg *config.Config, logger *logrus.Entry, dependencies Dependencies) {
-	log := logging.WithComponent(logger, "http.router")
+func RegisterRoutes(app *fiber.App, dependencies bootstrap.HttpApp) {
+	log := logging.WithComponent(dependencies.Log, "http.router")
 	app.Get("/protected-by-api-key", dependencies.APIKeyMiddleware, func(c *fiber.Ctx) error {
 		log := middleware.RequestLogger(c, log)
 		log.Info("Hello from protected route by API key!")
@@ -29,14 +28,14 @@ func RegisterRoutes(app *fiber.App, cfg *config.Config, logger *logrus.Entry, de
 			ID:        uuid.New().String(),
 			Subject:   "user-123",
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(24 * time.Hour)),
-			Issuer:    cfg.AppName,
+			Issuer:    dependencies.Config.AppName,
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
 			NotBefore: jwt.NewNumericDate(time.Now()),
 		}
 
 		token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
-		signedToken, err := token.SignedString([]byte(cfg.JWT.Secret))
+		signedToken, err := token.SignedString([]byte(dependencies.Config.JWT.Secret))
 		if err != nil {
 			log.WithError(err).Error("failed to generate jwt")
 			return c.Status(500).JSON(fiber.Map{"error": "internal error"})

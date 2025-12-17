@@ -2,15 +2,14 @@ package middleware
 
 import (
 	"fmt"
-	"go-archetype/internal/logging"
+	"go-archetype/internal/adapter/inbound/http/fiber/response"
+	"go-archetype/internal/domain/auth"
+	"go-archetype/internal/infrastructure/logging"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/keyauth"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/sirupsen/logrus"
-
-	"go-archetype/internal/adapter/http/fiber/response"
-	"go-archetype/internal/domain/auth"
 )
 
 func AuthJWT(logger *logrus.Entry, jwtSecret string) fiber.Handler {
