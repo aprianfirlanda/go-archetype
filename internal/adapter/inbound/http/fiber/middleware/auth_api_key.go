@@ -24,9 +24,7 @@ func AuthAPIKey(logger *logrus.Entry, apiKey string) fiber.Handler {
 			}
 
 			log := RequestLogger(c, logWithComponent)
-			log.WithFields(logging.Fields(map[string]any{
-				"reason": "invalid API key",
-			})).Warn("unauthorized request")
+			log.WithFields(logging.Field("reason", "invalid API key")).Warn("unauthorized request")
 			return false, keyauth.ErrMissingOrMalformedAPIKey
 		},
 		ErrorHandler: func(c *fiber.Ctx, err error) error {
