@@ -6,8 +6,8 @@ Copyright © 2025 APRIAN FIRLANDA IMANI <aprianfirlanda@gmail.com>
 
 import (
 	"go-archetype/internal/infrastructure/config"
-	"go-archetype/internal/infrastructure/database"
 	"go-archetype/internal/infrastructure/logging"
+	infragorm "go-archetype/internal/infrastructure/persistance/gorm"
 	"os"
 	"time"
 
@@ -50,7 +50,7 @@ to quickly create a Cobra application.`,
 				"config_value": cfg,
 			})).Trace("Configuration loaded")
 
-			dbConn, err = database.InitPostgres(cfg.DB, logger, []any{})
+			dbConn, err = infragorm.InitPostgres(cfg.DB, logger, []any{})
 
 			return nil
 		},

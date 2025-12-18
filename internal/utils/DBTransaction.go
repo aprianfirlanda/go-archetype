@@ -2,13 +2,13 @@ package utils
 
 import (
 	"context"
-	"go-archetype/internal/ports/outbound"
+	"go-archetype/internal/ports"
 )
 
 func WithTransaction(
 	ctx context.Context,
-	uow outbound.UnitOfWork,
-	fn func(tx outbound.UnitOfWorkTx) error,
+	uow ports.UnitOfWork,
+	fn func(tx ports.UnitOfWorkTx) error,
 ) error {
 	tx, err := uow.Begin(ctx)
 	if err != nil {

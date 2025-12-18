@@ -1,8 +1,6 @@
 package gorm
 
-import (
-	"gorm.io/gorm"
-)
+import "gorm.io/gorm"
 
 type unitOfWorkTx struct {
 	tx *gorm.DB

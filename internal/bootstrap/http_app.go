@@ -2,7 +2,7 @@ package bootstrap
 
 import (
 	"go-archetype/internal/infrastructure/config"
-	"go-archetype/internal/ports/outbound"
+	"go-archetype/internal/ports"
 
 	"github.com/sirupsen/logrus"
 )
@@ -10,5 +10,5 @@ import (
 type HttpApp struct {
 	Config   *config.Config
 	Log      *logrus.Entry
-	DBPinger outbound.DBPinger
+	DBPinger ports.DBPinger
 }

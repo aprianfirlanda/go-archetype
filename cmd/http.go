@@ -6,8 +6,8 @@ Copyright © 2025 APRIAN FIRLANDA IMANI <aprianfirlanda@gmail.com>
 
 import (
 	"go-archetype/internal/adapter/http/server"
-	"go-archetype/internal/adapter/outbound/persistance/gorm"
 	"go-archetype/internal/bootstrap"
+	"go-archetype/internal/infrastructure/persistance/gorm"
 
 	"github.com/spf13/cobra"
 )
