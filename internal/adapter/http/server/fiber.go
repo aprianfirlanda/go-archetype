@@ -1,9 +1,9 @@
-package http
+package server
 
 import (
 	"fmt"
-	"go-archetype/internal/adapter/inbound/http/fiber"
-	"go-archetype/internal/adapter/inbound/http/fiber/middleware"
+	"go-archetype/internal/adapter/http/middleware"
+	"go-archetype/internal/adapter/http/router"
 	"go-archetype/internal/bootstrap"
 	"go-archetype/internal/infrastructure/logging"
 
@@ -13,16 +13,16 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/requestid"
 )
 
-func StartServer(dependencies bootstrap.HttpApp) error {
-	log := logging.WithComponent(dependencies.Log, "http.server")
+func StartServer(deps bootstrap.HttpApp) error {
+	log := logging.WithComponent(deps.Log, "http.server")
 	app := fiber.New(fiber.Config{
-		AppName:      dependencies.Config.AppName,
+		AppName:      deps.Config.AppName,
 		ErrorHandler: middleware.ErrorHandler(),
 	})
 
 	// Global middlewares
 	// 0. Health Check, live: is the application up, ready: is the application ready to accept traffic
-	app.Use(middleware.HealthCheck(log, dependencies.DBPinger))
+	app.Use(middleware.HealthCheck(log, deps.DBPinger))
 	app.Get("/metrics", monitor.New())
 	// 1. Generate request ID first so everyone can use it
 	app.Use(requestid.New())
@@ -34,15 +34,9 @@ func StartServer(dependencies bootstrap.HttpApp) error {
 	// 4. CORS – mostly for browser / frontend
 	app.Use(cors.New())
 
-	// Auth Middleware
-	apiKeyMiddleware := middleware.AuthAPIKey(log, dependencies.Config.Services.General.APIKey)
-	dependencies.APIKeyMiddleware = apiKeyMiddleware
-	jwtMiddleware := middleware.AuthJWT(log, dependencies.Config.JWT.Secret)
-	dependencies.JWTMiddleware = jwtMiddleware
-
 	// Register routes
-	fiberhttp.RegisterRoutes(app, dependencies)
+	router.RegisterRoutes(app, deps)
 
-	log.Infof("Starting HTTP server on port %d", dependencies.Config.Http.Port)
-	return app.Listen(fmt.Sprintf(":%d", dependencies.Config.Http.Port))
+	log.Infof("Starting HTTP server on port %d", deps.Config.Http.Port)
+	return app.Listen(fmt.Sprintf(":%d", deps.Config.Http.Port))
 }

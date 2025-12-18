@@ -5,9 +5,9 @@ Copyright © 2025 APRIAN FIRLANDA IMANI <aprianfirlanda@gmail.com>
 */
 
 import (
+	"go-archetype/internal/adapter/http/server"
 	"go-archetype/internal/adapter/outbound/persistance/gorm"
 	"go-archetype/internal/bootstrap"
-	"go-archetype/internal/infrastructure/http"
 
 	"github.com/spf13/cobra"
 )
@@ -25,7 +25,7 @@ to quickly create a Cobra application.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		dbPinger := gorm.NewPinger(dbConn)
 
-		return http.StartServer(bootstrap.HttpApp{
+		return server.StartServer(bootstrap.HttpApp{
 			Config:   cfg,
 			Log:      logger,
 			DBPinger: dbPinger,

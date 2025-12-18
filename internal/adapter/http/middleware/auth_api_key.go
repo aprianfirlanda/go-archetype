@@ -3,7 +3,7 @@ package middleware
 import (
 	"crypto/sha256"
 	"crypto/subtle"
-	"go-archetype/internal/adapter/inbound/http/fiber/response"
+	"go-archetype/internal/adapter/http/response"
 	"go-archetype/internal/infrastructure/logging"
 
 	"github.com/gofiber/fiber/v2"

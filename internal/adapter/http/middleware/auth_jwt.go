@@ -2,7 +2,7 @@ package middleware
 
 import (
 	"fmt"
-	"go-archetype/internal/adapter/inbound/http/fiber/response"
+	"go-archetype/internal/adapter/http/response"
 	"go-archetype/internal/domain/auth"
 	"go-archetype/internal/infrastructure/logging"
 

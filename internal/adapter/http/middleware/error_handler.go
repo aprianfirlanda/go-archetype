@@ -2,7 +2,7 @@ package middleware
 
 import (
 	"errors"
-	"go-archetype/internal/adapter/inbound/http/fiber/response"
+	"go-archetype/internal/adapter/http/response"
 
 	"github.com/gofiber/fiber/v2"
 )
