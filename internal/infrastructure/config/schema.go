@@ -26,17 +26,15 @@ type Database struct {
 	User     string `mapstructure:"user"`
 	Password string `mapstructure:"password"`
 	Name     string `mapstructure:"name"`
-	SSLMode  string `mapstructure:"sslmode"`  // e.g. "disable", "require"
-	TimeZone string `mapstructure:"timezone"` // e.g. "UTC"
+	SSLMode  string `mapstructure:"sslmode"`
+	TimeZone string `mapstructure:"timezone"`
 
-	// Connection pool settings (optional, with sensible defaults if zero).
-	MaxOpenConns    int           `mapstructure:"maxopenconns"`    // default: 25
-	MaxIdleConns    int           `mapstructure:"maxidleconns"`    // default: 25
-	ConnMaxLifetime time.Duration `mapstructure:"connmaxlifetime"` // default: 1h
-	ConnMaxIdleTime time.Duration `mapstructure:"connmaxidletime"` // default: 15m
+	MaxOpenConns    int           `mapstructure:"maxopenconns"`
+	MaxIdleConns    int           `mapstructure:"maxidleconns"`
+	ConnMaxLifetime time.Duration `mapstructure:"connmaxlifetime"`
+	ConnMaxIdleTime time.Duration `mapstructure:"connmaxidletime"`
 
-	// GORM logger level (optional).
-	LogLevel string `mapstructure:"loglevel"` // Typical values: "silent", "error", "warn", "info". default: nil(warn)
+	LogLevel string `mapstructure:"loglevel"`
 }
 
 type JWT struct {
