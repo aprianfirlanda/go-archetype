@@ -8,14 +8,13 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-func NewLogger(logConfig config.Log) *logrus.Entry {
+func newLogrusLogger(logConfig config.Log) *logrus.Entry {
 	logger := logrus.New()
 
 	// =========================
 	// Set formatter
 	// =========================
-	format := strings.ToLower(logConfig.Format)
-	switch format {
+	switch strings.ToLower(logConfig.Format) {
 	case "json":
 		logger.SetFormatter(&logrus.JSONFormatter{})
 	default:
@@ -27,9 +26,7 @@ func NewLogger(logConfig config.Log) *logrus.Entry {
 	// =========================
 	// Set log level
 	// =========================
-	level := strings.ToLower(logConfig.Level)
-
-	switch level {
+	switch strings.ToLower(logConfig.Level) {
 	case "trace":
 		logger.SetLevel(logrus.TraceLevel)
 	case "debug":

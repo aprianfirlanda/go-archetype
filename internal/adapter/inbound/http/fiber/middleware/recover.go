@@ -15,10 +15,10 @@ func Recover(logger *logrus.Entry) fiber.Handler {
 		EnableStackTrace: true,
 		StackTraceHandler: func(c *fiber.Ctx, e interface{}) {
 			log := RequestLogger(c, logWithComponent)
-			log.WithFields(logrus.Fields{
+			log.WithFields(logging.Fields(map[string]any{
 				"error":      e,
 				"stacktrace": string(debug.Stack()),
-			}).Error("panic recovered")
+			})).Error("panic recovered")
 		},
 	})
 }

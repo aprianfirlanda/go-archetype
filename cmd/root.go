@@ -43,12 +43,12 @@ to quickly create a Cobra application.`,
 				return err
 			}
 
-			logger = logging.NewLogger(cfg.Log)
+			logger = logging.New(cfg.Log)
 
-			logger.WithFields(logrus.Fields{
+			logger.WithFields(logging.Fields(map[string]any{
 				"config_file":  viper.ConfigFileUsed(),
 				"config_value": cfg,
-			}).Debug("Configuration loaded")
+			})).Trace("Configuration loaded")
 
 			dbConn, err = database.InitPostgres(cfg.DB, logger, []any{})
 
