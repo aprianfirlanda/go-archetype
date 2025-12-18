@@ -14,7 +14,7 @@ GET http://localhost:3000/generate-token
 
 ### Test Protected API by JWT (Success)
 GET http://localhost:3000/protected-by-jwt
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlcyI6WyJhZG1pbiJdLCJpc3MiOiJnby1hcmNoZXR5cGUiLCJzdWIiOiJ1c2VyLTEyMyIsImV4cCI6MTc2NjEyODc4OCwibmJmIjoxNzY2MDQyMzg4LCJpYXQiOjE3NjYwNDIzODgsImp0aSI6IjdlOGE2MmY2LTEyNDAtNDA0OS05OTljLTdjZmU4ZGUwNjJlOSJ9.mMdP3VgTkOEgtpfd6tVZb4HAtNsUsfqObeSdFvZm4LY
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlcyI6WyJhZG1pbiJdLCJpc3MiOiJnby1hcmNoZXR5cGUiLCJzdWIiOiJ1c2VyLTEyMyIsImV4cCI6MTc2NjEyOTkwNywiaWF0IjoxNzY2MDQzNTA3LCJqdGkiOiJmMmE3NmYwYi1lNWE4LTRkZDQtYTdjZC00ZjJlZmQ0ZTlkNjAifQ.jsbYmFmHWmF-nF7ElVPyaL2Bkc--dzd-O4blsNF_VPA
 
 ### Test Protected API by JWT (Failed Wrong)
 GET http://localhost:3000/protected-by-jwt
