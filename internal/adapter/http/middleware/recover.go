@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	httpctx "go-archetype/internal/adapter/http/context"
 	"go-archetype/internal/infrastructure/logging"
 	"runtime/debug"
 
@@ -10,11 +11,11 @@ import (
 )
 
 func Recover(logger *logrus.Entry) fiber.Handler {
-	logWithComponent := logging.WithComponent(logger, "middleware.Recover")
+	logWithComponent := logging.WithComponent(logger, "http.middleware.Recover")
 	return recover.New(recover.Config{
 		EnableStackTrace: true,
 		StackTraceHandler: func(c *fiber.Ctx, e interface{}) {
-			log := RequestLogger(c, logWithComponent)
+			log := httpctx.Get(c, logWithComponent)
 			log.WithFields(logging.Fields(map[string]any{
 				"error":      e,
 				"stacktrace": string(debug.Stack()),

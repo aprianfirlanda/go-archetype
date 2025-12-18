@@ -26,7 +26,7 @@ func StartServer(deps bootstrap.HttpApp) error {
 	app.Get("/metrics", monitor.New())
 	// 1. Generate request ID first so everyone can use it
 	app.Use(requestid.New())
-	app.Use(middleware.RequestIDLoggerContext(log))
+	app.Use(middleware.RequestIDContext(log))
 	// 2. Logging wraps everything below (including recover + cors + handlers)
 	app.Use(middleware.Logging(log))
 	// 3. Recover from panic so we don't crash the server

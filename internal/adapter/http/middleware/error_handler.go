@@ -2,7 +2,8 @@ package middleware
 
 import (
 	"errors"
-	"go-archetype/internal/adapter/http/response"
+	"go-archetype/internal/adapter/http/context"
+	"go-archetype/internal/adapter/http/dto/response"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -20,7 +21,7 @@ func ErrorHandler() fiber.ErrorHandler {
 		}
 
 		// Get request ID (from requestid middleware)
-		rid := GetRequestID(c)
+		rid := context.GetRequestID(c)
 
 		// Build JSON error response
 		resp := response.ErrorResponse{

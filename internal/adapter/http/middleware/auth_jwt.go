@@ -2,7 +2,8 @@ package middleware
 
 import (
 	"fmt"
-	"go-archetype/internal/adapter/http/response"
+	httpctx "go-archetype/internal/adapter/http/context"
+	"go-archetype/internal/adapter/http/dto/response"
 	"go-archetype/internal/domain/auth"
 	"go-archetype/internal/infrastructure/logging"
 
@@ -13,12 +14,12 @@ import (
 )
 
 func AuthJWT(logger *logrus.Entry, jwtSecret string) fiber.Handler {
-	logWithComponent := logging.WithComponent(logger, "middleware.AuthJWT")
+	logWithComponent := logging.WithComponent(logger, "http.middleware.AuthJWT")
 	jwtSecretBytes := []byte(jwtSecret)
 
 	return keyauth.New(keyauth.Config{
 		Validator: func(c *fiber.Ctx, tokenString string) (bool, error) {
-			log := RequestLogger(c, logWithComponent)
+			log := httpctx.Get(c, logWithComponent)
 			// Parse & validate token
 			token, err := jwt.ParseWithClaims(tokenString, &auth.CustomClaims{}, func(t *jwt.Token) (interface{}, error) {
 				// Ensure the signing method is what you expect
@@ -56,7 +57,7 @@ func AuthJWT(logger *logrus.Entry, jwtSecret string) fiber.Handler {
 			status := fiber.StatusUnauthorized
 
 			// get requestId from fiber/middleware/requestid
-			rid := GetRequestID(c)
+			rid := httpctx.GetRequestID(c)
 
 			resp := response.ErrorResponse{
 				Message:   "invalid or missing JWT",

@@ -1,6 +1,7 @@
 package router
 
 import (
+	httpctx "go-archetype/internal/adapter/http/context"
 	"go-archetype/internal/adapter/http/middleware"
 	"go-archetype/internal/bootstrap"
 	"go-archetype/internal/domain/auth"
@@ -20,12 +21,12 @@ func RegisterRoutes(app *fiber.App, deps bootstrap.HttpApp) {
 	jwtMiddleware := middleware.AuthJWT(log, deps.Config.JWT.Secret)
 
 	app.Get("/protected-by-api-key", apiKeyMiddleware, func(c *fiber.Ctx) error {
-		log := middleware.RequestLogger(c, log)
+		log := httpctx.Get(c, log)
 		log.Info("Hello from protected route by API key!")
 		return c.SendString("Hello from protected route by API key!")
 	})
 	app.Get("/generate-token", func(c *fiber.Ctx) error {
-		log := middleware.RequestLogger(c, log)
+		log := httpctx.Get(c, log)
 
 		claims := auth.CustomClaims{}
 		claims.Roles = []string{"admin"}

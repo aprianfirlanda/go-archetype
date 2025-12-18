@@ -3,7 +3,8 @@ package middleware
 import (
 	"crypto/sha256"
 	"crypto/subtle"
-	"go-archetype/internal/adapter/http/response"
+	httpctx "go-archetype/internal/adapter/http/context"
+	"go-archetype/internal/adapter/http/dto/response"
 	"go-archetype/internal/infrastructure/logging"
 
 	"github.com/gofiber/fiber/v2"
@@ -12,7 +13,7 @@ import (
 import "github.com/gofiber/fiber/v2/middleware/keyauth"
 
 func AuthAPIKey(logger *logrus.Entry, apiKey string) fiber.Handler {
-	logWithComponent := logging.WithComponent(logger, "middleware.AuthAPIKey")
+	logWithComponent := logging.WithComponent(logger, "http.middleware.AuthAPIKey")
 	hashedAPIKey := sha256.Sum256([]byte(apiKey))
 
 	return keyauth.New(keyauth.Config{
@@ -23,7 +24,7 @@ func AuthAPIKey(logger *logrus.Entry, apiKey string) fiber.Handler {
 				return true, nil
 			}
 
-			log := RequestLogger(c, logWithComponent)
+			log := httpctx.Get(c, logWithComponent)
 			log.WithFields(logging.Field("reason", "invalid API key")).Warn("unauthorized request")
 			return false, keyauth.ErrMissingOrMalformedAPIKey
 		},
@@ -31,7 +32,7 @@ func AuthAPIKey(logger *logrus.Entry, apiKey string) fiber.Handler {
 			status := fiber.StatusUnauthorized
 
 			// get requestId from fiber/middleware/requestid
-			rid := GetRequestID(c)
+			rid := httpctx.GetRequestID(c)
 
 			resp := response.ErrorResponse{
 				Message:   "invalid or missing API key",
