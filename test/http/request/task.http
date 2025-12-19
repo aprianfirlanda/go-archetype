@@ -10,6 +10,46 @@ Authorization: Bearer {{jwt}}
   "tags": ["backend", "fiber"]
 }
 
+### Create Task - Missing Title
+POST {{baseUrl}}/api/tasks
+Content-Type: application/json
+Authorization: Bearer {{jwt}}
+
+{
+  "description": "no title",
+  "priority": 2
+}
+
+### Create Task - Title Too Short
+POST {{baseUrl}}/api/tasks
+Content-Type: application/json
+Authorization: Bearer {{jwt}}
+
+{
+  "title": "Hi",
+  "priority": 2
+}
+
+### Create Task - Invalid Priority
+POST {{baseUrl}}/api/tasks
+Content-Type: application/json
+Authorization: Bearer {{jwt}}
+
+{
+  "title": "Invalid priority",
+  "priority": 10
+}
+
+### Create Task - Too Many Tags
+POST {{baseUrl}}/api/tasks
+Content-Type: application/json
+Authorization: Bearer {{jwt}}
+
+{
+  "title": "Too many tags",
+  "tags": ["a","b","c","d","e","f","g","h","i","j","k"]
+}
+
 ### List Tasks (Pagination + Search) (JWT)
 GET {{baseUrl}}/api/tasks?page=1&limit=10&search=task&status=todo
 Authorization: Bearer {{jwt}}
@@ -17,6 +57,18 @@ Authorization: Bearer {{jwt}}
 ### List Tasks (Pagination + Search) (API Key)
 GET {{baseUrl}}/api/tasks?page=1&limit=10&search=task&status=todo
 Authorization: Bearer {{apiKey}}
+
+### List Tasks - Invalid Status
+GET {{baseUrl}}/api/tasks?status=invalid
+Authorization: Bearer {{jwt}}
+
+### List Tasks - Limit Too Large
+GET {{baseUrl}}/api/tasks?limit=1000
+Authorization: Bearer {{jwt}}
+
+### List Tasks - Invalid Priority Filter
+GET {{baseUrl}}/api/tasks?priority=10
+Authorization: Bearer {{jwt}}
 
 ### Get Task By ID
 GET {{baseUrl}}/api/tasks/task-123
@@ -33,6 +85,13 @@ Authorization: Bearer {{jwt}}
   "tags": ["architecture", "final"]
 }
 
+### Update Task - Empty Body
+PUT {{baseUrl}}/api/tasks/task-123
+Content-Type: application/json
+Authorization: Bearer {{jwt}}
+
+{}
+
 ### Update Task Status
 PATCH {{baseUrl}}/api/tasks/task-123/status
 Content-Type: application/json
@@ -40,6 +99,22 @@ Authorization: Bearer {{jwt}}
 
 {
   "status": "done"
+}
+
+### Update Task - Empty Body
+PUT {{baseUrl}}/api/tasks/task-123
+Content-Type: application/json
+Authorization: Bearer {{jwt}}
+
+{}
+
+### Update Task Status - Invalid Status
+PATCH {{baseUrl}}/api/tasks/task-123/status
+Content-Type: application/json
+Authorization: Bearer {{jwt}}
+
+{
+  "status": "archived"
 }
 
 ### Bulk Update Task Status
@@ -54,6 +129,25 @@ Authorization: Bearer {{jwt}}
     "task-789"
   ],
   "status": "in_progress"
+}
+
+### Bulk Update Status - Empty IDs
+PATCH {{baseUrl}}/api/tasks/status
+Content-Type: application/json
+Authorization: Bearer {{jwt}}
+
+{
+  "ids": [],
+  "status": "done"
+}
+
+### Bulk Update Status - Missing Status
+PATCH {{baseUrl}}/api/tasks/status
+Content-Type: application/json
+Authorization: Bearer {{jwt}}
+
+{
+  "ids": ["task-1", "task-2"]
 }
 
 ### Delete Task
@@ -72,3 +166,17 @@ Authorization: Bearer {{jwt}}
     "task-789"
   ]
 }
+
+
+### Bulk Delete - Empty IDs
+DELETE {{baseUrl}}/api/tasks
+Content-Type: application/json
+Authorization: Bearer {{jwt}}
+
+{
+  "ids": []
+}
+
+### Bulk Delete - Missing Body
+DELETE {{baseUrl}}/api/tasks
+Authorization: Bearer {{jwt}}

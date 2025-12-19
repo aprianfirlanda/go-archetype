@@ -4,8 +4,8 @@ import (
 	httpctx "go-archetype/internal/adapter/http/context"
 	"go-archetype/internal/adapter/http/dto/request"
 	"go-archetype/internal/adapter/http/dto/response"
+	"go-archetype/internal/adapter/http/validation"
 	"go-archetype/internal/domain/task"
-	"strconv"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
@@ -28,6 +28,11 @@ func (h *TaskHandler) Create(c *fiber.Ctx) error {
 	var req request.CreateTask
 	if err := c.BodyParser(&req); err != nil {
 		return fiber.ErrBadRequest
+	}
+
+	if err := validation.ValidateStruct(req); err != nil {
+		log.WithError(err).Warn("validation failed")
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
 	}
 
 	resp := response.Task{
@@ -57,23 +62,31 @@ func (h *TaskHandler) GetByID(c *fiber.Ctx) error {
 }
 
 func (h *TaskHandler) List(c *fiber.Ctx) error {
-	page, _ := strconv.Atoi(c.Query("page", "1"))
-	limit, _ := strconv.Atoi(c.Query("limit", "10"))
-	search := c.Query("search", "")
-	status := c.Query("status", "")
-
 	log := httpctx.Get(c, h.log)
+
+	var q request.ListTasks
+	if err := c.QueryParser(&q); err != nil {
+		log.WithError(err).Warn("invalid query params")
+		return fiber.ErrBadRequest
+	}
+
+	if err := validation.ValidateStruct(q); err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+	}
+
+	q.Normalize()
+
 	log.WithFields(logrus.Fields{
-		"page":   page,
-		"limit":  limit,
-		"search": search,
-		"status": status,
+		"page":   q.Page,
+		"limit":  q.Limit,
+		"search": q.Search,
+		"status": q.Status,
 	}).Info("list tasks")
 
 	return c.JSON(fiber.Map{
 		"data":  []response.Task{},
-		"page":  page,
-		"limit": limit,
+		"page":  q.Page,
+		"limit": q.Limit,
 		"total": 0,
 	})
 }
@@ -84,6 +97,10 @@ func (h *TaskHandler) Update(c *fiber.Ctx) error {
 
 	if err := c.BodyParser(&req); err != nil {
 		return fiber.ErrBadRequest
+	}
+
+	if err := validation.ValidateStruct(req); err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
 	}
 
 	return c.JSON(fiber.Map{
