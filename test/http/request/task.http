@@ -92,6 +92,10 @@ Authorization: Bearer {{jwt}}
 
 {}
 
+### Update Task - Missing Body
+PUT {{baseUrl}}/api/tasks/task-123
+Authorization: Bearer {{jwt}}
+
 ### Update Task Status
 PATCH {{baseUrl}}/api/tasks/task-123/status
 Content-Type: application/json
@@ -102,11 +106,15 @@ Authorization: Bearer {{jwt}}
 }
 
 ### Update Task - Empty Body
-PUT {{baseUrl}}/api/tasks/task-123
+PATCH {{baseUrl}}/api/tasks/task-123/status
 Content-Type: application/json
 Authorization: Bearer {{jwt}}
 
 {}
+
+### Update Task - Missing Body
+PUT {{baseUrl}}/api/tasks/task-123
+Authorization: Bearer {{jwt}}
 
 ### Update Task Status - Invalid Status
 PATCH {{baseUrl}}/api/tasks/task-123/status
@@ -176,6 +184,13 @@ Authorization: Bearer {{jwt}}
 {
   "ids": []
 }
+
+### Bulk Delete - Empty Body
+DELETE {{baseUrl}}/api/tasks
+Content-Type: application/json
+Authorization: Bearer {{jwt}}
+
+{}
 
 ### Bulk Delete - Missing Body
 DELETE {{baseUrl}}/api/tasks

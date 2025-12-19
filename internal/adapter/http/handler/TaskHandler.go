@@ -30,9 +30,17 @@ func (h *TaskHandler) Create(c *fiber.Ctx) error {
 		return fiber.ErrBadRequest
 	}
 
-	if err := validation.ValidateStruct(req); err != nil {
-		log.WithError(err).Warn("validation failed")
+	errors, err := validation.ValidateStruct(req)
+	if err != nil {
 		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+	}
+	if errors != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(
+			response.ValidationErrorResponse{
+				Message: "validation failed",
+				Errors:  errors,
+			},
+		)
 	}
 
 	resp := response.Task{
@@ -70,8 +78,17 @@ func (h *TaskHandler) List(c *fiber.Ctx) error {
 		return fiber.ErrBadRequest
 	}
 
-	if err := validation.ValidateStruct(q); err != nil {
+	errors, err := validation.ValidateStruct(q)
+	if err != nil {
 		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+	}
+	if errors != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(
+			response.ValidationErrorResponse{
+				Message: "validation failed",
+				Errors:  errors,
+			},
+		)
 	}
 
 	q.Normalize()
@@ -99,8 +116,17 @@ func (h *TaskHandler) Update(c *fiber.Ctx) error {
 		return fiber.ErrBadRequest
 	}
 
-	if err := validation.ValidateStruct(req); err != nil {
+	errors, err := validation.ValidateStruct(req)
+	if err != nil {
 		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+	}
+	if errors != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(
+			response.ValidationErrorResponse{
+				Message: "validation failed",
+				Errors:  errors,
+			},
+		)
 	}
 
 	return c.JSON(fiber.Map{
@@ -121,6 +147,19 @@ func (h *TaskHandler) UpdateStatus(c *fiber.Ctx) error {
 	if err := c.BodyParser(&req); err != nil {
 		log.WithError(err).Warn("invalid request body")
 		return fiber.ErrBadRequest
+	}
+
+	errors, err := validation.ValidateStruct(req)
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+	}
+	if errors != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(
+			response.ValidationErrorResponse{
+				Message: "validation failed",
+				Errors:  errors,
+			},
+		)
 	}
 
 	log.WithFields(logrus.Fields{
@@ -144,6 +183,19 @@ func (h *TaskHandler) BulkUpdateStatus(c *fiber.Ctx) error {
 	if err := c.BodyParser(&req); err != nil {
 		log.WithError(err).Warn("invalid bulk status update body")
 		return fiber.ErrBadRequest
+	}
+
+	errors, err := validation.ValidateStruct(req)
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+	}
+	if errors != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(
+			response.ValidationErrorResponse{
+				Message: "validation failed",
+				Errors:  errors,
+			},
+		)
 	}
 
 	log.WithFields(logrus.Fields{
@@ -182,8 +234,17 @@ func (h *TaskHandler) BulkDelete(c *fiber.Ctx) error {
 		return fiber.ErrBadRequest
 	}
 
-	if len(req.IDs) == 0 {
-		return fiber.NewError(fiber.StatusBadRequest, "ids must not be empty")
+	errors, err := validation.ValidateStruct(req)
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+	}
+	if errors != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(
+			response.ValidationErrorResponse{
+				Message: "validation failed",
+				Errors:  errors,
+			},
+		)
 	}
 
 	log.WithField("task_ids", req.IDs).Info("bulk delete tasks")

@@ -1,28 +1,34 @@
 package validation
 
 import (
-	"fmt"
-	"strings"
+	"errors"
 
 	"github.com/go-playground/validator/v10"
 )
 
 var validate = validator.New()
 
-func ValidateStruct(s any) error {
-	if err := validate.Struct(s); err != nil {
-		if ve, ok := err.(validator.ValidationErrors); ok {
-			var msgs []string
-			for _, fe := range ve {
-				msgs = append(msgs, fmt.Sprintf(
-					"%s failed on '%s'",
-					strings.ToLower(fe.Field()),
-					fe.Tag(),
-				))
-			}
-			return fmt.Errorf(strings.Join(msgs, ", "))
-		}
-		return err
+type FieldErrors map[string][]string
+
+func ValidateStruct(s any) (FieldErrors, error) {
+	err := validate.Struct(s)
+	if err == nil {
+		return nil, nil
 	}
-	return nil
+
+	var ve validator.ValidationErrors
+	ok := errors.As(err, &ve)
+	if !ok {
+		return nil, err
+	}
+
+	errs := FieldErrors{}
+
+	for _, fe := range ve {
+		field := toSnakeCase(fe.Field())
+
+		errs[field] = append(errs[field], messageFor(fe))
+	}
+
+	return errs, nil
 }
