@@ -1,0 +1,27 @@
+### Test Protected API by API Key (Success)
+GET {{baseUrl}}/api/demo/protected-by-api-key
+Authorization: Bearer {{apiKey}}
+
+### Test Protected API by API Key (Failed Wrong)
+GET {{baseUrl}}/api/demo/protected-by-api-key
+Authorization: Bearer Entwt4/uwQtnD2LqMdho4cPTmFEkGAzBytS4UsO0f8g
+
+### Test Protected API by API Key (Failed Empty)
+GET {{baseUrl}}/api/demo/protected-by-api-key
+
+### Generate token
+GET {{baseUrl}}/api/demo/generate-token
+
+### Test Protected API by JWT (Success)
+GET {{baseUrl}}/api/demo/protected-by-jwt
+Authorization: Bearer {{jwt}}
+
+### Test Protected API by JWT (Failed Wrong)
+GET {{baseUrl}}/api/demo/protected-by-jwt
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlcyI6WyJhZG1pbiJdLCJpc3MiOiJnby1hcmNoZXR5cGUiLCJzdWIiOiJ1c2VyLTEyMyIsImV4cCI6MTc2NDk4NzM5MSwibmJmIjoxNzY0OTAwOTkxLCJpYXQiOjE3NjQ5MDA5OTEsImp0aSI6IjY3NjlmNzY0LWY4ZWEtNDFhZS1iYjMzLWE4YTA1ZjAzNTMwYyJ9.t-iICKVZMnc0WirLbrjrvMYQJCyHJNemFc3ZCuHJjl
+
+### Test Protected API by JWT (Failed Empty)
+GET {{baseUrl}}/api/demo/protected-by-jwt
+
+### Test Panic
+GET {{baseUrl}}/api/demo/panic

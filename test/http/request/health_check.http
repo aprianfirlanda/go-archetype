@@ -1,0 +1,5 @@
+### Health Check - Live
+GET http://localhost:3000/live
+
+### Health Check - Ready
+GET http://localhost:3000/ready

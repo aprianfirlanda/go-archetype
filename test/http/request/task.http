@@ -1,0 +1,74 @@
+### Create Task
+POST {{baseUrl}}/api/tasks
+Content-Type: application/json
+Authorization: Bearer {{jwt}}
+
+{
+  "title": "Implement task API",
+  "description": "Create handlers and routing",
+  "priority": 2,
+  "tags": ["backend", "fiber"]
+}
+
+### List Tasks (Pagination + Search) (JWT)
+GET {{baseUrl}}/api/tasks?page=1&limit=10&search=task&status=todo
+Authorization: Bearer {{jwt}}
+
+### List Tasks (Pagination + Search) (API Key)
+GET {{baseUrl}}/api/tasks?page=1&limit=10&search=task&status=todo
+Authorization: Bearer {{apiKey}}
+
+### Get Task By ID
+GET {{baseUrl}}/api/tasks/task-123
+Authorization: Bearer {{jwt}}
+
+### Update Task
+PUT {{baseUrl}}/api/tasks/task-123
+Content-Type: application/json
+Authorization: Bearer {{jwt}}
+
+{
+  "title": "Write final architecture doc",
+  "priority": 4,
+  "tags": ["architecture", "final"]
+}
+
+### Update Task Status
+PATCH {{baseUrl}}/api/tasks/task-123/status
+Content-Type: application/json
+Authorization: Bearer {{jwt}}
+
+{
+  "status": "done"
+}
+
+### Bulk Update Task Status
+PATCH http://localhost:3000/api/tasks/status
+Content-Type: application/json
+Authorization: Bearer {{jwt}}
+
+{
+  "ids": [
+    "task-123",
+    "task-456",
+    "task-789"
+  ],
+  "status": "in_progress"
+}
+
+### Delete Task
+DELETE {{baseUrl}}/api/tasks/task-123
+Authorization: Bearer {{jwt}}
+
+### Bulk Delete Tasks
+DELETE http://localhost:3000/api/tasks
+Content-Type: application/json
+Authorization: Bearer {{jwt}}
+
+{
+  "ids": [
+    "task-123",
+    "task-456",
+    "task-789"
+  ]
+}
