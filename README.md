@@ -335,6 +335,28 @@ The Fiber application in this project uses several global middlewares to ensure 
    If required, the API Key should send on request header `Authorization: Bearer <API_KEY>`.
    To Generate API Key, use this command.
 
+add validation library
+```shell
+go get -u github.com/go-playground/validator/v10 
+```
+
+add swagger library for fiber
+```shell
+go get -u github.com/swaggo/fiber-swagger
+go get -u github.com/swaggo/swag
+```
+
+generate swagger docs
+```shell
+swag init \
+  -g cmd/http.go \
+  -o internal/adapter/http/docs
+```
+
+access swagger ui at
+```http://localhost:{port}/swagger/index.html
+```
+
 ## Setup Database (GORM)
 
 install dependency

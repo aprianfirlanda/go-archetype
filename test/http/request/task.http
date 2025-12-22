@@ -195,3 +195,15 @@ Authorization: Bearer {{jwt}}
 ### Bulk Delete - Missing Body
 DELETE {{baseUrl}}/api/tasks
 Authorization: Bearer {{jwt}}
+
+
+###
+# curl -X 'GET'
+#  'http://localhost:3000/api/tasks'
+#  -H 'accept: application/json'
+#  -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlcyI6WyJhZG1pbiJdLCJpc3MiOiJnby1hcmNoZXR5cGUiLCJzdWIiOiJ1c2VyLTEyMyIsImV4cCI6MTc2NjIyMzEzNiwiaWF0IjoxNzY2MTM2NzM2LCJqdGkiOiJmZGRmMWUxYy1hMGQzLTQxNjgtYmE1Yy0xN2I4YTAwOTEyNGUifQ.BNpApxeotBg1kPh8ANxSk3Tnz1aYbWjLTlEEsmFIz4I'
+GET http://localhost:3000/api/tasks
+accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlcyI6WyJhZG1pbiJdLCJpc3MiOiJnby1hcmNoZXR5cGUiLCJzdWIiOiJ1c2VyLTEyMyIsImV4cCI6MTc2NjIyMzEzNiwiaWF0IjoxNzY2MTM2NzM2LCJqdGkiOiJmZGRmMWUxYy1hMGQzLTQxNjgtYmE1Yy0xN2I4YTAwOTEyNGUifQ.BNpApxeotBg1kPh8ANxSk3Tnz1aYbWjLTlEEsmFIz4I
+
+###

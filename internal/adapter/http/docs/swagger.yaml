@@ -1,0 +1,528 @@
+definitions:
+  request.BulkDeleteTasks:
+    properties:
+      ids:
+        items:
+          type: string
+        minItems: 1
+        type: array
+    required:
+    - ids
+    type: object
+  request.BulkUpdateTaskStatus:
+    properties:
+      ids:
+        items:
+          type: string
+        minItems: 1
+        type: array
+      status:
+        allOf:
+        - $ref: '#/definitions/task.Status'
+        enum:
+        - todo
+        - in_progress
+        - done
+    required:
+    - ids
+    - status
+    type: object
+  request.CreateTask:
+    properties:
+      description:
+        maxLength: 500
+        type: string
+      due_date:
+        type: string
+      priority:
+        maximum: 5
+        minimum: 1
+        type: integer
+      tags:
+        items:
+          type: string
+        maxItems: 10
+        type: array
+      title:
+        minLength: 3
+        type: string
+    required:
+    - title
+    type: object
+  request.UpdateTask:
+    properties:
+      description:
+        maxLength: 500
+        type: string
+      due_date:
+        type: string
+      priority:
+        maximum: 5
+        minimum: 1
+        type: integer
+      tags:
+        items:
+          type: string
+        maxItems: 10
+        type: array
+      title:
+        minLength: 3
+        type: string
+    required:
+    - priority
+    - title
+    type: object
+  request.UpdateTaskStatus:
+    properties:
+      status:
+        allOf:
+        - $ref: '#/definitions/task.Status'
+        enum:
+        - todo
+        - in_progress
+        - done
+    required:
+    - status
+    type: object
+  response.BulkDeleteTasksValidateError:
+    properties:
+      ids:
+        items:
+          type: string
+        type: array
+    type: object
+  response.BulkUpdateTaskStatusValidateError:
+    properties:
+      ids:
+        items:
+          type: string
+        type: array
+      status:
+        items:
+          type: string
+        type: array
+    type: object
+  response.CreateTaskValidateError:
+    properties:
+      description:
+        items:
+          type: string
+        type: array
+      priority:
+        items:
+          type: string
+        type: array
+      tags:
+        items:
+          type: string
+        type: array
+      title:
+        items:
+          type: string
+        type: array
+    type: object
+  response.ErrorResponse:
+    properties:
+      errors: {}
+      message:
+        type: string
+      requestId:
+        type: string
+    type: object
+  response.ListTasksValidateError:
+    properties:
+      limit:
+        items:
+          type: string
+        type: array
+      page:
+        items:
+          type: string
+        type: array
+      priority:
+        items:
+          type: string
+        type: array
+      search:
+        type: string
+      status:
+        type: string
+    type: object
+  response.Meta:
+    properties:
+      has_next:
+        example: true
+        type: boolean
+      has_prev:
+        example: false
+        type: boolean
+      page:
+        example: 1
+        type: integer
+      per_page:
+        example: 10
+        type: integer
+      total_items:
+        example: 125
+        type: integer
+      total_pages:
+        example: 13
+        type: integer
+    type: object
+  response.Paginate:
+    properties:
+      data: {}
+      meta:
+        $ref: '#/definitions/response.Meta'
+    type: object
+  response.Simple:
+    properties:
+      data: {}
+    type: object
+  response.Task:
+    properties:
+      completed:
+        type: boolean
+      created_at:
+        type: string
+      description:
+        type: string
+      due_date:
+        type: string
+      id:
+        type: string
+      priority:
+        type: integer
+      status:
+        $ref: '#/definitions/task.Status'
+      tags:
+        items:
+          type: string
+        type: array
+      title:
+        type: string
+    type: object
+  response.UpdateTaskStatusValidateError:
+    properties:
+      status:
+        items:
+          type: string
+        type: array
+    type: object
+  response.UpdateTaskValidateError:
+    properties:
+      description:
+        items:
+          type: string
+        type: array
+      priority:
+        items:
+          type: string
+        type: array
+      tags:
+        items:
+          type: string
+        type: array
+      title:
+        items:
+          type: string
+        type: array
+    type: object
+  task.Status:
+    enum:
+    - todo
+    - in_progress
+    - done
+    type: string
+    x-enum-varnames:
+    - StatusTodo
+    - StatusInProgress
+    - StatusDone
+info:
+  contact: {}
+  description: REST API for Go Archetype
+  title: Go Archetype
+  version: "1.0"
+paths:
+  /api/tasks:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: Bulk Delete Tasks
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/request.BulkDeleteTasks'
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.ErrorResponse'
+            - properties:
+                errors:
+                  $ref: '#/definitions/response.BulkDeleteTasksValidateError'
+              type: object
+      security:
+      - JWTAuth: []
+      summary: Bulk delete tasks
+      tags:
+      - tasks
+    get:
+      description: List tasks with pagination and filters
+      parameters:
+      - description: Page number
+        in: query
+        name: page
+        type: integer
+      - description: Page size
+        in: query
+        name: limit
+        type: integer
+      - description: Search keyword
+        in: query
+        name: search
+        type: string
+      - description: Task status
+        in: query
+        name: status
+        type: string
+      - description: Task priority
+        in: query
+        name: priority
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Paginate'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/response.Task'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.ErrorResponse'
+            - properties:
+                errors:
+                  $ref: '#/definitions/response.ListTasksValidateError'
+              type: object
+      security:
+      - JWTAuth: []
+      summary: List tasks
+      tags:
+      - tasks
+    post:
+      consumes:
+      - application/json
+      description: Create a new task
+      parameters:
+      - description: Create Task Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/request.CreateTask'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Simple'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.Task'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.ErrorResponse'
+            - properties:
+                errors:
+                  $ref: '#/definitions/response.CreateTaskValidateError'
+              type: object
+      security:
+      - JWTAuth: []
+      summary: Create a task
+      tags:
+      - tasks
+  /api/tasks/{id}:
+    delete:
+      parameters:
+      - description: Task ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+      security:
+      - JWTAuth: []
+      summary: Delete task
+      tags:
+      - tasks
+    get:
+      description: Retrieve a single task by its ID
+      parameters:
+      - description: Task ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Simple'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.Task'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+      security:
+      - JWTAuth: []
+      - ApiKeyAuth: []
+      summary: Get task by ID
+      tags:
+      - tasks
+    put:
+      consumes:
+      - application/json
+      description: Replace a task completely
+      parameters:
+      - description: Task ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Update Task Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/request.UpdateTask'
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.ErrorResponse'
+            - properties:
+                errors:
+                  $ref: '#/definitions/response.UpdateTaskValidateError'
+              type: object
+      security:
+      - JWTAuth: []
+      summary: Update task
+      tags:
+      - tasks
+  /api/tasks/{id}/status:
+    patch:
+      consumes:
+      - application/json
+      parameters:
+      - description: Task ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Update Status Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/request.UpdateTaskStatus'
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.ErrorResponse'
+            - properties:
+                errors:
+                  $ref: '#/definitions/response.UpdateTaskStatusValidateError'
+              type: object
+      security:
+      - JWTAuth: []
+      summary: Update task status
+      tags:
+      - tasks
+  /api/tasks/status:
+    patch:
+      consumes:
+      - application/json
+      parameters:
+      - description: Bulk Update Status
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/request.BulkUpdateTaskStatus'
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.ErrorResponse'
+            - properties:
+                errors:
+                  $ref: '#/definitions/response.BulkUpdateTaskStatusValidateError'
+              type: object
+      security:
+      - JWTAuth: []
+      summary: Bulk update task status
+      tags:
+      - tasks
+securityDefinitions:
+  ApiKeyAuth:
+    description: 'API Key Authorization header. Format: Bearer {api_key}'
+    in: header
+    name: Authorization
+    type: apiKey
+  JWTAuth:
+    description: 'JWT Authorization header. Format: Bearer {jwt}'
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

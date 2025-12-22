@@ -22,12 +22,23 @@ func NewTaskHandler(log *logrus.Entry) *TaskHandler {
 	}
 }
 
+// Create godoc
+// @Summary      Create a task
+// @Description  Create a new task
+// @Tags         tasks
+// @Accept       json
+// @Produce      json
+// @Security     JWTAuth
+// @Param        request body request.CreateTask true "Create Task Request"
+// @Success      201 {object} response.Simple{data=response.Task}
+// @Failure      400 {object} response.ErrorResponse{errors=response.CreateTaskValidateError}
+// @Router       /api/tasks [post]
 func (h *TaskHandler) Create(c *fiber.Ctx) error {
 	log := httpctx.Get(c, h.log)
 
 	var req request.CreateTask
 	if err := c.BodyParser(&req); err != nil {
-		return fiber.ErrBadRequest
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
 	}
 
 	errors, err := validation.ValidateStruct(req)
@@ -36,9 +47,10 @@ func (h *TaskHandler) Create(c *fiber.Ctx) error {
 	}
 	if errors != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(
-			response.ValidationErrorResponse{
-				Message: "validation failed",
-				Errors:  errors,
+			response.ErrorResponse{
+				Message:   "validation failed",
+				Errors:    errors,
+				RequestID: httpctx.GetRequestID(c),
 			},
 		)
 	}
@@ -56,26 +68,54 @@ func (h *TaskHandler) Create(c *fiber.Ctx) error {
 	}
 
 	log.WithField("task_id", resp.ID).Info("task created")
-	return c.Status(fiber.StatusCreated).JSON(resp)
+	return c.Status(fiber.StatusCreated).JSON(response.Simple{Data: resp})
 }
 
+// GetByID godoc
+// @Summary      Get task by ID
+// @Description  Retrieve a single task by its ID
+// @Tags         tasks
+// @Produce      json
+// @Security     JWTAuth
+// @Security     ApiKeyAuth
+// @Param        id   path     string  true  "Task ID"
+// @Success      200 {object} response.Simple{data=response.Task}
+// @Failure      400  {object} response.ErrorResponse
+// @Failure      404  {object} response.ErrorResponse
+// @Router       /api/tasks/{id} [get]
 func (h *TaskHandler) GetByID(c *fiber.Ctx) error {
 	id := c.Params("id")
+	if id == "" {
+		return fiber.NewError(fiber.StatusBadRequest, "task ID is required")
+	}
 
-	return c.JSON(response.Task{
+	return c.JSON(response.Simple{Data: response.Task{
 		ID:     id,
 		Title:  "Demo Task",
 		Status: task.StatusInProgress,
-	})
+	}})
 }
 
+// List godoc
+// @Summary      List tasks
+// @Description  List tasks with pagination and filters
+// @Tags         tasks
+// @Produce      json
+// @Security     JWTAuth
+// @Param        page     query int     false "Page number"
+// @Param        limit    query int     false "Page size"
+// @Param        search   query string  false "Search keyword"
+// @Param        status   query string  false "Task status"
+// @Param        priority query int     false "Task priority"
+// @Success      200 {object} response.Paginate{data=[]response.Task}
+// @Failure      400 {object} response.ErrorResponse{errors=response.ListTasksValidateError}
+// @Router       /api/tasks [get]
 func (h *TaskHandler) List(c *fiber.Ctx) error {
 	log := httpctx.Get(c, h.log)
 
 	var q request.ListTasks
 	if err := c.QueryParser(&q); err != nil {
-		log.WithError(err).Warn("invalid query params")
-		return fiber.ErrBadRequest
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
 	}
 
 	errors, err := validation.ValidateStruct(q)
@@ -84,9 +124,10 @@ func (h *TaskHandler) List(c *fiber.Ctx) error {
 	}
 	if errors != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(
-			response.ValidationErrorResponse{
-				Message: "validation failed",
-				Errors:  errors,
+			response.ErrorResponse{
+				Message:   "validation failed",
+				Errors:    errors,
+				RequestID: httpctx.GetRequestID(c),
 			},
 		)
 	}
@@ -100,20 +141,40 @@ func (h *TaskHandler) List(c *fiber.Ctx) error {
 		"status": q.Status,
 	}).Info("list tasks")
 
-	return c.JSON(fiber.Map{
-		"data":  []response.Task{},
-		"page":  q.Page,
-		"limit": q.Limit,
-		"total": 0,
+	return c.JSON(response.Paginate{
+		Data: []response.Task{},
+		Meta: response.Meta{
+			Page:       q.Page,
+			PerPage:    q.Limit,
+			TotalItems: 0,
+			TotalPages: 0,
+			HasNext:    false,
+			HasPrev:    false,
+		},
 	})
 }
 
+// Update godoc
+// @Summary      Update task
+// @Description  Replace a task completely
+// @Tags         tasks
+// @Accept       json
+// @Produce      json
+// @Security     JWTAuth
+// @Param        id      path string true "Task ID"
+// @Param        request body request.UpdateTask true "Update Task Request"
+// @Success      204
+// @Failure      400 {object} response.ErrorResponse{errors=response.UpdateTaskValidateError}
+// @Router       /api/tasks/{id} [put]
 func (h *TaskHandler) Update(c *fiber.Ctx) error {
 	id := c.Params("id")
-	var req request.UpdateTask
+	if id == "" {
+		return fiber.NewError(fiber.StatusBadRequest, "task ID is required")
+	}
 
+	var req request.UpdateTask
 	if err := c.BodyParser(&req); err != nil {
-		return fiber.ErrBadRequest
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
 	}
 
 	errors, err := validation.ValidateStruct(req)
@@ -122,31 +183,39 @@ func (h *TaskHandler) Update(c *fiber.Ctx) error {
 	}
 	if errors != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(
-			response.ValidationErrorResponse{
-				Message: "validation failed",
-				Errors:  errors,
+			response.ErrorResponse{
+				Message:   "validation failed",
+				Errors:    errors,
+				RequestID: httpctx.GetRequestID(c),
 			},
 		)
 	}
 
-	return c.JSON(fiber.Map{
-		"id":     id,
-		"status": "updated",
-	})
+	return c.SendStatus(fiber.StatusNoContent)
 }
 
+// UpdateStatus godoc
+// @Summary      Update task status
+// @Tags         tasks
+// @Accept       json
+// @Produce      json
+// @Security     JWTAuth
+// @Param        id      path string true "Task ID"
+// @Param        request body request.UpdateTaskStatus true "Update Status Request"
+// @Success      204
+// @Failure      400 {object} response.ErrorResponse{errors=response.UpdateTaskStatusValidateError}
+// @Router       /api/tasks/{id}/status [patch]
 func (h *TaskHandler) UpdateStatus(c *fiber.Ctx) error {
 	log := httpctx.Get(c, h.log)
 
 	id := c.Params("id")
 	if id == "" {
-		return fiber.ErrBadRequest
+		return fiber.NewError(fiber.StatusBadRequest, "task ID is required")
 	}
 
 	var req request.UpdateTaskStatus
 	if err := c.BodyParser(&req); err != nil {
-		log.WithError(err).Warn("invalid request body")
-		return fiber.ErrBadRequest
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
 	}
 
 	errors, err := validation.ValidateStruct(req)
@@ -155,9 +224,10 @@ func (h *TaskHandler) UpdateStatus(c *fiber.Ctx) error {
 	}
 	if errors != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(
-			response.ValidationErrorResponse{
-				Message: "validation failed",
-				Errors:  errors,
+			response.ErrorResponse{
+				Message:   "validation failed",
+				Errors:    errors,
+				RequestID: httpctx.GetRequestID(c),
 			},
 		)
 	}
@@ -170,19 +240,25 @@ func (h *TaskHandler) UpdateStatus(c *fiber.Ctx) error {
 	// later:
 	// err := h.updateTaskStatus.Execute(ctx, id, req.Status)
 
-	return c.JSON(fiber.Map{
-		"id":     id,
-		"status": req.Status,
-	})
+	return c.SendStatus(fiber.StatusNoContent)
 }
 
+// BulkUpdateStatus godoc
+// @Summary      Bulk update task status
+// @Tags         tasks
+// @Accept       json
+// @Produce      json
+// @Security     JWTAuth
+// @Param        request body request.BulkUpdateTaskStatus true "Bulk Update Status"
+// @Success      204
+// @Failure      400 {object} response.ErrorResponse{errors=response.BulkUpdateTaskStatusValidateError}
+// @Router       /api/tasks/status [patch]
 func (h *TaskHandler) BulkUpdateStatus(c *fiber.Ctx) error {
 	log := httpctx.Get(c, h.log)
 
 	var req request.BulkUpdateTaskStatus
 	if err := c.BodyParser(&req); err != nil {
-		log.WithError(err).Warn("invalid bulk status update body")
-		return fiber.ErrBadRequest
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
 	}
 
 	errors, err := validation.ValidateStruct(req)
@@ -191,9 +267,10 @@ func (h *TaskHandler) BulkUpdateStatus(c *fiber.Ctx) error {
 	}
 	if errors != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(
-			response.ValidationErrorResponse{
-				Message: "validation failed",
-				Errors:  errors,
+			response.ErrorResponse{
+				Message:   "validation failed",
+				Errors:    errors,
+				RequestID: httpctx.GetRequestID(c),
 			},
 		)
 	}
@@ -209,12 +286,20 @@ func (h *TaskHandler) BulkUpdateStatus(c *fiber.Ctx) error {
 	return c.SendStatus(fiber.StatusNoContent)
 }
 
+// Delete godoc
+// @Summary      Delete task
+// @Tags         tasks
+// @Security     JWTAuth
+// @Param        id path string true "Task ID"
+// @Success      204
+// @Failure      400 {object} response.ErrorResponse
+// @Router       /api/tasks/{id} [delete]
 func (h *TaskHandler) Delete(c *fiber.Ctx) error {
 	log := httpctx.Get(c, h.log)
 
 	id := c.Params("id")
 	if id == "" {
-		return fiber.ErrBadRequest
+		return fiber.NewError(fiber.StatusBadRequest, "task ID is required")
 	}
 
 	log.WithField("task_id", id).Info("delete task")
@@ -225,13 +310,21 @@ func (h *TaskHandler) Delete(c *fiber.Ctx) error {
 	return c.SendStatus(fiber.StatusNoContent)
 }
 
+// BulkDelete godoc
+// @Summary      Bulk delete tasks
+// @Tags         tasks
+// @Accept       json
+// @Security     JWTAuth
+// @Param        request body request.BulkDeleteTasks true "Bulk Delete Tasks"
+// @Success      204
+// @Failure      400 {object} response.ErrorResponse{errors=response.BulkDeleteTasksValidateError}
+// @Router       /api/tasks [delete]
 func (h *TaskHandler) BulkDelete(c *fiber.Ctx) error {
 	log := httpctx.Get(c, h.log)
 
 	var req request.BulkDeleteTasks
 	if err := c.BodyParser(&req); err != nil {
-		log.WithError(err).Warn("invalid bulk delete request body")
-		return fiber.ErrBadRequest
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
 	}
 
 	errors, err := validation.ValidateStruct(req)
@@ -240,9 +333,10 @@ func (h *TaskHandler) BulkDelete(c *fiber.Ctx) error {
 	}
 	if errors != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(
-			response.ValidationErrorResponse{
-				Message: "validation failed",
-				Errors:  errors,
+			response.ErrorResponse{
+				Message:   "validation failed",
+				Errors:    errors,
+				RequestID: httpctx.GetRequestID(c),
 			},
 		)
 	}

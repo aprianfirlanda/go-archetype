@@ -6,11 +6,16 @@ import (
 	"go-archetype/internal/bootstrap"
 	"go-archetype/internal/infrastructure/logging"
 
+	_ "go-archetype/internal/adapter/http/docs"
+
 	"github.com/gofiber/fiber/v2"
+	fiberSwagger "github.com/swaggo/fiber-swagger"
 )
 
 func RegisterRoutes(app *fiber.App, deps bootstrap.HttpApp) {
 	log := logging.WithComponent(deps.Log, "http.router")
+
+	app.Get("/swagger/*", fiberSwagger.WrapHandler)
 
 	// Setup Auth Middlewares
 	apiKeyMiddleware := middleware.AuthAPIKey(log, deps.Config.Services.General.APIKey)
@@ -30,6 +35,7 @@ func RegisterRoutes(app *fiber.App, deps bootstrap.HttpApp) {
 	taskHandler := handler.NewTaskHandler(log)
 	task := api.Group("/tasks")
 	task.Post("/", jwtMiddleware, taskHandler.Create)
+	// TODO: still not work join the two middlewares
 	task.Get("/", middleware.AnyAuth(apiKeyMiddleware, apiKeyMiddleware), taskHandler.List)
 	task.Get("/:id", jwtMiddleware, taskHandler.GetByID)
 	task.Put("/:id", jwtMiddleware, taskHandler.Update)

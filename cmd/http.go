@@ -12,6 +12,22 @@ import (
 	"github.com/spf13/cobra"
 )
 
+// @title           Go Archetype
+// @version         1.0
+// @description     REST API for Go Archetype
+
+// ===== Security Definitions =====
+
+// @securityDefinitions.apikey JWTAuth
+// @in header
+// @name Authorization
+// @description JWT Authorization header. Format: Bearer {jwt}
+
+// @securityDefinitions.apikey ApiKeyAuth
+// @in header
+// @name Authorization
+// @description API Key Authorization header. Format: Bearer {api_key}
+
 // httpCmd represents the http command
 var httpCmd = &cobra.Command{
 	Use:   "http",
