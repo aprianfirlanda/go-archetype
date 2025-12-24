@@ -28,7 +28,7 @@ func Initialize(appName, cfgFile string, cmd *cobra.Command) error {
 		cobra.CheckErr(err)
 
 		// Search for a config file with the name "config" (without extension).
-		viper.AddConfigPath(".")
+		viper.AddConfigPath("./config")
 		viper.AddConfigPath(home + "/." + appName)
 		viper.SetConfigName("config")
 		viper.SetConfigType("yaml")
