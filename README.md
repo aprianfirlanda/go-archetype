@@ -9,80 +9,109 @@ This project was created using Go version 1.25.4.
 
 Folder Structure
 ```text
-task-manager/
+go-archetype/
+├── .idea/
+├── bin/
 ├── cmd/
-│   ├── root.go                # cobra root command
-│   ├── serve.go               # start HTTP server
-│   └── migrate.go             # db migration command
-│
+│   ├── http.go
+│   └── root.go
+├── config/
+│   └── example.config.yaml
 ├── internal/
-│   ├── domain/
-│   │   └── task/
-│   │       ├── entity.go      # Task entity
-│   │       ├── value.go       # Value objects (Status, Priority)
-│   │       └── errors.go
-│   │
-│   ├── application/
-│   │   └── task/
-│   │       ├── create.go      # CreateTask use case
-│   │       ├── update.go
-│   │       ├── list.go
-│   │       └── delete.go
-│   │
-│   ├── ports/
-│   │   ├── inbound/
-│   │   │   └── task_service.go
-│   │   └── outbound/
-│   │       └── task_repository.go
-│   │
-│   ├── adapters/
-│   │   ├── inbound/
-│   │   │   └── http/
-│   │   │       └── fiber/
-│   │   │           ├── router.go
-│   │   │           ├── handler/
-│   │   │           │   ├── task_handler.go
-│   │   │           │   └── health_handler.go
-│   │   │           ├── middleware/
-│   │   │           │   ├── auth_apikey.go
-│   │   │           │   ├── auth_jwt.go
-│   │   │           │   ├── logging.go
-│   │   │           │   ├── recover.go
-│   │   │           │   ├── request_id.go
-│   │   │           │   └── error_handler.go
-│   │   │           └── dto/
-│   │   │               ├── request.go
-│   │   │               ├── response.go
-│   │   │               └── error.go
-│   │   │
-│   │   └── outbound/
-│   │       └── persistence/
-│   │           ├── gorm/
-│   │           │   ├── model.go
-│   │           │   └── repository.go
-│   │           └── migration.go
-│   │
-│   ├── infrastructure/
-│   │   ├── config/
-│   │   │   └── config.go      # viper
-│   │   ├── database/
-│   │   │   └── gorm.go
-│   │   ├── logger/
-│   │   │   └── logrus.go
-│   │   └── server/
-│   │       └── fiber.go
-│   │
-│   └── bootstrap/
-│       └── http_app.go             # dependency wiring for http
-│
-├── configs/
-│   └── config.yaml
-│
-├── migrations/
-│
+│   └── adapter/
+│       ├── http/
+│       │   ├── context/
+│       │   │   └── logger.go
+│       │   ├── docs/
+│       │   │   ├── docs.go
+│       │   │   ├── swagger.json
+│       │   │   └── swagger.yaml
+│       │   ├── dto/
+│       │   │   ├── request/
+│       │   │   │   └── task.go
+│       │   │   └── response/
+│       │   │       ├── error.go
+│       │   │       ├── success.go
+│       │   │       └── task.go
+│       │   ├── handler/
+│       │   │   ├── DemoHandler.go
+│       │   │   └── TaskHandler.go
+│       │   ├── middleware/
+│       │   │   ├── any_auth.go
+│       │   │   ├── auth_api_key.go
+│       │   │   ├── auth_jwt.go
+│       │   │   ├── error_handler.go
+│       │   │   ├── health_check.go
+│       │   │   ├── logging.go
+│       │   │   ├── recover.go
+│       │   │   └── request_id.go
+│       │   ├── router/
+│       │   │   └── router.go
+│       │   └── server/
+│       │       └── fiber.go
+│       └── validation/
+├── application/
+│   └── task/
+│       └── service.go         // Application service (orchestration)
+├── bootstrap/
+│   └── http_app.go
+├── domain/
+│   ├── auth/
+│   │   ├── entity.go          // User, Credentials entities
+│   │   ├── service.go         // Auth business logic
+│   │   ├── repository.go      // Auth repository interface (port)
+│   │   └── custom_claims.go
+│   └── task/
+│       ├── entity.go          // Task entity
+│       ├── status.go          // Task status enum
+│       ├── service.go         // Task business logic
+│       └── repository.go      // Task repository interface (port)
+├── infrastructure/
+│   ├── config/
+│   │   ├── bootstrap.go
+│   │   ├── config.go
+│   │   └── schema.go
+│   ├── database/
+│   │   ├── ping.go
+│   │   ├── pool.go
+│   │   └── postgres.go
+│   ├── logging/
+│   │   ├── component.go
+│   │   ├── field.go
+│   │   ├── logger.go
+│   │   └── logrus.go
+│   └── persistence/
+│       └── gorm/
+│           ├── bootstrap.go
+│           ├── pinger.go
+│           ├── uow.go
+│           ├── uow_tx.go
+│           └── repository/
+│               ├── task_repository.go    // Implements domain/task/repository.go
+│               └── user_repository.go    // Implements domain/auth/repository.go
+├── ports/
+│   ├── input/                 // Driving ports (what drives the app)
+│   │   ├── task_service.go    // Interface for task service
+│   │   └── auth_service.go    // Interface for auth service
+│   └── output/                // Driven ports (what the app drives)
+│       ├── task_repository.go // Repository interface
+│       └── db_transaction.go  // Transaction interface
+├── utils/
+│   └── DBTransaction.go
+├── migration/
+├── test/
+│   └── http/
+│       └── request/
+│           ├── demo.http
+│           ├── health_check.http
+│           ├── http-client.private.env.json
+│           └── task.http
+├── .gitignore
+├── compose.yaml
 ├── go.mod
-└── main.go
-
+├── LICENSE
+├── main.go
+└── README.md
 ```
 
 ⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻
