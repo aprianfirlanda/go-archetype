@@ -50,13 +50,16 @@ Authorization: Bearer {{jwt}}
   "tags": ["a","b","c","d","e","f","g","h","i","j","k"]
 }
 
+### List Tasks (Pagination + Search) (Invalid - No Auth)
+GET {{baseUrl}}/api/tasks?page=1&limit=10&search=task&status=todo
+
 ### List Tasks (Pagination + Search) (JWT)
 GET {{baseUrl}}/api/tasks?page=1&limit=10&search=task&status=todo
 Authorization: Bearer {{jwt}}
 
 ### List Tasks (Pagination + Search) (API Key)
 GET {{baseUrl}}/api/tasks?page=1&limit=10&search=task&status=todo
-Authorization: Bearer {{apiKey}}
+Authorization: ApiKey {{apiKey}}
 
 ### List Tasks - Invalid Status
 GET {{baseUrl}}/api/tasks?status=invalid

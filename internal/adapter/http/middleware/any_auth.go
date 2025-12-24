@@ -1,20 +1,29 @@
 package middleware
 
-import "github.com/gofiber/fiber/v2"
+import (
+	httpctx "go-archetype/internal/adapter/http/context"
+	"go-archetype/internal/adapter/http/dto/response"
 
-// AnyAuth allows request if ANY middleware succeeds.
+	"github.com/gofiber/fiber/v2"
+)
+
+// AnyAuth allows request if ANY middleware succeeds
 func AnyAuth(middlewares ...fiber.Handler) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		for _, mw := range middlewares {
-			// clone ctx to avoid side effects
-			ctx := c.Context()
 			if err := mw(c); err == nil {
-				// auth passed
 				return c.Next()
 			}
-			// reset ctx if needed (Fiber v2 safe here)
-			c.SetUserContext(ctx)
 		}
-		return fiber.ErrUnauthorized
+
+		// All middlewares failed
+		rid := httpctx.GetRequestID(c)
+		resp := response.ErrorResponse{
+			Message:   "invalid or missing authentication credentials",
+			RequestID: rid,
+		}
+
+		c.Type("json", "utf-8")
+		return c.Status(fiber.StatusUnauthorized).JSON(resp)
 	}
 }

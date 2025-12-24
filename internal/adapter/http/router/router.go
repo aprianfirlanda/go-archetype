@@ -36,7 +36,7 @@ func RegisterRoutes(app *fiber.App, deps bootstrap.HttpApp) {
 	task := api.Group("/tasks")
 	task.Post("/", jwtMiddleware, taskHandler.Create)
 	// TODO: still not work join the two middlewares
-	task.Get("/", middleware.AnyAuth(apiKeyMiddleware, apiKeyMiddleware), taskHandler.List)
+	task.Get("/", middleware.AnyAuth(apiKeyMiddleware, jwtMiddleware), taskHandler.List)
 	task.Get("/:id", jwtMiddleware, taskHandler.GetByID)
 	task.Put("/:id", jwtMiddleware, taskHandler.Update)
 	task.Patch("/:id/status", jwtMiddleware, taskHandler.UpdateStatus)

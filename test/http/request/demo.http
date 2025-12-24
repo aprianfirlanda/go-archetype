@@ -1,10 +1,10 @@
 ### Test Protected API by API Key (Success)
 GET {{baseUrl}}/api/demo/protected-by-api-key
-Authorization: Bearer {{apiKey}}
+Authorization: ApiKey {{apiKey}}
 
 ### Test Protected API by API Key (Failed Wrong)
 GET {{baseUrl}}/api/demo/protected-by-api-key
-Authorization: Bearer Entwt4/uwQtnD2LqMdho4cPTmFEkGAzBytS4UsO0f8g
+Authorization: ApiKey Entwt4/uwQtnD2LqMdho4cPTmFEkGAzBytS4UsO0f8g
 
 ### Test Protected API by API Key (Failed Empty)
 GET {{baseUrl}}/api/demo/protected-by-api-key
