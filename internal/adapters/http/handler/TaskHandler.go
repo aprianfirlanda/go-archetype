@@ -7,7 +7,7 @@ import (
 	"go-archetype/internal/adapters/http/dto/request"
 	"go-archetype/internal/adapters/http/dto/response"
 	"go-archetype/internal/adapters/http/validation"
-	taskDomain "go-archetype/internal/domain/task"
+	"go-archetype/internal/domain/task"
 	"go-archetype/internal/infrastructure/logging"
 	"go-archetype/internal/ports/input"
 
@@ -60,7 +60,7 @@ func (h *TaskHandler) Create(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(response.Fail("validation failed", fieldErrors, rid))
 	}
 
-	taskEntity := &taskDomain.Entity{
+	taskEntity := &task.Entity{
 		Title:       req.Title,
 		Description: req.Description,
 		Priority:    req.Priority,
@@ -98,10 +98,10 @@ func (h *TaskHandler) GetByPublicID(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(response.FailMessage("task publicID is required", rid))
 	}
 
-	task, err := h.taskService.GetTaskByPublicID(c.Context(), publicID)
+	respData, err := h.taskService.GetTaskByPublicID(c.Context(), publicID)
 	if err != nil {
 		switch {
-		case errors.Is(err, taskDomain.ErrNotFound):
+		case errors.Is(err, task.ErrNotFound):
 			return c.Status(fiber.StatusNotFound).JSON(response.FailMessage("task not found", rid))
 		default:
 			log.WithError(err).Error("failed to get task")
@@ -109,7 +109,7 @@ func (h *TaskHandler) GetByPublicID(c *fiber.Ctx) error {
 		}
 	}
 
-	return c.JSON(response.OK(task, rid))
+	return c.JSON(response.OK(respData, rid))
 }
 
 // List godoc
