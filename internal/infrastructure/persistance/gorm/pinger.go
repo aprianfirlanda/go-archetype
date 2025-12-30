@@ -3,7 +3,7 @@ package gorm
 import (
 	"context"
 	"go-archetype/internal/infrastructure/db"
-	"go-archetype/internal/ports"
+	"go-archetype/internal/ports/output"
 
 	"gorm.io/gorm"
 )
@@ -12,7 +12,7 @@ type Pinger struct {
 	db *gorm.DB
 }
 
-func NewPinger(db *gorm.DB) ports.DBPinger {
+func NewPinger(db *gorm.DB) output.DBPinger {
 	return &Pinger{db: db}
 }
 

@@ -7,7 +7,7 @@
         "version": "1.0"
     },
     "paths": {
-        "/v1/api/tasks": {
+        "/api/tasks": {
             "get": {
                 "security": [
                     {
@@ -43,13 +43,13 @@
                     },
                     {
                         "type": "string",
-                        "description": "Entity status",
+                        "description": "Task status",
                         "name": "status",
                         "in": "query"
                     },
                     {
                         "type": "integer",
-                        "description": "Entity priority",
+                        "description": "Task priority",
                         "name": "priority",
                         "in": "query"
                     }
@@ -60,18 +60,15 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Success"
+                                    "$ref": "#/definitions/response.Paginate"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
-                                        " meta": {
-                                            "$ref": "#/definitions/response.PaginationMeta"
-                                        },
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/task.Entity"
+                                                "$ref": "#/definitions/response.Task"
                                             }
                                         }
                                     }
@@ -84,7 +81,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Error"
+                                    "$ref": "#/definitions/response.ErrorResponse"
                                 },
                                 {
                                     "type": "object",
@@ -118,7 +115,7 @@
                 "summary": "Create a task",
                 "parameters": [
                     {
-                        "description": "Create Entity Request",
+                        "description": "Create Task Request",
                         "name": "request",
                         "in": "body",
                         "required": true,
@@ -133,13 +130,13 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Success"
+                                    "$ref": "#/definitions/response.Simple"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/response.IDResponse"
+                                            "$ref": "#/definitions/response.Task"
                                         }
                                     }
                                 }
@@ -151,7 +148,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Error"
+                                    "$ref": "#/definitions/response.ErrorResponse"
                                 },
                                 {
                                     "type": "object",
@@ -162,12 +159,6 @@
                                     }
                                 }
                             ]
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/response.Error"
                         }
                     }
                 }
@@ -187,7 +178,7 @@
                 "summary": "Bulk delete tasks",
                 "parameters": [
                     {
-                        "description": "Bulk DeletePublicID Tasks",
+                        "description": "Bulk Delete Tasks",
                         "name": "request",
                         "in": "body",
                         "required": true,
@@ -205,7 +196,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Error"
+                                    "$ref": "#/definitions/response.ErrorResponse"
                                 },
                                 {
                                     "type": "object",
@@ -221,7 +212,7 @@
                 }
             }
         },
-        "/v1/api/tasks/status": {
+        "/api/tasks/status": {
             "patch": {
                 "security": [
                     {
@@ -258,7 +249,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Error"
+                                    "$ref": "#/definitions/response.ErrorResponse"
                                 },
                                 {
                                     "type": "object",
@@ -274,7 +265,7 @@
                 }
             }
         },
-        "/v1/api/tasks/{public_id}": {
+        "/api/tasks/{id}": {
             "get": {
                 "security": [
                     {
@@ -295,8 +286,8 @@
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Entity ID",
-                        "name": "public_id",
+                        "description": "Task ID",
+                        "name": "id",
                         "in": "path",
                         "required": true
                     }
@@ -307,13 +298,13 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Success"
+                                    "$ref": "#/definitions/response.Simple"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/task.Entity"
+                                            "$ref": "#/definitions/response.Task"
                                         }
                                     }
                                 }
@@ -323,13 +314,13 @@
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.Error"
+                            "$ref": "#/definitions/response.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/response.Error"
+                            "$ref": "#/definitions/response.ErrorResponse"
                         }
                     }
                 }
@@ -354,13 +345,13 @@
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Entity ID",
+                        "description": "Task ID",
                         "name": "id",
                         "in": "path",
                         "required": true
                     },
                     {
-                        "description": "Update Entity Request",
+                        "description": "Update Task Request",
                         "name": "request",
                         "in": "body",
                         "required": true,
@@ -378,7 +369,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Error"
+                                    "$ref": "#/definitions/response.ErrorResponse"
                                 },
                                 {
                                     "type": "object",
@@ -402,11 +393,11 @@
                 "tags": [
                     "tasks"
                 ],
-                "summary": "DeletePublicID task",
+                "summary": "Delete task",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Entity ID",
+                        "description": "Task ID",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -419,13 +410,13 @@
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.Error"
+                            "$ref": "#/definitions/response.ErrorResponse"
                         }
                     }
                 }
             }
         },
-        "/v1/api/tasks/{public_id}/status": {
+        "/api/tasks/{id}/status": {
             "patch": {
                 "security": [
                     {
@@ -445,7 +436,7 @@
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Entity ID",
+                        "description": "Task ID",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -469,7 +460,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Error"
+                                    "$ref": "#/definitions/response.ErrorResponse"
                                 },
                                 {
                                     "type": "object",
@@ -670,22 +661,14 @@
                 }
             }
         },
-        "response.Error": {
+        "response.ErrorResponse": {
             "type": "object",
             "properties": {
-                "error": {},
+                "errors": {},
                 "message": {
                     "type": "string"
                 },
-                "request_id": {
-                    "type": "string"
-                }
-            }
-        },
-        "response.IDResponse": {
-            "type": "object",
-            "properties": {
-                "id": {
+                "requestId": {
                     "type": "string"
                 }
             }
@@ -719,13 +702,9 @@
                 }
             }
         },
-        "response.PaginationMeta": {
+        "response.Meta": {
             "type": "object",
             "properties": {
-                "from": {
-                    "type": "integer",
-                    "example": 11
-                },
                 "has_next": {
                     "type": "boolean",
                     "example": true
@@ -734,17 +713,13 @@
                     "type": "boolean",
                     "example": false
                 },
-                "limit": {
-                    "type": "integer",
-                    "example": 10
-                },
                 "page": {
                     "type": "integer",
                     "example": 1
                 },
-                "to": {
+                "per_page": {
                     "type": "integer",
-                    "example": 20
+                    "example": 10
                 },
                 "total_items": {
                     "type": "integer",
@@ -756,15 +731,52 @@
                 }
             }
         },
-        "response.Success": {
+        "response.Paginate": {
             "type": "object",
             "properties": {
                 "data": {},
-                "message": {
+                "meta": {
+                    "$ref": "#/definitions/response.Meta"
+                }
+            }
+        },
+        "response.Simple": {
+            "type": "object",
+            "properties": {
+                "data": {}
+            }
+        },
+        "response.Task": {
+            "type": "object",
+            "properties": {
+                "completed": {
+                    "type": "boolean"
+                },
+                "created_at": {
                     "type": "string"
                 },
-                "meta": {},
-                "request_id": {
+                "description": {
+                    "type": "string"
+                },
+                "due_date": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "priority": {
+                    "type": "integer"
+                },
+                "status": {
+                    "$ref": "#/definitions/task.Status"
+                },
+                "tags": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "title": {
                     "type": "string"
                 }
             }
@@ -806,48 +818,6 @@
                     "items": {
                         "type": "string"
                     }
-                }
-            }
-        },
-        "task.Entity": {
-            "type": "object",
-            "properties": {
-                "completed": {
-                    "type": "boolean"
-                },
-                "createdAt": {
-                    "type": "string"
-                },
-                "description": {
-                    "type": "string"
-                },
-                "dueDate": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer",
-                    "format": "int64"
-                },
-                "priority": {
-                    "type": "integer"
-                },
-                "publicID": {
-                    "type": "string"
-                },
-                "status": {
-                    "$ref": "#/definitions/task.Status"
-                },
-                "tags": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "title": {
-                    "type": "string"
-                },
-                "updatedAt": {
-                    "type": "string"
                 }
             }
         },

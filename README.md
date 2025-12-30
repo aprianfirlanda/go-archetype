@@ -444,4 +444,7 @@ db:
   logLevel: warn
 ```
 
-
+add lib for generate uuid v7
+```shell
+go get -u github.com/google/uuid
+```

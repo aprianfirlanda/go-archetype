@@ -5,7 +5,8 @@ Copyright © 2025 APRIAN FIRLANDA IMANI <aprianfirlanda@gmail.com>
 */
 
 import (
-	"go-archetype/internal/adapter/http/server"
+	"go-archetype/internal/adapters/http/server"
+	taskapp "go-archetype/internal/application/task"
 	"go-archetype/internal/bootstrap"
 	"go-archetype/internal/infrastructure/persistance/gorm"
 
@@ -39,12 +40,19 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
+		// Infrastructure
 		dbPinger := gorm.NewPinger(dbConn)
+		taskRepo := gorm.NewTaskRepository(dbConn)
+		uow := gorm.NewUnitOfWork(dbConn)
+
+		// Application
+		taskService := taskapp.NewService(uow, taskRepo)
 
 		return server.StartServer(bootstrap.HttpApp{
-			Config:   cfg,
-			Log:      logger,
-			DBPinger: dbPinger,
+			Config:      cfg,
+			Log:         logger,
+			DBPinger:    dbPinger,
+			TaskService: taskService,
 		})
 	},
 }

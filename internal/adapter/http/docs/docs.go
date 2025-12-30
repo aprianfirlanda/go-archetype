@@ -15,7 +15,7 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/api/tasks": {
+        "/v1/api/tasks": {
             "get": {
                 "security": [
                     {
@@ -51,13 +51,13 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "description": "Task status",
+                        "description": "Entity status",
                         "name": "status",
                         "in": "query"
                     },
                     {
                         "type": "integer",
-                        "description": "Task priority",
+                        "description": "Entity priority",
                         "name": "priority",
                         "in": "query"
                     }
@@ -68,15 +68,18 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Paginate"
+                                    "$ref": "#/definitions/response.Success"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
+                                        " meta": {
+                                            "$ref": "#/definitions/response.PaginationMeta"
+                                        },
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/response.Task"
+                                                "$ref": "#/definitions/task.Entity"
                                             }
                                         }
                                     }
@@ -89,7 +92,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.ErrorResponse"
+                                    "$ref": "#/definitions/response.Error"
                                 },
                                 {
                                     "type": "object",
@@ -123,7 +126,7 @@ const docTemplate = `{
                 "summary": "Create a task",
                 "parameters": [
                     {
-                        "description": "Create Task Request",
+                        "description": "Create Entity Request",
                         "name": "request",
                         "in": "body",
                         "required": true,
@@ -138,13 +141,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Simple"
+                                    "$ref": "#/definitions/response.Success"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/response.Task"
+                                            "$ref": "#/definitions/response.IDResponse"
                                         }
                                     }
                                 }
@@ -156,7 +159,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.ErrorResponse"
+                                    "$ref": "#/definitions/response.Error"
                                 },
                                 {
                                     "type": "object",
@@ -167,6 +170,12 @@ const docTemplate = `{
                                     }
                                 }
                             ]
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.Error"
                         }
                     }
                 }
@@ -186,7 +195,7 @@ const docTemplate = `{
                 "summary": "Bulk delete tasks",
                 "parameters": [
                     {
-                        "description": "Bulk Delete Tasks",
+                        "description": "Bulk DeletePublicID Tasks",
                         "name": "request",
                         "in": "body",
                         "required": true,
@@ -204,7 +213,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.ErrorResponse"
+                                    "$ref": "#/definitions/response.Error"
                                 },
                                 {
                                     "type": "object",
@@ -220,7 +229,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/tasks/status": {
+        "/v1/api/tasks/status": {
             "patch": {
                 "security": [
                     {
@@ -257,7 +266,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.ErrorResponse"
+                                    "$ref": "#/definitions/response.Error"
                                 },
                                 {
                                     "type": "object",
@@ -273,7 +282,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/tasks/{id}": {
+        "/v1/api/tasks/{public_id}": {
             "get": {
                 "security": [
                     {
@@ -294,8 +303,8 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Task ID",
-                        "name": "id",
+                        "description": "Entity ID",
+                        "name": "public_id",
                         "in": "path",
                         "required": true
                     }
@@ -306,13 +315,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Simple"
+                                    "$ref": "#/definitions/response.Success"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/response.Task"
+                                            "$ref": "#/definitions/task.Entity"
                                         }
                                     }
                                 }
@@ -322,13 +331,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.ErrorResponse"
+                            "$ref": "#/definitions/response.Error"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/response.ErrorResponse"
+                            "$ref": "#/definitions/response.Error"
                         }
                     }
                 }
@@ -353,13 +362,13 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Task ID",
+                        "description": "Entity ID",
                         "name": "id",
                         "in": "path",
                         "required": true
                     },
                     {
-                        "description": "Update Task Request",
+                        "description": "Update Entity Request",
                         "name": "request",
                         "in": "body",
                         "required": true,
@@ -377,7 +386,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.ErrorResponse"
+                                    "$ref": "#/definitions/response.Error"
                                 },
                                 {
                                     "type": "object",
@@ -401,11 +410,11 @@ const docTemplate = `{
                 "tags": [
                     "tasks"
                 ],
-                "summary": "Delete task",
+                "summary": "DeletePublicID task",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Task ID",
+                        "description": "Entity ID",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -418,13 +427,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.ErrorResponse"
+                            "$ref": "#/definitions/response.Error"
                         }
                     }
                 }
             }
         },
-        "/api/tasks/{id}/status": {
+        "/v1/api/tasks/{public_id}/status": {
             "patch": {
                 "security": [
                     {
@@ -444,7 +453,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Task ID",
+                        "description": "Entity ID",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -468,7 +477,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.ErrorResponse"
+                                    "$ref": "#/definitions/response.Error"
                                 },
                                 {
                                     "type": "object",
@@ -669,14 +678,22 @@ const docTemplate = `{
                 }
             }
         },
-        "response.ErrorResponse": {
+        "response.Error": {
             "type": "object",
             "properties": {
-                "errors": {},
+                "error": {},
                 "message": {
                     "type": "string"
                 },
-                "requestId": {
+                "request_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "response.IDResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
                     "type": "string"
                 }
             }
@@ -710,9 +727,13 @@ const docTemplate = `{
                 }
             }
         },
-        "response.Meta": {
+        "response.PaginationMeta": {
             "type": "object",
             "properties": {
+                "from": {
+                    "type": "integer",
+                    "example": 11
+                },
                 "has_next": {
                     "type": "boolean",
                     "example": true
@@ -721,13 +742,17 @@ const docTemplate = `{
                     "type": "boolean",
                     "example": false
                 },
+                "limit": {
+                    "type": "integer",
+                    "example": 10
+                },
                 "page": {
                     "type": "integer",
                     "example": 1
                 },
-                "per_page": {
+                "to": {
                     "type": "integer",
-                    "example": 10
+                    "example": 20
                 },
                 "total_items": {
                     "type": "integer",
@@ -739,52 +764,15 @@ const docTemplate = `{
                 }
             }
         },
-        "response.Paginate": {
+        "response.Success": {
             "type": "object",
             "properties": {
                 "data": {},
-                "meta": {
-                    "$ref": "#/definitions/response.Meta"
-                }
-            }
-        },
-        "response.Simple": {
-            "type": "object",
-            "properties": {
-                "data": {}
-            }
-        },
-        "response.Task": {
-            "type": "object",
-            "properties": {
-                "completed": {
-                    "type": "boolean"
-                },
-                "created_at": {
+                "message": {
                     "type": "string"
                 },
-                "description": {
-                    "type": "string"
-                },
-                "due_date": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "priority": {
-                    "type": "integer"
-                },
-                "status": {
-                    "$ref": "#/definitions/task.Status"
-                },
-                "tags": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "title": {
+                "meta": {},
+                "request_id": {
                     "type": "string"
                 }
             }
@@ -826,6 +814,48 @@ const docTemplate = `{
                     "items": {
                         "type": "string"
                     }
+                }
+            }
+        },
+        "task.Entity": {
+            "type": "object",
+            "properties": {
+                "completed": {
+                    "type": "boolean"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "dueDate": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "priority": {
+                    "type": "integer"
+                },
+                "publicID": {
+                    "type": "string"
+                },
+                "status": {
+                    "$ref": "#/definitions/task.Status"
+                },
+                "tags": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "title": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string"
                 }
             }
         },
