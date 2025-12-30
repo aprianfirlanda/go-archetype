@@ -98,7 +98,7 @@ func (h *TaskHandler) GetByPublicID(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(response.FailMessage("task publicID is required", rid))
 	}
 
-	respData, err := h.taskService.GetTaskByPublicID(c.Context(), publicID)
+	taskEntity, err := h.taskService.GetTaskByPublicID(c.Context(), publicID)
 	if err != nil {
 		switch {
 		case errors.Is(err, task.ErrNotFound):
@@ -109,7 +109,7 @@ func (h *TaskHandler) GetByPublicID(c *fiber.Ctx) error {
 		}
 	}
 
-	return c.JSON(response.OK(respData, rid))
+	return c.JSON(response.OK(taskEntity, rid))
 }
 
 // List godoc
