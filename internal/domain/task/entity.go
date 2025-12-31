@@ -2,6 +2,7 @@ package task
 
 import (
 	"errors"
+	"go-archetype/internal/domain/identity"
 	"time"
 )
 
@@ -19,6 +20,29 @@ type Entity struct {
 	UpdatedAt   time.Time
 }
 
+func New(
+	title string,
+	description string,
+	priority int,
+	dueDate *time.Time,
+	tags []string,
+) *Entity {
+	now := time.Now()
+
+	return &Entity{
+		PublicID:    identity.NewPublicID(),
+		Title:       title,
+		Description: description,
+		Priority:    priority,
+		DueDate:     dueDate,
+		Tags:        tags,
+		Status:      StatusTodo,
+		Completed:   false,
+		CreatedAt:   now,
+		UpdatedAt:   now,
+	}
+}
+
 // Validate contains business rules
 func (t *Entity) Validate() error {
 	if t.Title == "" {
@@ -34,6 +58,21 @@ func (t *Entity) Validate() error {
 		return errors.New("maximum 10 tags allowed")
 	}
 	return nil
+}
+
+func (t *Entity) Update(
+	title string,
+	description string,
+	priority int,
+	dueDate *time.Time,
+	tags []string,
+) {
+	t.Title = title
+	t.Description = description
+	t.Priority = priority
+	t.DueDate = dueDate
+	t.Tags = tags
+	t.UpdatedAt = time.Now()
 }
 
 func (t *Entity) Complete() error {

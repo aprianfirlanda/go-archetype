@@ -7,6 +7,7 @@ import (
 	"go-archetype/internal/adapters/http/dto/request"
 	"go-archetype/internal/adapters/http/dto/response"
 	"go-archetype/internal/adapters/http/validation"
+	"go-archetype/internal/application/task/command"
 	"go-archetype/internal/domain/task"
 	"go-archetype/internal/infrastructure/logging"
 	"go-archetype/internal/ports/input"
@@ -17,10 +18,10 @@ import (
 
 type TaskHandler struct {
 	log         *logrus.Entry
-	taskService input.TaskService
+	taskService portin.TaskService
 }
 
-func NewTaskHandler(handlerLog *logrus.Entry, taskService input.TaskService) *TaskHandler {
+func NewTaskHandler(handlerLog *logrus.Entry, taskService portin.TaskService) *TaskHandler {
 	handlerLog = logging.WithComponent(handlerLog, "http.TaskHandler")
 	return &TaskHandler{
 		log:         handlerLog,
@@ -60,15 +61,14 @@ func (h *TaskHandler) Create(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(response.Fail("validation failed", fieldErrors, rid))
 	}
 
-	taskEntity := &task.Entity{
+	cmd := taskcmd.Create{
 		Title:       req.Title,
 		Description: req.Description,
 		Priority:    req.Priority,
 		DueDate:     req.DueDate,
 		Tags:        req.Tags,
 	}
-
-	publicID, err := h.taskService.CreateTask(c.Context(), taskEntity)
+	publicID, err := h.taskService.Create(c.Context(), cmd)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(response.Fail("failed to create task", err, rid))
 	}
@@ -83,7 +83,7 @@ func (h *TaskHandler) Create(c *fiber.Ctx) error {
 // @Produce      json
 // @Security     JWTAuth
 // @Security     ApiKeyAuth
-// @Param        public_id   path     string  true  "Entity ID"
+// @Param        public_id   path     string  true  "Entity Public ID"
 // @Success      200  {object} response.Success{data=task.Entity}
 // @Failure      400  {object} response.Error
 // @Failure      404  {object} response.Error
@@ -98,7 +98,7 @@ func (h *TaskHandler) GetByPublicID(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(response.FailMessage("task publicID is required", rid))
 	}
 
-	taskEntity, err := h.taskService.GetTaskByPublicID(c.Context(), publicID)
+	taskEntity, err := h.taskService.GetByPublicID(c.Context(), publicID)
 	if err != nil {
 		switch {
 		case errors.Is(err, task.ErrNotFound):
@@ -154,7 +154,7 @@ func (h *TaskHandler) List(c *fiber.Ctx) error {
 			JSON(response.FailMessage(err.Error(), rid))
 	}
 
-	tasks, total, err := h.taskService.ListTasks(c.Context(), filter)
+	tasks, total, err := h.taskService.List(c.Context(), filter)
 	if err != nil {
 		return err
 	}
@@ -176,10 +176,11 @@ func (h *TaskHandler) List(c *fiber.Ctx) error {
 // @Accept       json
 // @Produce      json
 // @Security     JWTAuth
-// @Param        id      path string true "Entity ID"
+// @Param        public_id   path     string  true  "Entity Public ID"
 // @Param        request body request.UpdateTask true "Update Entity Request"
 // @Success      204
 // @Failure      400 {object} response.Error{errors=response.UpdateTaskValidateError}
+// @Failure      404  {object} response.Error
 // @Router       /v1/api/tasks/{public_id} [put]
 func (h *TaskHandler) Update(c *fiber.Ctx) error {
 	log := httpctx.Get(c, h.log)
@@ -207,6 +208,25 @@ func (h *TaskHandler) Update(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(response.Fail("validation failed", fieldErrors, rid))
 	}
 
+	cmd := taskcmd.Update{
+		PublicID:    publicID,
+		Title:       req.Title,
+		Description: req.Description,
+		Priority:    req.Priority,
+		DueDate:     req.DueDate,
+		Tags:        req.Tags,
+	}
+	err = h.taskService.Update(c.Context(), cmd)
+	if err != nil {
+		switch {
+		case errors.Is(err, task.ErrNotFound):
+			return c.Status(fiber.StatusNotFound).JSON(response.FailMessage("task not found", rid))
+		default:
+			log.WithError(err).Error("failed to update task")
+			return c.Status(fiber.StatusInternalServerError).JSON(response.FailMessage("failed to update task", rid))
+		}
+	}
+
 	return c.SendStatus(fiber.StatusNoContent)
 }
 
@@ -216,10 +236,11 @@ func (h *TaskHandler) Update(c *fiber.Ctx) error {
 // @Accept       json
 // @Produce      json
 // @Security     JWTAuth
-// @Param        id      path string true "Entity ID"
+// @Param        public_id   path     string  true  "Entity Public ID"
 // @Param        request body request.UpdateTaskStatus true "Update Status Request"
 // @Success      204
 // @Failure      400 {object} response.Error{errors=response.UpdateTaskStatusValidateError}
+// @Failure      404 {object} response.Error
 // @Router       /v1/api/tasks/{public_id}/status [patch]
 func (h *TaskHandler) UpdateStatus(c *fiber.Ctx) error {
 	log := httpctx.Get(c, h.log)
@@ -247,13 +268,25 @@ func (h *TaskHandler) UpdateStatus(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(response.Fail("validation failed", fieldErrors, rid))
 	}
 
-	log.WithFields(logrus.Fields{
-		"task_id": publicID,
-		"status":  req.Status,
-	}).Info("update task status")
-
-	// later:
-	// err := h.updateTaskStatus.Execute(ctx, publicID, req.Status)
+	status := task.Status(req.Status)
+	if status.IsValid() {
+		log.WithField("status", status).Info("invalid status")
+		return c.Status(fiber.StatusBadRequest).JSON(response.OKMessage("invalid status", rid))
+	}
+	cmd := taskcmd.UpdateStatus{
+		PublicID: publicID,
+		Status:   status,
+	}
+	err = h.taskService.UpdateStatusSingle(c.Context(), cmd)
+	if err != nil {
+		switch {
+		case errors.Is(err, task.ErrNotFound):
+			return c.Status(fiber.StatusNotFound).JSON(response.FailMessage("task not found", rid))
+		default:
+			log.WithError(err).Error("failed to update task status")
+			return c.Status(fiber.StatusInternalServerError).JSON(response.FailMessage("failed to update task status", rid))
+		}
+	}
 
 	return c.SendStatus(fiber.StatusNoContent)
 }
@@ -288,13 +321,19 @@ func (h *TaskHandler) BulkUpdateStatus(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(response.Fail("validation failed", fieldErrors, rid))
 	}
 
-	log.WithFields(logrus.Fields{
-		"task_ids": req.IDs,
-		"status":   req.Status,
-	}).Info("bulk update task status")
-
-	// later:
-	// err := h.updateStatuses.Execute(c.Context(), req.IDs, req.Status)
+	status := task.Status(req.Status)
+	if status.IsValid() {
+		log.WithField("status", status).Info("invalid status")
+		return c.Status(fiber.StatusBadRequest).JSON(response.OKMessage("invalid status", rid))
+	}
+	cmd := taskcmd.BulkUpdateStatus{
+		PublicIDs: req.IDs,
+		Status:    status,
+	}
+	err = h.taskService.BulkUpdateStatus(c.Context(), cmd)
+	if err != nil {
+		return err
+	}
 
 	return c.SendStatus(fiber.StatusNoContent)
 }
@@ -303,7 +342,7 @@ func (h *TaskHandler) BulkUpdateStatus(c *fiber.Ctx) error {
 // @Summary      DeletePublicID task
 // @Tags         tasks
 // @Security     JWTAuth
-// @Param        id path string true "Entity ID"
+// @Param        public_id   path     string  true  "Entity Public ID"
 // @Success      204
 // @Failure      400 {object} response.Error
 // @Router       /v1/api/tasks/{public_id} [delete]
@@ -317,10 +356,9 @@ func (h *TaskHandler) DeletePublicID(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(response.FailMessage("task publicID is required", rid))
 	}
 
-	log.WithField("task_id", publicID).Info("delete task")
-
-	// later:
-	// err := h.deleteTask.Execute(ctx, publicID)
+	if err := h.taskService.DeleteByPublicID(c.Context(), publicID); err != nil {
+		return err
+	}
 
 	return c.SendStatus(fiber.StatusNoContent)
 }
@@ -354,11 +392,12 @@ func (h *TaskHandler) BulkDelete(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(response.Fail("validation failed", fieldErrors, rid))
 	}
 
-	log.WithField("task_ids", req.IDs).Info("bulk delete tasks")
-
-	// later (usecase):
-	// err := h.deleteTasks.Execute(c.Context(), req.IDs)
-	// if err != nil { return err }
+	cmd := taskcmd.BulkDelete{
+		PublicIDs: req.IDs,
+	}
+	if err := h.taskService.BulkDelete(c.Context(), cmd); err != nil {
+		return err
+	}
 
 	return c.SendStatus(fiber.StatusNoContent)
 }

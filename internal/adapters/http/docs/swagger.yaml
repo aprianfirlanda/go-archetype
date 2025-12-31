@@ -17,12 +17,11 @@ definitions:
         minItems: 1
         type: array
       status:
-        allOf:
-        - $ref: '#/definitions/task.Status'
         enum:
         - todo
         - in_progress
         - done
+        type: string
     required:
     - ids
     - status
@@ -75,12 +74,11 @@ definitions:
   request.UpdateTaskStatus:
     properties:
       status:
-        allOf:
-        - $ref: '#/definitions/task.Status'
         enum:
         - todo
         - in_progress
         - done
+        type: string
     required:
     - status
     type: object
@@ -121,12 +119,17 @@ definitions:
           type: string
         type: array
     type: object
-  response.ErrorResponse:
+  response.Error:
     properties:
-      errors: {}
+      error: {}
       message:
         type: string
-      requestId:
+      request_id:
+        type: string
+    type: object
+  response.IDResponse:
+    properties:
+      id:
         type: string
     type: object
   response.ListTasksValidateError:
@@ -148,19 +151,25 @@ definitions:
       status:
         type: string
     type: object
-  response.Meta:
+  response.PaginationMeta:
     properties:
+      from:
+        example: 11
+        type: integer
       has_next:
         example: true
         type: boolean
       has_prev:
         example: false
         type: boolean
+      limit:
+        example: 10
+        type: integer
       page:
         example: 1
         type: integer
-      per_page:
-        example: 10
+      to:
+        example: 20
         type: integer
       total_items:
         example: 125
@@ -169,37 +178,13 @@ definitions:
         example: 13
         type: integer
     type: object
-  response.Paginate:
+  response.Success:
     properties:
       data: {}
-      meta:
-        $ref: '#/definitions/response.Meta'
-    type: object
-  response.Simple:
-    properties:
-      data: {}
-    type: object
-  response.Task:
-    properties:
-      completed:
-        type: boolean
-      created_at:
+      message:
         type: string
-      description:
-        type: string
-      due_date:
-        type: string
-      id:
-        type: string
-      priority:
-        type: integer
-      status:
-        $ref: '#/definitions/task.Status'
-      tags:
-        items:
-          type: string
-        type: array
-      title:
+      meta: {}
+      request_id:
         type: string
     type: object
   response.UpdateTaskStatusValidateError:
@@ -228,6 +213,34 @@ definitions:
           type: string
         type: array
     type: object
+  task.Entity:
+    properties:
+      completed:
+        type: boolean
+      createdAt:
+        type: string
+      description:
+        type: string
+      dueDate:
+        type: string
+      id:
+        format: int64
+        type: integer
+      priority:
+        type: integer
+      publicID:
+        type: string
+      status:
+        $ref: '#/definitions/task.Status'
+      tags:
+        items:
+          type: string
+        type: array
+      title:
+        type: string
+      updatedAt:
+        type: string
+    type: object
   task.Status:
     enum:
     - todo
@@ -244,12 +257,12 @@ info:
   title: Go Archetype
   version: "1.0"
 paths:
-  /api/tasks:
+  /v1/api/tasks:
     delete:
       consumes:
       - application/json
       parameters:
-      - description: Bulk Delete Tasks
+      - description: Bulk DeletePublicID Tasks
         in: body
         name: request
         required: true
@@ -262,7 +275,7 @@ paths:
           description: Bad Request
           schema:
             allOf:
-            - $ref: '#/definitions/response.ErrorResponse'
+            - $ref: '#/definitions/response.Error'
             - properties:
                 errors:
                   $ref: '#/definitions/response.BulkDeleteTasksValidateError'
@@ -287,11 +300,11 @@ paths:
         in: query
         name: search
         type: string
-      - description: Task status
+      - description: Entity status
         in: query
         name: status
         type: string
-      - description: Task priority
+      - description: Entity priority
         in: query
         name: priority
         type: integer
@@ -302,18 +315,20 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/response.Paginate'
+            - $ref: '#/definitions/response.Success'
             - properties:
+                ' meta':
+                  $ref: '#/definitions/response.PaginationMeta'
                 data:
                   items:
-                    $ref: '#/definitions/response.Task'
+                    $ref: '#/definitions/task.Entity'
                   type: array
               type: object
         "400":
           description: Bad Request
           schema:
             allOf:
-            - $ref: '#/definitions/response.ErrorResponse'
+            - $ref: '#/definitions/response.Error'
             - properties:
                 errors:
                   $ref: '#/definitions/response.ListTasksValidateError'
@@ -328,7 +343,7 @@ paths:
       - application/json
       description: Create a new task
       parameters:
-      - description: Create Task Request
+      - description: Create Entity Request
         in: body
         name: request
         required: true
@@ -341,31 +356,35 @@ paths:
           description: Created
           schema:
             allOf:
-            - $ref: '#/definitions/response.Simple'
+            - $ref: '#/definitions/response.Success'
             - properties:
                 data:
-                  $ref: '#/definitions/response.Task'
+                  $ref: '#/definitions/response.IDResponse'
               type: object
         "400":
           description: Bad Request
           schema:
             allOf:
-            - $ref: '#/definitions/response.ErrorResponse'
+            - $ref: '#/definitions/response.Error'
             - properties:
                 errors:
                   $ref: '#/definitions/response.CreateTaskValidateError'
               type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Error'
       security:
       - JWTAuth: []
       summary: Create a task
       tags:
       - tasks
-  /api/tasks/{id}:
+  /v1/api/tasks/{public_id}:
     delete:
       parameters:
-      - description: Task ID
+      - description: Entity Public ID
         in: path
-        name: id
+        name: public_id
         required: true
         type: string
       responses:
@@ -374,18 +393,18 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/response.ErrorResponse'
+            $ref: '#/definitions/response.Error'
       security:
       - JWTAuth: []
-      summary: Delete task
+      summary: DeletePublicID task
       tags:
       - tasks
     get:
       description: Retrieve a single task by its ID
       parameters:
-      - description: Task ID
+      - description: Entity Public ID
         in: path
-        name: id
+        name: public_id
         required: true
         type: string
       produces:
@@ -395,19 +414,19 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/response.Simple'
+            - $ref: '#/definitions/response.Success'
             - properties:
                 data:
-                  $ref: '#/definitions/response.Task'
+                  $ref: '#/definitions/task.Entity'
               type: object
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/response.ErrorResponse'
+            $ref: '#/definitions/response.Error'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/response.ErrorResponse'
+            $ref: '#/definitions/response.Error'
       security:
       - JWTAuth: []
       - ApiKeyAuth: []
@@ -419,12 +438,12 @@ paths:
       - application/json
       description: Replace a task completely
       parameters:
-      - description: Task ID
+      - description: Entity Public ID
         in: path
-        name: id
+        name: public_id
         required: true
         type: string
-      - description: Update Task Request
+      - description: Update Entity Request
         in: body
         name: request
         required: true
@@ -439,24 +458,28 @@ paths:
           description: Bad Request
           schema:
             allOf:
-            - $ref: '#/definitions/response.ErrorResponse'
+            - $ref: '#/definitions/response.Error'
             - properties:
                 errors:
                   $ref: '#/definitions/response.UpdateTaskValidateError'
               type: object
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.Error'
       security:
       - JWTAuth: []
       summary: Update task
       tags:
       - tasks
-  /api/tasks/{id}/status:
+  /v1/api/tasks/{public_id}/status:
     patch:
       consumes:
       - application/json
       parameters:
-      - description: Task ID
+      - description: Entity Public ID
         in: path
-        name: id
+        name: public_id
         required: true
         type: string
       - description: Update Status Request
@@ -474,17 +497,21 @@ paths:
           description: Bad Request
           schema:
             allOf:
-            - $ref: '#/definitions/response.ErrorResponse'
+            - $ref: '#/definitions/response.Error'
             - properties:
                 errors:
                   $ref: '#/definitions/response.UpdateTaskStatusValidateError'
               type: object
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.Error'
       security:
       - JWTAuth: []
       summary: Update task status
       tags:
       - tasks
-  /api/tasks/status:
+  /v1/api/tasks/status:
     patch:
       consumes:
       - application/json
@@ -504,7 +531,7 @@ paths:
           description: Bad Request
           schema:
             allOf:
-            - $ref: '#/definitions/response.ErrorResponse'
+            - $ref: '#/definitions/response.Error'
             - properties:
                 errors:
                   $ref: '#/definitions/response.BulkUpdateTaskStatusValidateError'

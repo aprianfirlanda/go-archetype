@@ -3,6 +3,8 @@ package gorm
 import (
 	"context"
 	"errors"
+	taskport "go-archetype/internal/application/task/port"
+	taskquery "go-archetype/internal/application/task/query"
 	"go-archetype/internal/domain/task"
 	"strings"
 	"time"
@@ -14,7 +16,7 @@ type taskRepository struct {
 	db *gorm.DB
 }
 
-func NewTaskRepository(db *gorm.DB) task.Repository {
+func NewTaskRepository(db *gorm.DB) taskport.Repository {
 	return &taskRepository{db: db}
 }
 
@@ -91,7 +93,7 @@ func (r *taskRepository) FindByPublicID(ctx context.Context, publicID string) (*
 	return toEntity(&model), nil
 }
 
-func (r *taskRepository) FindAll(ctx context.Context, filter task.ListFilter) ([]*task.Entity, int64, error) {
+func (r *taskRepository) FindAll(ctx context.Context, filter taskquery.ListFilter) ([]*task.Entity, int64, error) {
 	query := r.db.WithContext(ctx).Model(&TaskModel{})
 
 	// Apply filters
@@ -132,12 +134,20 @@ func (r *taskRepository) FindAll(ctx context.Context, filter task.ListFilter) ([
 }
 
 func (r *taskRepository) Update(ctx context.Context, t *task.Entity) error {
-	model := toModel(t)
-	return r.db.WithContext(ctx).Save(model).Error
-}
+	result := r.db.WithContext(ctx).
+		Model(&TaskModel{}).
+		Where("public_id = ?", t.PublicID).
+		Updates(toModel(t))
 
-func (r *taskRepository) DeleteByPublicID(ctx context.Context, publicID string) error {
-	return r.db.WithContext(ctx).Delete(&TaskModel{}, "public_id = ?", publicID).Error
+	if result.Error != nil {
+		return result.Error
+	}
+
+	if result.RowsAffected == 0 {
+		return task.ErrNotFound
+	}
+
+	return nil
 }
 
 func (r *taskRepository) BulkUpdateStatus(ctx context.Context, publicIDs []string, status task.Status) error {
@@ -151,6 +161,34 @@ func (r *taskRepository) BulkUpdateStatus(ctx context.Context, publicIDs []strin
 		}).Error
 }
 
+func (r *taskRepository) DeleteByPublicID(ctx context.Context, publicID string) error {
+	result := r.db.WithContext(ctx).
+		Where("public_id = ?", publicID).
+		Delete(&TaskModel{})
+
+	if result.Error != nil {
+		return result.Error
+	}
+
+	if result.RowsAffected == 0 {
+		return task.ErrNotFound
+	}
+
+	return nil
+}
+
 func (r *taskRepository) BulkDelete(ctx context.Context, publicIDs []string) error {
-	return r.db.WithContext(ctx).Delete(&TaskModel{}, "public_id IN ?", publicIDs).Error
+	result := r.db.WithContext(ctx).
+		Where("public_id IN ?", publicIDs).
+		Delete(&TaskModel{})
+
+	if result.Error != nil {
+		return result.Error
+	}
+
+	if result.RowsAffected == 0 {
+		return task.ErrNotFound
+	}
+
+	return nil
 }

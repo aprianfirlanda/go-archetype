@@ -1,7 +1,6 @@
 package response
 
 import (
-	"go-archetype/internal/domain/task"
 	"time"
 )
 
@@ -13,15 +12,15 @@ type CreateTaskValidateError struct {
 }
 
 type Task struct {
-	ID          string      `json:"id,omitempty"`
-	Title       string      `json:"title,omitempty"`
-	Description string      `json:"description,omitempty"`
-	Status      task.Status `json:"status,omitempty"`
-	Priority    int         `json:"priority,omitempty"`
-	DueDate     *time.Time  `json:"due_date,omitempty"`
-	Tags        []string    `json:"tags,omitempty"`
-	Completed   bool        `json:"completed,omitempty"`
-	CreatedAt   time.Time   `json:"created_at,omitempty"`
+	ID          string     `json:"id,omitempty"`
+	Title       string     `json:"title,omitempty"`
+	Description string     `json:"description,omitempty"`
+	Status      string     `json:"status,omitempty"`
+	Priority    int        `json:"priority,omitempty"`
+	DueDate     *time.Time `json:"due_date,omitempty"`
+	Tags        []string   `json:"tags,omitempty"`
+	Completed   bool       `json:"completed,omitempty"`
+	CreatedAt   time.Time  `json:"created_at,omitempty"`
 }
 
 type ListTasksValidateError struct {

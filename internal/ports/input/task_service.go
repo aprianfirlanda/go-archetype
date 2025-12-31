@@ -1,17 +1,19 @@
-package input
+package portin
 
 import (
 	"context"
+	taskcmd "go-archetype/internal/application/task/command"
+	taskquery "go-archetype/internal/application/task/query"
 	"go-archetype/internal/domain/task"
 )
 
 type TaskService interface {
-	CreateTask(ctx context.Context, task *task.Entity) (string, error)
-	GetTaskByPublicID(ctx context.Context, id string) (*task.Entity, error)
-	ListTasks(ctx context.Context, filter task.ListFilter) ([]*task.Entity, int64, error)
-	UpdateTask(ctx context.Context, task *task.Entity) error
-	UpdateTaskStatus(ctx context.Context, id string, status task.Status) error
-	DeleteTaskByPublicID(ctx context.Context, id string) error
-	BulkUpdateStatus(ctx context.Context, ids []string, status task.Status) error
-	BulkDelete(ctx context.Context, ids []string) error
+	Create(ctx context.Context, cmd taskcmd.Create) (string, error)
+	GetByPublicID(ctx context.Context, id string) (*task.Entity, error)
+	List(ctx context.Context, query taskquery.ListFilter) ([]*task.Entity, int64, error)
+	Update(ctx context.Context, cmd taskcmd.Update) error
+	UpdateStatusSingle(ctx context.Context, cmd taskcmd.UpdateStatus) error
+	BulkUpdateStatus(ctx context.Context, cmd taskcmd.BulkUpdateStatus) error
+	DeleteByPublicID(ctx context.Context, id string) error
+	BulkDelete(ctx context.Context, cmd taskcmd.BulkDelete) error
 }

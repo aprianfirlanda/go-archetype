@@ -2,8 +2,8 @@ package bootstrap
 
 import (
 	"go-archetype/internal/infrastructure/config"
-	"go-archetype/internal/ports/input"
-	"go-archetype/internal/ports/output"
+	portin "go-archetype/internal/ports/input"
+	portout "go-archetype/internal/ports/output"
 
 	"github.com/sirupsen/logrus"
 )
@@ -11,6 +11,6 @@ import (
 type HttpApp struct {
 	Config      *config.Config
 	Log         *logrus.Entry
-	DBPinger    output.DBPinger
-	TaskService input.TaskService
+	DBPinger    portout.DBPinger
+	TaskService portin.TaskService
 }

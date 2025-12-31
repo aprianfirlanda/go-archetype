@@ -6,7 +6,7 @@ Copyright © 2025 APRIAN FIRLANDA IMANI <aprianfirlanda@gmail.com>
 
 import (
 	"go-archetype/internal/adapters/http/server"
-	taskapp "go-archetype/internal/application/task"
+	taskapp "go-archetype/internal/application/task/service"
 	"go-archetype/internal/bootstrap"
 	"go-archetype/internal/infrastructure/persistance/gorm"
 

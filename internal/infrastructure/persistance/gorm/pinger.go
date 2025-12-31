@@ -12,7 +12,7 @@ type Pinger struct {
 	db *gorm.DB
 }
 
-func NewPinger(db *gorm.DB) output.DBPinger {
+func NewPinger(db *gorm.DB) portout.DBPinger {
 	return &Pinger{db: db}
 }
 

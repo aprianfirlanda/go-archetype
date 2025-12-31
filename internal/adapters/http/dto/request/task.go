@@ -1,7 +1,6 @@
 package request
 
 import (
-	"go-archetype/internal/domain/task"
 	"strings"
 	"time"
 )
@@ -42,12 +41,12 @@ type UpdateTask struct {
 }
 
 type UpdateTaskStatus struct {
-	Status task.Status `json:"status" validate:"required,oneof=todo in_progress done"`
+	Status string `json:"status" validate:"required,oneof=todo in_progress done"`
 }
 
 type BulkUpdateTaskStatus struct {
-	IDs    []string    `json:"ids" validate:"required,min=1,dive,required"`
-	Status task.Status `json:"status" validate:"required,oneof=todo in_progress done"`
+	IDs    []string `json:"ids" validate:"required,min=1,dive,required"`
+	Status string   `json:"status" validate:"required,oneof=todo in_progress done"`
 }
 
 type BulkDeleteTasks struct {

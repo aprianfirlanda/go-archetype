@@ -2,14 +2,14 @@ package middleware
 
 import (
 	"go-archetype/internal/infrastructure/logging"
-	"go-archetype/internal/ports/output"
+	portout "go-archetype/internal/ports/output"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/sirupsen/logrus"
 )
 import "github.com/gofiber/fiber/v2/middleware/healthcheck"
 
-func HealthCheck(logger *logrus.Entry, dbPinger output.DBPinger) fiber.Handler {
+func HealthCheck(logger *logrus.Entry, dbPinger portout.DBPinger) fiber.Handler {
 	log := logging.WithComponent(logger, "middleware.HealthCheck")
 
 	return healthcheck.New(healthcheck.Config{

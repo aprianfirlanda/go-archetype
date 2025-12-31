@@ -379,7 +379,7 @@ generate swagger docs
 ```shell
 swag init \
   -g cmd/http.go \
-  -o internal/adapter/http/docs
+  -o internal/adapters/http/docs
 ```
 
 access swagger ui at

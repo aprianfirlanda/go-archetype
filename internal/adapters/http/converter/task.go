@@ -3,20 +3,21 @@ package converter
 import (
 	"errors"
 	"go-archetype/internal/adapters/http/dto/request"
+	taskapp "go-archetype/internal/application/task/query"
 	"go-archetype/internal/domain/task"
 )
 
-func ToListFilter(q request.ListTasks) (task.ListFilter, error) {
+func ToListFilter(q request.ListTasks) (taskapp.ListFilter, error) {
 	var status task.Status
 
 	if q.Status != "" {
 		status = task.Status(q.Status)
 		if !status.IsValid() {
-			return task.ListFilter{}, errors.New("invalid status")
+			return taskapp.ListFilter{}, errors.New("invalid status")
 		}
 	}
 
-	return task.ListFilter{
+	return taskapp.ListFilter{
 		Search:   q.Search,
 		Status:   status,
 		Priority: q.Priority,
