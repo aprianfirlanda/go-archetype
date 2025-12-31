@@ -3,9 +3,9 @@ package gorm
 import (
 	"context"
 	"errors"
-	taskport "go-archetype/internal/application/task/port"
 	taskquery "go-archetype/internal/application/task/query"
 	"go-archetype/internal/domain/task"
+	taskport "go-archetype/internal/ports/output"
 	"strings"
 	"time"
 
@@ -16,7 +16,7 @@ type taskRepository struct {
 	db *gorm.DB
 }
 
-func NewTaskRepository(db *gorm.DB) taskport.Repository {
+func NewTaskRepository(db *gorm.DB) taskport.TaskRepository {
 	return &taskRepository{db: db}
 }
 

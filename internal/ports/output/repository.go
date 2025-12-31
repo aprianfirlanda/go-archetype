@@ -1,4 +1,4 @@
-package taskport
+package portout
 
 import (
 	"context"
@@ -6,7 +6,7 @@ import (
 	"go-archetype/internal/domain/task"
 )
 
-type Repository interface {
+type TaskRepository interface {
 	Create(ctx context.Context, task *task.Entity) error
 	FindByPublicID(ctx context.Context, publicID string) (*task.Entity, error)
 	FindAll(ctx context.Context, filter taskquery.ListFilter) ([]*task.Entity, int64, error)
