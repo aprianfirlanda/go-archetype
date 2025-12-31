@@ -269,7 +269,7 @@ func (h *TaskHandler) UpdateStatus(c *fiber.Ctx) error {
 	}
 
 	status := task.Status(req.Status)
-	if status.IsValid() {
+	if !status.IsValid() {
 		log.WithField("status", status).Info("invalid status")
 		return c.Status(fiber.StatusBadRequest).JSON(response.OKMessage("invalid status", rid))
 	}
@@ -277,7 +277,7 @@ func (h *TaskHandler) UpdateStatus(c *fiber.Ctx) error {
 		PublicID: publicID,
 		Status:   status,
 	}
-	err = h.taskService.UpdateStatusSingle(c.Context(), cmd)
+	err = h.taskService.UpdateStatus(c.Context(), cmd)
 	if err != nil {
 		switch {
 		case errors.Is(err, task.ErrNotFound):
@@ -322,7 +322,7 @@ func (h *TaskHandler) BulkUpdateStatus(c *fiber.Ctx) error {
 	}
 
 	status := task.Status(req.Status)
-	if status.IsValid() {
+	if !status.IsValid() {
 		log.WithField("status", status).Info("invalid status")
 		return c.Status(fiber.StatusBadRequest).JSON(response.OKMessage("invalid status", rid))
 	}

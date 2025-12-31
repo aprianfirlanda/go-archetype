@@ -12,7 +12,7 @@ type TaskService interface {
 	GetByPublicID(ctx context.Context, id string) (*task.Entity, error)
 	List(ctx context.Context, query taskquery.ListFilter) ([]*task.Entity, int64, error)
 	Update(ctx context.Context, cmd taskcmd.Update) error
-	UpdateStatusSingle(ctx context.Context, cmd taskcmd.UpdateStatus) error
+	UpdateStatus(ctx context.Context, cmd taskcmd.UpdateStatus) error
 	BulkUpdateStatus(ctx context.Context, cmd taskcmd.BulkUpdateStatus) error
 	DeleteByPublicID(ctx context.Context, id string) error
 	BulkDelete(ctx context.Context, cmd taskcmd.BulkDelete) error

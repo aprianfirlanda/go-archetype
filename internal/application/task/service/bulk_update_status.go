@@ -15,21 +15,5 @@ func (s *Service) BulkUpdateStatus(ctx context.Context, cmd taskcmd.BulkUpdateSt
 		return errors.New("invalid status")
 	}
 
-	tx, err := s.uow.Begin(ctx)
-	if err != nil {
-		return err
-	}
-	defer tx.Rollback()
-
-	// Update each task with business validation
-	for _, publicID := range cmd.PublicIDs {
-		if err := s.updateStatus(ctx, taskcmd.UpdateStatus{
-			PublicID: publicID,
-			Status:   cmd.Status,
-		}); err != nil {
-			return err
-		}
-	}
-
-	return tx.Commit()
+	return s.taskRepository.BulkUpdateStatus(ctx, cmd.PublicIDs, cmd.Status)
 }

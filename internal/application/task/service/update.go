@@ -18,5 +18,5 @@ func (s *Service) Update(ctx context.Context, cmd taskcmd.Update) error {
 		cmd.DueDate,
 		cmd.Tags,
 	)
-	return s.taskRepository.Update(ctx, task)
+	return s.taskRepository.UpdateByPublicID(ctx, task)
 }

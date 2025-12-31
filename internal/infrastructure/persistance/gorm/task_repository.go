@@ -133,7 +133,7 @@ func (r *taskRepository) FindAll(ctx context.Context, filter taskquery.ListFilte
 	return tasks, total, nil
 }
 
-func (r *taskRepository) Update(ctx context.Context, t *task.Entity) error {
+func (r *taskRepository) UpdateByPublicID(ctx context.Context, t *task.Entity) error {
 	result := r.db.WithContext(ctx).
 		Model(&TaskModel{}).
 		Where("public_id = ?", t.PublicID).
@@ -150,15 +150,46 @@ func (r *taskRepository) Update(ctx context.Context, t *task.Entity) error {
 	return nil
 }
 
+func (r *taskRepository) UpdateStatusByPublicID(ctx context.Context, publicID string, status task.Status) error {
+	result := r.db.WithContext(ctx).
+		Model(&TaskModel{}).
+		Where("public_id = ?", publicID).
+		Updates(map[string]interface{}{
+			"status":     string(status),
+			"completed":  status == task.StatusDone,
+			"updated_at": time.Now(),
+		})
+
+	if result.Error != nil {
+		return result.Error
+	}
+
+	if result.RowsAffected == 0 {
+		return task.ErrNotFound
+	}
+
+	return nil
+}
+
 func (r *taskRepository) BulkUpdateStatus(ctx context.Context, publicIDs []string, status task.Status) error {
-	return r.db.WithContext(ctx).
+	result := r.db.WithContext(ctx).
 		Model(&TaskModel{}).
 		Where("public_id IN ?", publicIDs).
 		Updates(map[string]interface{}{
 			"status":     string(status),
 			"completed":  status == task.StatusDone,
 			"updated_at": time.Now(),
-		}).Error
+		})
+
+	if result.Error != nil {
+		return result.Error
+	}
+
+	if result.RowsAffected == 0 {
+		return task.ErrNotFound
+	}
+
+	return nil
 }
 
 func (r *taskRepository) DeleteByPublicID(ctx context.Context, publicID string) error {
