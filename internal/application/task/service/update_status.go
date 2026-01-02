@@ -6,5 +6,14 @@ import (
 )
 
 func (s *Service) UpdateStatus(ctx context.Context, cmd taskcmd.UpdateStatus) error {
-	return s.taskRepository.UpdateStatusByPublicID(ctx, cmd.PublicID, cmd.Status)
+	task, err := s.taskRepository.FindByPublicID(ctx, cmd.PublicID)
+	if err != nil {
+		return err
+	}
+
+	if err := task.UpdateStatus(cmd.Status); err != nil {
+		return err
+	}
+
+	return s.taskRepository.UpdateByPublicID(ctx, task)
 }
