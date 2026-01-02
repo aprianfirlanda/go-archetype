@@ -50,10 +50,10 @@ func (h *Handler) BulkUpdateStatus(c *fiber.Ctx) error {
 		PublicIDs: req.IDs,
 		Status:    status,
 	}
-	err = h.taskService.BulkUpdateStatus(c.Context(), cmd)
+	res, err := h.taskService.BulkUpdateStatus(c.Context(), cmd)
 	if err != nil {
 		return err
 	}
 
-	return c.SendStatus(fiber.StatusNoContent)
+	return c.Status(fiber.StatusOK).JSON(response.OK(res, rid))
 }
