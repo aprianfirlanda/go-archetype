@@ -2,7 +2,7 @@ package taskhandler
 
 import (
 	"go-archetype/internal/adapters/http/context"
-	"go-archetype/internal/adapters/http/dto/request"
+	"go-archetype/internal/adapters/http/dto/request/task"
 	"go-archetype/internal/adapters/http/dto/response"
 	"go-archetype/internal/adapters/http/validation"
 	"go-archetype/internal/application/task/command"
@@ -15,15 +15,15 @@ import (
 // @Tags         tasks
 // @Accept       json
 // @Security     JWTAuth
-// @Param        request body request.BulkDeleteTasks true "Bulk DeletePublicID Tasks"
-// @Success      204
-// @Failure      400 {object} response.Error{errors=response.BulkDeleteTasksValidateError}
+// @Param        request body taskreq.BulkDelete true "Bulk DeletePublicID Tasks"
+// @Success      200  {object} response.Success{data=taskresp.BulkDelete}
+// @Failure      400 {object} response.Error{errors=taskresp.BulkDeleteValidateError}
 // @Router       /v1/api/tasks [delete]
 func (h *Handler) BulkDelete(c *fiber.Ctx) error {
 	log := httpctx.Get(c, h.log)
 	rid := httpctx.GetRequestID(c)
 
-	var req request.BulkDeleteTasks
+	var req taskreq.BulkDelete
 	if err := c.BodyParser(&req); err != nil {
 		log.WithError(err).Error("failed to parse request body")
 		return c.Status(fiber.StatusBadRequest).JSON(response.FailMessage("failed to parse request body", rid))
@@ -42,9 +42,10 @@ func (h *Handler) BulkDelete(c *fiber.Ctx) error {
 	cmd := taskcmd.BulkDelete{
 		PublicIDs: req.IDs,
 	}
-	if err := h.taskService.BulkDelete(c.Context(), cmd); err != nil {
+	res, err := h.taskService.BulkDelete(c.Context(), cmd)
+	if err != nil {
 		return err
 	}
 
-	return c.SendStatus(fiber.StatusNoContent)
+	return c.Status(fiber.StatusOK).JSON(response.OK(res, rid))
 }

@@ -2,7 +2,7 @@ package taskhandler
 
 import (
 	"go-archetype/internal/adapters/http/context"
-	"go-archetype/internal/adapters/http/dto/request"
+	"go-archetype/internal/adapters/http/dto/request/task"
 	"go-archetype/internal/adapters/http/dto/response"
 	"go-archetype/internal/adapters/http/validation"
 	"go-archetype/internal/application/task/command"
@@ -17,15 +17,15 @@ import (
 // @Accept       json
 // @Produce      json
 // @Security     JWTAuth
-// @Param        request body request.BulkUpdateTaskStatus true "Bulk Update Status"
-// @Success      204
-// @Failure      400 {object} response.Error{errors=response.BulkUpdateTaskStatusValidateError}
+// @Param        request body taskreq.BulkUpdateStatus true "Bulk Update Status"
+// @Success      200  {object} response.Success{data=taskresp.BulkUpdateStatus}
+// @Failure      400 {object} response.Error{errors=taskresp.BulkUpdateStatusValidateError}
 // @Router       /v1/api/tasks/status [patch]
 func (h *Handler) BulkUpdateStatus(c *fiber.Ctx) error {
 	log := httpctx.Get(c, h.log)
 	rid := httpctx.GetRequestID(c)
 
-	var req request.BulkUpdateTaskStatus
+	var req taskreq.BulkUpdateStatus
 	if err := c.BodyParser(&req); err != nil {
 		log.WithError(err).Error("failed to parse request body")
 		return c.Status(fiber.StatusBadRequest).JSON(response.FailMessage("failed to parse request body", rid))

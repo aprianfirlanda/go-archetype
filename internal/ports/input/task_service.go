@@ -16,5 +16,5 @@ type TaskService interface {
 	UpdateStatus(ctx context.Context, cmd taskcmd.UpdateStatus) error
 	BulkUpdateStatus(ctx context.Context, cmd taskcmd.BulkUpdateStatus) (*taskresult.BulkUpdateStatusResult, error)
 	DeleteByPublicID(ctx context.Context, id string) error
-	BulkDelete(ctx context.Context, cmd taskcmd.BulkDelete) error
+	BulkDelete(ctx context.Context, cmd taskcmd.BulkDelete) (*taskresult.BulkDeleteResult, error)
 }

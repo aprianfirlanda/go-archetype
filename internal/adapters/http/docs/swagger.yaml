@@ -1,124 +1,4 @@
 definitions:
-  request.BulkDeleteTasks:
-    properties:
-      ids:
-        items:
-          type: string
-        minItems: 1
-        type: array
-    required:
-    - ids
-    type: object
-  request.BulkUpdateTaskStatus:
-    properties:
-      ids:
-        items:
-          type: string
-        minItems: 1
-        type: array
-      status:
-        enum:
-        - todo
-        - in_progress
-        - done
-        type: string
-    required:
-    - ids
-    - status
-    type: object
-  request.CreateTask:
-    properties:
-      description:
-        maxLength: 500
-        type: string
-      due_date:
-        type: string
-      priority:
-        maximum: 5
-        minimum: 1
-        type: integer
-      tags:
-        items:
-          type: string
-        maxItems: 10
-        type: array
-      title:
-        minLength: 3
-        type: string
-    required:
-    - title
-    type: object
-  request.UpdateTask:
-    properties:
-      description:
-        maxLength: 500
-        type: string
-      due_date:
-        type: string
-      priority:
-        maximum: 5
-        minimum: 1
-        type: integer
-      tags:
-        items:
-          type: string
-        maxItems: 10
-        type: array
-      title:
-        minLength: 3
-        type: string
-    required:
-    - priority
-    - title
-    type: object
-  request.UpdateTaskStatus:
-    properties:
-      status:
-        enum:
-        - todo
-        - in_progress
-        - done
-        type: string
-    required:
-    - status
-    type: object
-  response.BulkDeleteTasksValidateError:
-    properties:
-      ids:
-        items:
-          type: string
-        type: array
-    type: object
-  response.BulkUpdateTaskStatusValidateError:
-    properties:
-      ids:
-        items:
-          type: string
-        type: array
-      status:
-        items:
-          type: string
-        type: array
-    type: object
-  response.CreateTaskValidateError:
-    properties:
-      description:
-        items:
-          type: string
-        type: array
-      priority:
-        items:
-          type: string
-        type: array
-      tags:
-        items:
-          type: string
-        type: array
-      title:
-        items:
-          type: string
-        type: array
-    type: object
   response.Error:
     properties:
       error: {}
@@ -130,25 +10,6 @@ definitions:
   response.IDResponse:
     properties:
       id:
-        type: string
-    type: object
-  response.ListTasksValidateError:
-    properties:
-      limit:
-        items:
-          type: string
-        type: array
-      page:
-        items:
-          type: string
-        type: array
-      priority:
-        items:
-          type: string
-        type: array
-      search:
-        type: string
-      status:
         type: string
     type: object
   response.PaginationMeta:
@@ -187,14 +48,144 @@ definitions:
       request_id:
         type: string
     type: object
-  response.UpdateTaskStatusValidateError:
+  taskreq.BulkDelete:
     properties:
+      ids:
+        items:
+          type: string
+        minItems: 1
+        type: array
+    required:
+    - ids
+    type: object
+  taskreq.BulkUpdateStatus:
+    properties:
+      ids:
+        items:
+          type: string
+        minItems: 1
+        type: array
+      status:
+        enum:
+        - todo
+        - in_progress
+        - done
+        type: string
+    required:
+    - ids
+    - status
+    type: object
+  taskreq.Create:
+    properties:
+      description:
+        maxLength: 500
+        type: string
+      due_date:
+        type: string
+      priority:
+        maximum: 5
+        minimum: 1
+        type: integer
+      tags:
+        items:
+          type: string
+        maxItems: 10
+        type: array
+      title:
+        minLength: 3
+        type: string
+    required:
+    - title
+    type: object
+  taskreq.Update:
+    properties:
+      description:
+        maxLength: 500
+        type: string
+      due_date:
+        type: string
+      priority:
+        maximum: 5
+        minimum: 1
+        type: integer
+      tags:
+        items:
+          type: string
+        maxItems: 10
+        type: array
+      title:
+        minLength: 3
+        type: string
+    required:
+    - priority
+    - title
+    type: object
+  taskreq.UpdateStatus:
+    properties:
+      status:
+        enum:
+        - todo
+        - in_progress
+        - done
+        type: string
+    required:
+    - status
+    type: object
+  taskresp.BulkDelete:
+    properties:
+      deleted:
+        items:
+          type: string
+        type: array
+      failed:
+        items:
+          $ref: '#/definitions/taskresp.BulkDeleteFailure'
+        type: array
+    type: object
+  taskresp.BulkDeleteFailure:
+    properties:
+      id:
+        type: string
+      reason:
+        type: string
+    type: object
+  taskresp.BulkDeleteValidateError:
+    properties:
+      ids:
+        items:
+          type: string
+        type: array
+    type: object
+  taskresp.BulkUpdateStatus:
+    properties:
+      failed:
+        items:
+          $ref: '#/definitions/taskresp.BulkUpdateStatusFail'
+        type: array
+      updated:
+        items:
+          type: string
+        type: array
+    type: object
+  taskresp.BulkUpdateStatusFail:
+    properties:
+      id:
+        type: string
+      reason:
+        type: string
+    type: object
+  taskresp.BulkUpdateStatusValidateError:
+    properties:
+      ids:
+        items:
+          type: string
+        type: array
       status:
         items:
           type: string
         type: array
     type: object
-  response.UpdateTaskValidateError:
+  taskresp.CreateValidateError:
     properties:
       description:
         items:
@@ -213,44 +204,99 @@ definitions:
           type: string
         type: array
     type: object
-  task.Entity:
+  taskresp.Detail:
     properties:
       completed:
         type: boolean
-      createdAt:
+      created_at:
         type: string
       description:
         type: string
-      dueDate:
+      due_date:
         type: string
       id:
-        format: int64
-        type: integer
+        type: string
       priority:
         type: integer
-      publicID:
-        type: string
       status:
-        $ref: '#/definitions/task.Status'
+        type: string
       tags:
         items:
           type: string
         type: array
       title:
         type: string
-      updatedAt:
+      updated_at:
         type: string
     type: object
-  task.Status:
-    enum:
-    - todo
-    - in_progress
-    - done
-    type: string
-    x-enum-varnames:
-    - StatusTodo
-    - StatusInProgress
-    - StatusDone
+  taskresp.ListItem:
+    properties:
+      completed:
+        type: boolean
+      created_at:
+        type: string
+      description:
+        type: string
+      due_date:
+        type: string
+      id:
+        type: string
+      priority:
+        type: integer
+      status:
+        type: string
+      tags:
+        items:
+          type: string
+        type: array
+      title:
+        type: string
+    type: object
+  taskresp.ListValidateError:
+    properties:
+      limit:
+        items:
+          type: string
+        type: array
+      page:
+        items:
+          type: string
+        type: array
+      priority:
+        items:
+          type: string
+        type: array
+      search:
+        type: string
+      status:
+        type: string
+    type: object
+  taskresp.UpdateStatusValidateError:
+    properties:
+      status:
+        items:
+          type: string
+        type: array
+    type: object
+  taskresp.UpdateValidateError:
+    properties:
+      description:
+        items:
+          type: string
+        type: array
+      priority:
+        items:
+          type: string
+        type: array
+      tags:
+        items:
+          type: string
+        type: array
+      title:
+        items:
+          type: string
+        type: array
+    type: object
 info:
   contact: {}
   description: REST API for Go Archetype
@@ -267,10 +313,17 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/request.BulkDeleteTasks'
+          $ref: '#/definitions/taskreq.BulkDelete'
       responses:
-        "204":
-          description: No Content
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Success'
+            - properties:
+                data:
+                  $ref: '#/definitions/taskresp.BulkDelete'
+              type: object
         "400":
           description: Bad Request
           schema:
@@ -278,7 +331,7 @@ paths:
             - $ref: '#/definitions/response.Error'
             - properties:
                 errors:
-                  $ref: '#/definitions/response.BulkDeleteTasksValidateError'
+                  $ref: '#/definitions/taskresp.BulkDeleteValidateError'
               type: object
       security:
       - JWTAuth: []
@@ -321,7 +374,7 @@ paths:
                   $ref: '#/definitions/response.PaginationMeta'
                 data:
                   items:
-                    $ref: '#/definitions/task.Entity'
+                    $ref: '#/definitions/taskresp.ListItem'
                   type: array
               type: object
         "400":
@@ -331,7 +384,7 @@ paths:
             - $ref: '#/definitions/response.Error'
             - properties:
                 errors:
-                  $ref: '#/definitions/response.ListTasksValidateError'
+                  $ref: '#/definitions/taskresp.ListValidateError'
               type: object
       security:
       - JWTAuth: []
@@ -348,7 +401,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/request.CreateTask'
+          $ref: '#/definitions/taskreq.Create'
       produces:
       - application/json
       responses:
@@ -368,7 +421,7 @@ paths:
             - $ref: '#/definitions/response.Error'
             - properties:
                 errors:
-                  $ref: '#/definitions/response.CreateTaskValidateError'
+                  $ref: '#/definitions/taskresp.CreateValidateError'
               type: object
         "500":
           description: Internal Server Error
@@ -417,7 +470,7 @@ paths:
             - $ref: '#/definitions/response.Success'
             - properties:
                 data:
-                  $ref: '#/definitions/task.Entity'
+                  $ref: '#/definitions/taskresp.Detail'
               type: object
         "400":
           description: Bad Request
@@ -448,7 +501,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/request.UpdateTask'
+          $ref: '#/definitions/taskreq.Update'
       produces:
       - application/json
       responses:
@@ -461,7 +514,7 @@ paths:
             - $ref: '#/definitions/response.Error'
             - properties:
                 errors:
-                  $ref: '#/definitions/response.UpdateTaskValidateError'
+                  $ref: '#/definitions/taskresp.UpdateValidateError'
               type: object
         "404":
           description: Not Found
@@ -487,7 +540,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/request.UpdateTaskStatus'
+          $ref: '#/definitions/taskreq.UpdateStatus'
       produces:
       - application/json
       responses:
@@ -500,7 +553,7 @@ paths:
             - $ref: '#/definitions/response.Error'
             - properties:
                 errors:
-                  $ref: '#/definitions/response.UpdateTaskStatusValidateError'
+                  $ref: '#/definitions/taskresp.UpdateStatusValidateError'
               type: object
         "404":
           description: Not Found
@@ -521,12 +574,19 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/request.BulkUpdateTaskStatus'
+          $ref: '#/definitions/taskreq.BulkUpdateStatus'
       produces:
       - application/json
       responses:
-        "204":
-          description: No Content
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Success'
+            - properties:
+                data:
+                  $ref: '#/definitions/taskresp.BulkUpdateStatus'
+              type: object
         "400":
           description: Bad Request
           schema:
@@ -534,7 +594,7 @@ paths:
             - $ref: '#/definitions/response.Error'
             - properties:
                 errors:
-                  $ref: '#/definitions/response.BulkUpdateTaskStatusValidateError'
+                  $ref: '#/definitions/taskresp.BulkUpdateStatusValidateError'
               type: object
       security:
       - JWTAuth: []

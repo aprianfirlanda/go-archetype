@@ -3,7 +3,7 @@ package taskhandler
 import (
 	"errors"
 	"go-archetype/internal/adapters/http/context"
-	"go-archetype/internal/adapters/http/dto/request"
+	"go-archetype/internal/adapters/http/dto/request/task"
 	"go-archetype/internal/adapters/http/dto/response"
 	"go-archetype/internal/adapters/http/validation"
 	"go-archetype/internal/application/task/command"
@@ -19,9 +19,9 @@ import (
 // @Produce      json
 // @Security     JWTAuth
 // @Param        public_id   path     string  true  "Entity Public ID"
-// @Param        request body request.UpdateTaskStatus true "Update Status Request"
+// @Param        request body taskreq.UpdateStatus true "Update Status Request"
 // @Success      204
-// @Failure      400 {object} response.Error{errors=response.UpdateTaskStatusValidateError}
+// @Failure      400 {object} response.Error{errors=taskresp.UpdateStatusValidateError}
 // @Failure      404 {object} response.Error
 // @Router       /v1/api/tasks/{public_id}/status [patch]
 func (h *Handler) UpdateStatus(c *fiber.Ctx) error {
@@ -34,7 +34,7 @@ func (h *Handler) UpdateStatus(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(response.FailMessage("task publicID is required", rid))
 	}
 
-	var req request.UpdateTaskStatus
+	var req taskreq.UpdateStatus
 	if err := c.BodyParser(&req); err != nil {
 		log.WithError(err).Error("failed to parse request body")
 		return c.Status(fiber.StatusBadRequest).JSON(response.FailMessage("failed to parse request body", rid))

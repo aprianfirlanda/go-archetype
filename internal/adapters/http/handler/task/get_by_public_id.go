@@ -4,6 +4,7 @@ import (
 	"errors"
 	"go-archetype/internal/adapters/http/context"
 	"go-archetype/internal/adapters/http/dto/response"
+	taskresp "go-archetype/internal/adapters/http/dto/response/task"
 	"go-archetype/internal/domain/task"
 
 	"github.com/gofiber/fiber/v2"
@@ -17,7 +18,7 @@ import (
 // @Security     JWTAuth
 // @Security     ApiKeyAuth
 // @Param        public_id   path     string  true  "Entity Public ID"
-// @Success      200  {object} response.Success{data=task.Entity}
+// @Success      200  {object} response.Success{data=taskresp.Detail}
 // @Failure      400  {object} response.Error
 // @Failure      404  {object} response.Error
 // @Router       /v1/api/tasks/{public_id} [get]
@@ -42,5 +43,6 @@ func (h *Handler) GetByPublicID(c *fiber.Ctx) error {
 		}
 	}
 
-	return c.JSON(response.OK(taskEntity, rid))
+	dto := taskresp.ToDetail(taskEntity)
+	return c.JSON(response.OK(dto, rid))
 }

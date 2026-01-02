@@ -2,9 +2,9 @@ package taskhandler
 
 import (
 	"go-archetype/internal/adapters/http/context"
-	"go-archetype/internal/adapters/http/converter"
-	"go-archetype/internal/adapters/http/dto/request"
+	"go-archetype/internal/adapters/http/dto/request/task"
 	"go-archetype/internal/adapters/http/dto/response"
+	taskresp "go-archetype/internal/adapters/http/dto/response/task"
 	"go-archetype/internal/adapters/http/validation"
 
 	"github.com/gofiber/fiber/v2"
@@ -21,14 +21,14 @@ import (
 // @Param        search   query string  false "Search keyword"
 // @Param        status   query string  false "Entity status"
 // @Param        priority query int     false "Entity priority"
-// @Success      200 {object} response.Success{data=[]task.Entity, meta=response.PaginationMeta}
-// @Failure      400 {object} response.Error{errors=response.ListTasksValidateError}
+// @Success      200 {object} response.Success{data=[]taskresp.ListItem, meta=response.PaginationMeta}
+// @Failure      400 {object} response.Error{errors=taskresp.ListValidateError}
 // @Router       /v1/api/tasks [get]
 func (h *Handler) List(c *fiber.Ctx) error {
 	log := httpctx.Get(c, h.log)
 	rid := httpctx.GetRequestID(c)
 
-	var q request.ListTasks
+	var q taskreq.List
 	if err := c.QueryParser(&q); err != nil {
 		log.WithError(err).Error("failed to parse query params")
 		return c.Status(fiber.StatusBadRequest).JSON(response.FailMessage("failed to parse query params", rid))
@@ -46,7 +46,7 @@ func (h *Handler) List(c *fiber.Ctx) error {
 
 	q.Normalize()
 
-	filter, err := converter.ToListFilter(q)
+	filter, err := q.ToListFilter()
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).
 			JSON(response.FailMessage(err.Error(), rid))
@@ -57,6 +57,7 @@ func (h *Handler) List(c *fiber.Ctx) error {
 		return err
 	}
 
+	dto := taskresp.ToList(tasks)
 	meta := response.NewPaginationMeta(
 		filter.Page,
 		filter.Limit,
@@ -64,5 +65,5 @@ func (h *Handler) List(c *fiber.Ctx) error {
 	)
 
 	return c.Status(fiber.StatusOK).
-		JSON(response.OKPaginate(tasks, meta, rid))
+		JSON(response.OKPaginate(dto, meta, rid))
 }

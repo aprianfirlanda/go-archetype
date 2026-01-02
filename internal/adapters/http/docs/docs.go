@@ -79,7 +79,7 @@ const docTemplate = `{
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/task.Entity"
+                                                "$ref": "#/definitions/taskresp.ListItem"
                                             }
                                         }
                                     }
@@ -98,7 +98,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "errors": {
-                                            "$ref": "#/definitions/response.ListTasksValidateError"
+                                            "$ref": "#/definitions/taskresp.ListValidateError"
                                         }
                                     }
                                 }
@@ -131,7 +131,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/request.CreateTask"
+                            "$ref": "#/definitions/taskreq.Create"
                         }
                     }
                 ],
@@ -165,7 +165,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "errors": {
-                                            "$ref": "#/definitions/response.CreateTaskValidateError"
+                                            "$ref": "#/definitions/taskresp.CreateValidateError"
                                         }
                                     }
                                 }
@@ -200,13 +200,28 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/request.BulkDeleteTasks"
+                            "$ref": "#/definitions/taskreq.BulkDelete"
                         }
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": "No Content"
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Success"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/taskresp.BulkDelete"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
                     },
                     "400": {
                         "description": "Bad Request",
@@ -219,7 +234,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "errors": {
-                                            "$ref": "#/definitions/response.BulkDeleteTasksValidateError"
+                                            "$ref": "#/definitions/taskresp.BulkDeleteValidateError"
                                         }
                                     }
                                 }
@@ -253,13 +268,28 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/request.BulkUpdateTaskStatus"
+                            "$ref": "#/definitions/taskreq.BulkUpdateStatus"
                         }
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": "No Content"
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Success"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/taskresp.BulkUpdateStatus"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
                     },
                     "400": {
                         "description": "Bad Request",
@@ -272,7 +302,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "errors": {
-                                            "$ref": "#/definitions/response.BulkUpdateTaskStatusValidateError"
+                                            "$ref": "#/definitions/taskresp.BulkUpdateStatusValidateError"
                                         }
                                     }
                                 }
@@ -321,7 +351,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/task.Entity"
+                                            "$ref": "#/definitions/taskresp.Detail"
                                         }
                                     }
                                 }
@@ -373,7 +403,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/request.UpdateTask"
+                            "$ref": "#/definitions/taskreq.Update"
                         }
                     }
                 ],
@@ -392,7 +422,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "errors": {
-                                            "$ref": "#/definitions/response.UpdateTaskValidateError"
+                                            "$ref": "#/definitions/taskresp.UpdateValidateError"
                                         }
                                     }
                                 }
@@ -470,7 +500,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/request.UpdateTaskStatus"
+                            "$ref": "#/definitions/taskreq.UpdateStatus"
                         }
                     }
                 ],
@@ -489,7 +519,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "errors": {
-                                            "$ref": "#/definitions/response.UpdateTaskStatusValidateError"
+                                            "$ref": "#/definitions/taskresp.UpdateStatusValidateError"
                                         }
                                     }
                                 }
@@ -507,181 +537,6 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "request.BulkDeleteTasks": {
-            "type": "object",
-            "required": [
-                "ids"
-            ],
-            "properties": {
-                "ids": {
-                    "type": "array",
-                    "minItems": 1,
-                    "items": {
-                        "type": "string"
-                    }
-                }
-            }
-        },
-        "request.BulkUpdateTaskStatus": {
-            "type": "object",
-            "required": [
-                "ids",
-                "status"
-            ],
-            "properties": {
-                "ids": {
-                    "type": "array",
-                    "minItems": 1,
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "status": {
-                    "type": "string",
-                    "enum": [
-                        "todo",
-                        "in_progress",
-                        "done"
-                    ]
-                }
-            }
-        },
-        "request.CreateTask": {
-            "type": "object",
-            "required": [
-                "title"
-            ],
-            "properties": {
-                "description": {
-                    "type": "string",
-                    "maxLength": 500
-                },
-                "due_date": {
-                    "type": "string"
-                },
-                "priority": {
-                    "type": "integer",
-                    "maximum": 5,
-                    "minimum": 1
-                },
-                "tags": {
-                    "type": "array",
-                    "maxItems": 10,
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "title": {
-                    "type": "string",
-                    "minLength": 3
-                }
-            }
-        },
-        "request.UpdateTask": {
-            "type": "object",
-            "required": [
-                "priority",
-                "title"
-            ],
-            "properties": {
-                "description": {
-                    "type": "string",
-                    "maxLength": 500
-                },
-                "due_date": {
-                    "type": "string"
-                },
-                "priority": {
-                    "type": "integer",
-                    "maximum": 5,
-                    "minimum": 1
-                },
-                "tags": {
-                    "type": "array",
-                    "maxItems": 10,
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "title": {
-                    "type": "string",
-                    "minLength": 3
-                }
-            }
-        },
-        "request.UpdateTaskStatus": {
-            "type": "object",
-            "required": [
-                "status"
-            ],
-            "properties": {
-                "status": {
-                    "type": "string",
-                    "enum": [
-                        "todo",
-                        "in_progress",
-                        "done"
-                    ]
-                }
-            }
-        },
-        "response.BulkDeleteTasksValidateError": {
-            "type": "object",
-            "properties": {
-                "ids": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                }
-            }
-        },
-        "response.BulkUpdateTaskStatusValidateError": {
-            "type": "object",
-            "properties": {
-                "ids": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "status": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                }
-            }
-        },
-        "response.CreateTaskValidateError": {
-            "type": "object",
-            "properties": {
-                "description": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "priority": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "tags": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "title": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                }
-            }
-        },
         "response.Error": {
             "type": "object",
             "properties": {
@@ -698,35 +553,6 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "id": {
-                    "type": "string"
-                }
-            }
-        },
-        "response.ListTasksValidateError": {
-            "type": "object",
-            "properties": {
-                "limit": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "page": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "priority": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "search": {
-                    "type": "string"
-                },
-                "status": {
                     "type": "string"
                 }
             }
@@ -781,9 +607,200 @@ const docTemplate = `{
                 }
             }
         },
-        "response.UpdateTaskStatusValidateError": {
+        "taskreq.BulkDelete": {
+            "type": "object",
+            "required": [
+                "ids"
+            ],
+            "properties": {
+                "ids": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "taskreq.BulkUpdateStatus": {
+            "type": "object",
+            "required": [
+                "ids",
+                "status"
+            ],
+            "properties": {
+                "ids": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "status": {
+                    "type": "string",
+                    "enum": [
+                        "todo",
+                        "in_progress",
+                        "done"
+                    ]
+                }
+            }
+        },
+        "taskreq.Create": {
+            "type": "object",
+            "required": [
+                "title"
+            ],
+            "properties": {
+                "description": {
+                    "type": "string",
+                    "maxLength": 500
+                },
+                "due_date": {
+                    "type": "string"
+                },
+                "priority": {
+                    "type": "integer",
+                    "maximum": 5,
+                    "minimum": 1
+                },
+                "tags": {
+                    "type": "array",
+                    "maxItems": 10,
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "title": {
+                    "type": "string",
+                    "minLength": 3
+                }
+            }
+        },
+        "taskreq.Update": {
+            "type": "object",
+            "required": [
+                "priority",
+                "title"
+            ],
+            "properties": {
+                "description": {
+                    "type": "string",
+                    "maxLength": 500
+                },
+                "due_date": {
+                    "type": "string"
+                },
+                "priority": {
+                    "type": "integer",
+                    "maximum": 5,
+                    "minimum": 1
+                },
+                "tags": {
+                    "type": "array",
+                    "maxItems": 10,
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "title": {
+                    "type": "string",
+                    "minLength": 3
+                }
+            }
+        },
+        "taskreq.UpdateStatus": {
+            "type": "object",
+            "required": [
+                "status"
+            ],
+            "properties": {
+                "status": {
+                    "type": "string",
+                    "enum": [
+                        "todo",
+                        "in_progress",
+                        "done"
+                    ]
+                }
+            }
+        },
+        "taskresp.BulkDelete": {
             "type": "object",
             "properties": {
+                "deleted": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "failed": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/taskresp.BulkDeleteFailure"
+                    }
+                }
+            }
+        },
+        "taskresp.BulkDeleteFailure": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "reason": {
+                    "type": "string"
+                }
+            }
+        },
+        "taskresp.BulkDeleteValidateError": {
+            "type": "object",
+            "properties": {
+                "ids": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "taskresp.BulkUpdateStatus": {
+            "type": "object",
+            "properties": {
+                "failed": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/taskresp.BulkUpdateStatusFail"
+                    }
+                },
+                "updated": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "taskresp.BulkUpdateStatusFail": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "reason": {
+                    "type": "string"
+                }
+            }
+        },
+        "taskresp.BulkUpdateStatusValidateError": {
+            "type": "object",
+            "properties": {
+                "ids": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
                 "status": {
                     "type": "array",
                     "items": {
@@ -792,7 +809,7 @@ const docTemplate = `{
                 }
             }
         },
-        "response.UpdateTaskValidateError": {
+        "taskresp.CreateValidateError": {
             "type": "object",
             "properties": {
                 "description": {
@@ -821,33 +838,29 @@ const docTemplate = `{
                 }
             }
         },
-        "task.Entity": {
+        "taskresp.Detail": {
             "type": "object",
             "properties": {
                 "completed": {
                     "type": "boolean"
                 },
-                "createdAt": {
+                "created_at": {
                     "type": "string"
                 },
                 "description": {
                     "type": "string"
                 },
-                "dueDate": {
+                "due_date": {
                     "type": "string"
                 },
                 "id": {
-                    "type": "integer",
-                    "format": "int64"
+                    "type": "string"
                 },
                 "priority": {
                     "type": "integer"
                 },
-                "publicID": {
-                    "type": "string"
-                },
                 "status": {
-                    "$ref": "#/definitions/task.Status"
+                    "type": "string"
                 },
                 "tags": {
                     "type": "array",
@@ -858,23 +871,114 @@ const docTemplate = `{
                 "title": {
                     "type": "string"
                 },
-                "updatedAt": {
+                "updated_at": {
                     "type": "string"
                 }
             }
         },
-        "task.Status": {
-            "type": "string",
-            "enum": [
-                "todo",
-                "in_progress",
-                "done"
-            ],
-            "x-enum-varnames": [
-                "StatusTodo",
-                "StatusInProgress",
-                "StatusDone"
-            ]
+        "taskresp.ListItem": {
+            "type": "object",
+            "properties": {
+                "completed": {
+                    "type": "boolean"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "due_date": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "priority": {
+                    "type": "integer"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "tags": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "taskresp.ListValidateError": {
+            "type": "object",
+            "properties": {
+                "limit": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "page": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "priority": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "search": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "taskresp.UpdateStatusValidateError": {
+            "type": "object",
+            "properties": {
+                "status": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "taskresp.UpdateValidateError": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "priority": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "tags": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "title": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
         }
     },
     "securityDefinitions": {
