@@ -8,7 +8,7 @@ import (
 func (r *repository) BulkDelete(ctx context.Context, publicIDs []string) error {
 	result := r.db.WithContext(ctx).
 		Where("public_id IN ?", publicIDs).
-		Delete(&Model{})
+		Delete(&Task{})
 
 	if result.Error != nil {
 		return result.Error

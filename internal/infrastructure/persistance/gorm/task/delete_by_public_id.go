@@ -8,7 +8,7 @@ import (
 func (r *repository) DeleteByPublicID(ctx context.Context, publicID string) error {
 	result := r.db.WithContext(ctx).
 		Where("public_id = ?", publicID).
-		Delete(&Model{})
+		Delete(&Task{})
 
 	if result.Error != nil {
 		return result.Error
