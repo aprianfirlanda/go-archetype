@@ -2,7 +2,7 @@ package middleware
 
 import (
 	"fmt"
-	httpctx "go-archetype/internal/adapters/http/context"
+	"go-archetype/internal/adapters/http/context"
 	"go-archetype/internal/domain/auth"
 	"go-archetype/internal/infrastructure/logging"
 

@@ -1,7 +1,7 @@
 package demohandler
 
 import (
-	httpctx "go-archetype/internal/adapters/http/context"
+	"go-archetype/internal/adapters/http/context"
 	"go-archetype/internal/domain/auth"
 	"time"
 

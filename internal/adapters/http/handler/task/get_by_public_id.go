@@ -2,7 +2,7 @@ package taskhandler
 
 import (
 	"errors"
-	httpctx "go-archetype/internal/adapters/http/context"
+	"go-archetype/internal/adapters/http/context"
 	"go-archetype/internal/adapters/http/dto/response"
 	"go-archetype/internal/domain/task"
 
@@ -21,7 +21,7 @@ import (
 // @Failure      400  {object} response.Error
 // @Failure      404  {object} response.Error
 // @Router       /v1/api/tasks/{public_id} [get]
-func (h *TaskHandler) GetByPublicID(c *fiber.Ctx) error {
+func (h *Handler) GetByPublicID(c *fiber.Ctx) error {
 	log := httpctx.Get(c, h.log)
 	rid := httpctx.GetRequestID(c)
 

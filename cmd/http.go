@@ -9,6 +9,7 @@ import (
 	taskapp "go-archetype/internal/application/task/service"
 	"go-archetype/internal/bootstrap"
 	"go-archetype/internal/infrastructure/persistance/gorm"
+	"go-archetype/internal/infrastructure/persistance/gorm/task"
 
 	"github.com/spf13/cobra"
 )
@@ -42,7 +43,7 @@ to quickly create a Cobra application.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		// Infrastructure
 		dbPinger := gorm.NewPinger(dbConn)
-		taskRepo := gorm.NewTaskRepository(dbConn)
+		taskRepo := taskgorm.NewRepository(dbConn)
 		uow := gorm.NewUnitOfWork(dbConn)
 
 		// Application

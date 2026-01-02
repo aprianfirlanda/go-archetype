@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	httpctx "go-archetype/internal/adapters/http/context"
+	"go-archetype/internal/adapters/http/context"
 	"go-archetype/internal/adapters/http/dto/response"
 
 	"github.com/gofiber/fiber/v2"

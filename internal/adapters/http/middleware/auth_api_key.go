@@ -3,7 +3,7 @@ package middleware
 import (
 	"crypto/sha256"
 	"crypto/subtle"
-	httpctx "go-archetype/internal/adapters/http/context"
+	"go-archetype/internal/adapters/http/context"
 	"go-archetype/internal/infrastructure/logging"
 
 	"github.com/gofiber/fiber/v2"

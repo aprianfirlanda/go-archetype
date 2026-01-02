@@ -7,14 +7,14 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-type TaskHandler struct {
+type Handler struct {
 	log         *logrus.Entry
 	taskService portin.TaskService
 }
 
-func NewTaskHandler(handlerLog *logrus.Entry, taskService portin.TaskService) *TaskHandler {
+func NewHandler(handlerLog *logrus.Entry, taskService portin.TaskService) *Handler {
 	handlerLog = logging.WithComponent(handlerLog, "http.TaskHandler")
-	return &TaskHandler{
+	return &Handler{
 		log:         handlerLog,
 		taskService: taskService,
 	}

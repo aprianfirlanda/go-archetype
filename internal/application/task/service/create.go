@@ -2,12 +2,12 @@ package tasksvc
 
 import (
 	"context"
-	taskcmd "go-archetype/internal/application/task/command"
-	taskDomain "go-archetype/internal/domain/task"
+	"go-archetype/internal/application/task/command"
+	"go-archetype/internal/domain/task"
 )
 
 func (s *Service) Create(ctx context.Context, cmd taskcmd.Create) (string, error) {
-	task := taskDomain.New(
+	entity := task.New(
 		cmd.Title,
 		cmd.Description,
 		cmd.Priority,
@@ -15,13 +15,13 @@ func (s *Service) Create(ctx context.Context, cmd taskcmd.Create) (string, error
 		cmd.Tags,
 	)
 
-	if err := task.Validate(); err != nil {
+	if err := entity.Validate(); err != nil {
 		return "", err
 	}
 
-	if err := s.taskRepository.Create(ctx, task); err != nil {
+	if err := s.taskRepository.Create(ctx, entity); err != nil {
 		return "", err
 	}
 
-	return task.PublicID, nil
+	return entity.PublicID, nil
 }

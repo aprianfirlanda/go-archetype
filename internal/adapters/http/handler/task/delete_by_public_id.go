@@ -1,7 +1,7 @@
 package taskhandler
 
 import (
-	httpctx "go-archetype/internal/adapters/http/context"
+	"go-archetype/internal/adapters/http/context"
 	"go-archetype/internal/adapters/http/dto/response"
 
 	"github.com/gofiber/fiber/v2"
@@ -15,7 +15,7 @@ import (
 // @Success      204
 // @Failure      400 {object} response.Error
 // @Router       /v1/api/tasks/{public_id} [delete]
-func (h *TaskHandler) DeletePublicID(c *fiber.Ctx) error {
+func (h *Handler) DeletePublicID(c *fiber.Ctx) error {
 	log := httpctx.Get(c, h.log)
 	rid := httpctx.GetRequestID(c)
 

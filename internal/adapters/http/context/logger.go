@@ -1,4 +1,4 @@
-package context
+package httpctx
 
 import (
 	"go-archetype/internal/domain/auth"

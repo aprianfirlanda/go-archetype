@@ -33,7 +33,7 @@ func RegisterRoutes(app *fiber.App, deps bootstrap.HttpApp) {
 	demoV1.Get("/panic", demoHandler.Panic)
 
 	// Task API
-	taskHandler := taskhandler.NewTaskHandler(log, deps.TaskService)
+	taskHandler := taskhandler.NewHandler(log, deps.TaskService)
 	taskV1 := api.Group("/v1/tasks")
 	taskV1.Post("/", jwtMiddleware, taskHandler.Create)
 	taskV1.Get("/", middleware.AnyAuth(apiKeyMiddleware, jwtMiddleware), taskHandler.List)

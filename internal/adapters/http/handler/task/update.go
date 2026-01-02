@@ -2,7 +2,7 @@ package taskhandler
 
 import (
 	"errors"
-	httpctx "go-archetype/internal/adapters/http/context"
+	"go-archetype/internal/adapters/http/context"
 	"go-archetype/internal/adapters/http/dto/request"
 	"go-archetype/internal/adapters/http/dto/response"
 	"go-archetype/internal/adapters/http/validation"
@@ -25,7 +25,7 @@ import (
 // @Failure      400 {object} response.Error{errors=response.UpdateTaskValidateError}
 // @Failure      404  {object} response.Error
 // @Router       /v1/api/tasks/{public_id} [put]
-func (h *TaskHandler) Update(c *fiber.Ctx) error {
+func (h *Handler) Update(c *fiber.Ctx) error {
 	log := httpctx.Get(c, h.log)
 	rid := httpctx.GetRequestID(c)
 

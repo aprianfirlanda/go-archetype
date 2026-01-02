@@ -21,7 +21,7 @@ func ErrorHandler() fiber.ErrorHandler {
 		}
 
 		// Get request ID (from requestid middleware)
-		rid := context.GetRequestID(c)
+		rid := httpctx.GetRequestID(c)
 
 		// Build JSON error response
 		resp := response.FailMessage(err.Error(), rid)

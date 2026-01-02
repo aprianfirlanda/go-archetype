@@ -2,8 +2,8 @@ package portin
 
 import (
 	"context"
-	taskcmd "go-archetype/internal/application/task/command"
-	taskquery "go-archetype/internal/application/task/query"
+	"go-archetype/internal/application/task/command"
+	"go-archetype/internal/application/task/query"
 	"go-archetype/internal/domain/task"
 )
 

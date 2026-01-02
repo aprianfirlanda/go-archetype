@@ -1,7 +1,7 @@
 package taskhandler
 
 import (
-	httpctx "go-archetype/internal/adapters/http/context"
+	"go-archetype/internal/adapters/http/context"
 	"go-archetype/internal/adapters/http/dto/request"
 	"go-archetype/internal/adapters/http/dto/response"
 	"go-archetype/internal/adapters/http/validation"
@@ -19,7 +19,7 @@ import (
 // @Success      204
 // @Failure      400 {object} response.Error{errors=response.BulkDeleteTasksValidateError}
 // @Router       /v1/api/tasks [delete]
-func (h *TaskHandler) BulkDelete(c *fiber.Ctx) error {
+func (h *Handler) BulkDelete(c *fiber.Ctx) error {
 	log := httpctx.Get(c, h.log)
 	rid := httpctx.GetRequestID(c)
 

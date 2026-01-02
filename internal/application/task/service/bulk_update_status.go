@@ -3,7 +3,7 @@ package tasksvc
 import (
 	"context"
 	"errors"
-	taskcmd "go-archetype/internal/application/task/command"
+	"go-archetype/internal/application/task/command"
 )
 
 func (s *Service) BulkUpdateStatus(ctx context.Context, cmd taskcmd.BulkUpdateStatus) error {
