@@ -459,4 +459,3 @@ go install ariga.io/atlas/cmd/atlas@latest
 ## Next Steps
 - [ ] add goose migration
 - [ ] change health check to have endpoint, not middleware anymore
-- [ ] error centralize
