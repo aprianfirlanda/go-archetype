@@ -42,7 +42,7 @@ func (h *Handler) BulkDelete(c *fiber.Ctx) error {
 	cmd := taskcmd.BulkDelete{
 		PublicIDs: req.IDs,
 	}
-	res, err := h.taskService.BulkDelete(c.Context(), cmd)
+	res, err := h.taskService.BulkDelete(c.UserContext(), cmd)
 	if err != nil {
 		return err
 	}

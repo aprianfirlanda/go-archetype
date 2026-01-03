@@ -52,7 +52,7 @@ func (h *Handler) List(c *fiber.Ctx) error {
 			JSON(response.FailMessage(err.Error(), rid))
 	}
 
-	tasks, total, err := h.taskService.List(c.Context(), filter)
+	tasks, total, err := h.taskService.List(c.UserContext(), filter)
 	if err != nil {
 		return err
 	}

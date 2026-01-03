@@ -7,7 +7,7 @@ import (
 	"go-archetype/internal/pkg/apperror"
 )
 
-func (s *Service) BulkDelete(ctx context.Context, cmd taskcmd.BulkDelete) (*taskresult.BulkDeleteResult, error) {
+func (s *service) BulkDelete(ctx context.Context, cmd taskcmd.BulkDelete) (*taskresult.BulkDeleteResult, error) {
 	if len(cmd.PublicIDs) == 0 {
 		return nil, apperror.Validation("no task publicIDs provided", nil)
 	}

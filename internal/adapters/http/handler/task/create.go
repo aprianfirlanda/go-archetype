@@ -49,7 +49,7 @@ func (h *Handler) Create(c *fiber.Ctx) error {
 		DueDate:     req.DueDate,
 		Tags:        req.Tags,
 	}
-	publicID, err := h.taskService.Create(c.Context(), cmd)
+	publicID, err := h.taskService.Create(c.UserContext(), cmd)
 	if err != nil {
 		return err
 	}

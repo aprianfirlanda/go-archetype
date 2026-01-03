@@ -1,5 +1,5 @@
 ### Create Task
-POST {{baseUrl}}/api/tasks
+POST {{baseUrl}}/api/v1/tasks
 Content-Type: application/json
 Authorization: Bearer {{jwt}}
 
@@ -11,7 +11,7 @@ Authorization: Bearer {{jwt}}
 }
 
 ### Create Task - Missing Title
-POST {{baseUrl}}/api/tasks
+POST {{baseUrl}}/api/v1/tasks
 Content-Type: application/json
 Authorization: Bearer {{jwt}}
 
@@ -21,7 +21,7 @@ Authorization: Bearer {{jwt}}
 }
 
 ### Create Task - Title Too Short
-POST {{baseUrl}}/api/tasks
+POST {{baseUrl}}/api/v1/tasks
 Content-Type: application/json
 Authorization: Bearer {{jwt}}
 
@@ -31,7 +31,7 @@ Authorization: Bearer {{jwt}}
 }
 
 ### Create Task - Invalid Priority
-POST {{baseUrl}}/api/tasks
+POST {{baseUrl}}/api/v1/tasks
 Content-Type: application/json
 Authorization: Bearer {{jwt}}
 
@@ -41,7 +41,7 @@ Authorization: Bearer {{jwt}}
 }
 
 ### Create Task - Too Many Tags
-POST {{baseUrl}}/api/tasks
+POST {{baseUrl}}/api/v1/tasks
 Content-Type: application/json
 Authorization: Bearer {{jwt}}
 
@@ -51,34 +51,34 @@ Authorization: Bearer {{jwt}}
 }
 
 ### List Tasks (Pagination + Search) (Invalid - No Auth)
-GET {{baseUrl}}/api/tasks?page=1&limit=10&search=task&status=todo
+GET {{baseUrl}}/api/v1/tasks?page=1&limit=10&search=task&status=todo
 
 ### List Tasks (Pagination + Search) (JWT)
-GET {{baseUrl}}/api/tasks?page=1&limit=10&search=task&status=todo
+GET {{baseUrl}}/api/v1/tasks?page=1&limit=10&search=task&status=todo
 Authorization: Bearer {{jwt}}
 
 ### List Tasks (Pagination + Search) (API Key)
-GET {{baseUrl}}/api/tasks?page=1&limit=10&search=task&status=todo
+GET {{baseUrl}}/api/v1/tasks?page=1&limit=10&search=task&status=todo
 Authorization: ApiKey {{apiKey}}
 
 ### List Tasks - Invalid Status
-GET {{baseUrl}}/api/tasks?status=invalid
+GET {{baseUrl}}/api/v1/tasks?status=invalid
 Authorization: Bearer {{jwt}}
 
 ### List Tasks - Limit Too Large
-GET {{baseUrl}}/api/tasks?limit=1000
+GET {{baseUrl}}/api/v1/tasks?limit=1000
 Authorization: Bearer {{jwt}}
 
 ### List Tasks - Invalid Priority Filter
-GET {{baseUrl}}/api/tasks?priority=10
+GET {{baseUrl}}/api/v1/tasks?priority=10
 Authorization: Bearer {{jwt}}
 
 ### Get Task By ID
-GET {{baseUrl}}/api/tasks/task-123
+GET {{baseUrl}}/api/v1/tasks/task-123
 Authorization: Bearer {{jwt}}
 
 ### Update Task
-PUT {{baseUrl}}/api/tasks/task-123
+PUT {{baseUrl}}/api/v1/tasks/task-123
 Content-Type: application/json
 Authorization: Bearer {{jwt}}
 
@@ -89,18 +89,18 @@ Authorization: Bearer {{jwt}}
 }
 
 ### Update Task - Empty Body
-PUT {{baseUrl}}/api/tasks/task-123
+PUT {{baseUrl}}/api/v1/tasks/task-123
 Content-Type: application/json
 Authorization: Bearer {{jwt}}
 
 {}
 
 ### Update Task - Missing Body
-PUT {{baseUrl}}/api/tasks/task-123
+PUT {{baseUrl}}/api/v1/tasks/task-123
 Authorization: Bearer {{jwt}}
 
 ### Update Task Status
-PATCH {{baseUrl}}/api/tasks/task-123/status
+PATCH {{baseUrl}}/api/v1/tasks/task-123/status
 Content-Type: application/json
 Authorization: Bearer {{jwt}}
 
@@ -109,18 +109,18 @@ Authorization: Bearer {{jwt}}
 }
 
 ### Update Task - Empty Body
-PATCH {{baseUrl}}/api/tasks/task-123/status
+PATCH {{baseUrl}}/api/v1/tasks/task-123/status
 Content-Type: application/json
 Authorization: Bearer {{jwt}}
 
 {}
 
 ### Update Task - Missing Body
-PUT {{baseUrl}}/api/tasks/task-123
+PUT {{baseUrl}}/api/v1/tasks/task-123
 Authorization: Bearer {{jwt}}
 
 ### Update Task Status - Invalid Status
-PATCH {{baseUrl}}/api/tasks/task-123/status
+PATCH {{baseUrl}}/api/v1/tasks/task-123/status
 Content-Type: application/json
 Authorization: Bearer {{jwt}}
 
@@ -129,7 +129,7 @@ Authorization: Bearer {{jwt}}
 }
 
 ### Bulk Update Task Status
-PATCH http://localhost:3000/api/tasks/status
+PATCH http://localhost:3000/api/v1/tasks/status
 Content-Type: application/json
 Authorization: Bearer {{jwt}}
 
@@ -143,7 +143,7 @@ Authorization: Bearer {{jwt}}
 }
 
 ### Bulk Update Status - Empty IDs
-PATCH {{baseUrl}}/api/tasks/status
+PATCH {{baseUrl}}/api/v1/tasks/status
 Content-Type: application/json
 Authorization: Bearer {{jwt}}
 
@@ -153,7 +153,7 @@ Authorization: Bearer {{jwt}}
 }
 
 ### Bulk Update Status - Missing Status
-PATCH {{baseUrl}}/api/tasks/status
+PATCH {{baseUrl}}/api/v1/tasks/status
 Content-Type: application/json
 Authorization: Bearer {{jwt}}
 
@@ -162,11 +162,11 @@ Authorization: Bearer {{jwt}}
 }
 
 ### Delete Task
-DELETE {{baseUrl}}/api/tasks/task-123
+DELETE {{baseUrl}}/api/v1/tasks/task-123
 Authorization: Bearer {{jwt}}
 
 ### Bulk Delete Tasks
-DELETE http://localhost:3000/api/tasks
+DELETE http://localhost:3000/api/v1/tasks
 Content-Type: application/json
 Authorization: Bearer {{jwt}}
 
@@ -180,7 +180,7 @@ Authorization: Bearer {{jwt}}
 
 
 ### Bulk Delete - Empty IDs
-DELETE {{baseUrl}}/api/tasks
+DELETE {{baseUrl}}/api/v1/tasks
 Content-Type: application/json
 Authorization: Bearer {{jwt}}
 
@@ -189,23 +189,23 @@ Authorization: Bearer {{jwt}}
 }
 
 ### Bulk Delete - Empty Body
-DELETE {{baseUrl}}/api/tasks
+DELETE {{baseUrl}}/api/v1/tasks
 Content-Type: application/json
 Authorization: Bearer {{jwt}}
 
 {}
 
 ### Bulk Delete - Missing Body
-DELETE {{baseUrl}}/api/tasks
+DELETE {{baseUrl}}/api/v1/tasks
 Authorization: Bearer {{jwt}}
 
 
 ###
 # curl -X 'GET'
-#  'http://localhost:3000/api/tasks'
+#  'http://localhost:3000/api/v1/tasks'
 #  -H 'accept: application/json'
 #  -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlcyI6WyJhZG1pbiJdLCJpc3MiOiJnby1hcmNoZXR5cGUiLCJzdWIiOiJ1c2VyLTEyMyIsImV4cCI6MTc2NjIyMzEzNiwiaWF0IjoxNzY2MTM2NzM2LCJqdGkiOiJmZGRmMWUxYy1hMGQzLTQxNjgtYmE1Yy0xN2I4YTAwOTEyNGUifQ.BNpApxeotBg1kPh8ANxSk3Tnz1aYbWjLTlEEsmFIz4I'
-GET http://localhost:3000/api/tasks
+GET http://localhost:3000/api/v1/tasks
 accept: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlcyI6WyJhZG1pbiJdLCJpc3MiOiJnby1hcmNoZXR5cGUiLCJzdWIiOiJ1c2VyLTEyMyIsImV4cCI6MTc2NjIyMzEzNiwiaWF0IjoxNzY2MTM2NzM2LCJqdGkiOiJmZGRmMWUxYy1hMGQzLTQxNjgtYmE1Yy0xN2I4YTAwOTEyNGUifQ.BNpApxeotBg1kPh8ANxSk3Tnz1aYbWjLTlEEsmFIz4I
 

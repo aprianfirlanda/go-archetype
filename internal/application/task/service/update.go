@@ -8,7 +8,7 @@ import (
 	"go-archetype/internal/pkg/apperror"
 )
 
-func (s *Service) Update(ctx context.Context, cmd taskcmd.Update) error {
+func (s *service) Update(ctx context.Context, cmd taskcmd.Update) error {
 	taskEntity, err := s.taskRepository.FindByPublicID(ctx, cmd.PublicID)
 	if err != nil {
 		if errors.Is(err, task.ErrNotFound) {

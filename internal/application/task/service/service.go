@@ -5,13 +5,13 @@ import (
 	"go-archetype/internal/ports/output"
 )
 
-type Service struct {
+type service struct {
 	taskRepository portout.TaskRepository
 	uow            portout.UnitOfWork
 }
 
-func NewService(uow portout.UnitOfWork, taskRepository portout.TaskRepository) portin.TaskService {
-	return &Service{
+func New(uow portout.UnitOfWork, taskRepository portout.TaskRepository) portin.TaskService {
+	return &service{
 		uow:            uow,
 		taskRepository: taskRepository,
 	}

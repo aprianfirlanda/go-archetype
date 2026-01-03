@@ -30,7 +30,7 @@ func (h *Handler) GetByPublicID(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(response.FailMessage("task publicID is required", rid))
 	}
 
-	taskEntity, err := h.taskService.GetByPublicID(c.Context(), publicID)
+	taskEntity, err := h.taskService.GetByPublicID(c.UserContext(), publicID)
 	if err != nil {
 		return err
 	}

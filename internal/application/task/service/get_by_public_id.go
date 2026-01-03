@@ -7,7 +7,7 @@ import (
 	"go-archetype/internal/pkg/apperror"
 )
 
-func (s *Service) GetByPublicID(ctx context.Context, publicID string) (*task.Entity, error) {
+func (s *service) GetByPublicID(ctx context.Context, publicID string) (*task.Entity, error) {
 	if publicID == "" {
 		return nil, apperror.Validation("task publicID is required", nil)
 	}

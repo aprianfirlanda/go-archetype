@@ -7,7 +7,7 @@ import (
 	"go-archetype/internal/pkg/apperror"
 )
 
-func (s *Service) Create(ctx context.Context, cmd taskcmd.Create) (string, error) {
+func (s *service) Create(ctx context.Context, cmd taskcmd.Create) (string, error) {
 	entity := task.New(
 		cmd.Title,
 		cmd.Description,

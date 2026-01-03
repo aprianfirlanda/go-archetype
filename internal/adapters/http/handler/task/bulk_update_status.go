@@ -45,7 +45,7 @@ func (h *Handler) BulkUpdateStatus(c *fiber.Ctx) error {
 		PublicIDs: req.IDs,
 		Status:    task.Status(req.Status),
 	}
-	res, err := h.taskService.BulkUpdateStatus(c.Context(), cmd)
+	res, err := h.taskService.BulkUpdateStatus(c.UserContext(), cmd)
 	if err != nil {
 		return err
 	}

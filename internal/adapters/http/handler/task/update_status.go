@@ -58,7 +58,7 @@ func (h *Handler) UpdateStatus(c *fiber.Ctx) error {
 		PublicID: publicID,
 		Status:   status,
 	}
-	err = h.taskService.UpdateStatus(c.Context(), cmd)
+	err = h.taskService.UpdateStatus(c.UserContext(), cmd)
 	if err != nil {
 		return err
 	}

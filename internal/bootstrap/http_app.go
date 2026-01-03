@@ -9,8 +9,9 @@ import (
 )
 
 type HttpApp struct {
-	Config      *config.Config
-	Log         *logrus.Entry
-	DBPinger    portout.DBPinger
-	TaskService portin.TaskService
+	Config        *config.Config
+	Log           *logrus.Entry
+	DBPinger      portout.DBPinger
+	TaskService   portin.TaskService
+	HealthService portin.HealthService
 }

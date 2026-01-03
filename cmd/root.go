@@ -51,6 +51,10 @@ to quickly create a Cobra application.`,
 			})).Trace("Configuration loaded")
 
 			dbConn, err = infragorm.InitPostgres(cfg.DB, logger, []any{})
+			if err != nil {
+				logger.WithError(err).Fatal("failed to connect to database")
+				return err
+			}
 
 			return nil
 		},

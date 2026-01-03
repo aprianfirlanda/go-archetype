@@ -6,6 +6,7 @@ Copyright © 2025 APRIAN FIRLANDA IMANI <aprianfirlanda@gmail.com>
 
 import (
 	"go-archetype/internal/adapters/http/server"
+	healthsvc "go-archetype/internal/application/health/service"
 	taskapp "go-archetype/internal/application/task/service"
 	"go-archetype/internal/bootstrap"
 	"go-archetype/internal/infrastructure/persistance/gorm"
@@ -47,13 +48,15 @@ to quickly create a Cobra application.`,
 		uow := gorm.NewUnitOfWork(dbConn)
 
 		// Application
-		taskService := taskapp.NewService(uow, taskRepo)
+		healthService := healthsvc.New(dbPinger)
+		taskService := taskapp.New(uow, taskRepo)
 
 		return server.StartServer(bootstrap.HttpApp{
-			Config:      cfg,
-			Log:         logger,
-			DBPinger:    dbPinger,
-			TaskService: taskService,
+			Config:        cfg,
+			Log:           logger,
+			DBPinger:      dbPinger,
+			TaskService:   taskService,
+			HealthService: healthService,
 		})
 	},
 }

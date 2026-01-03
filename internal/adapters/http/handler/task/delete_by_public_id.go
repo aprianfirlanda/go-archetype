@@ -25,7 +25,7 @@ func (h *Handler) DeletePublicID(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(response.FailMessage("task publicID is required", rid))
 	}
 
-	if err := h.taskService.DeleteByPublicID(c.Context(), publicID); err != nil {
+	if err := h.taskService.DeleteByPublicID(c.UserContext(), publicID); err != nil {
 		return err
 	}
 

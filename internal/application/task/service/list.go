@@ -7,7 +7,7 @@ import (
 	"go-archetype/internal/pkg/apperror"
 )
 
-func (s *Service) List(ctx context.Context, filter taskquery.ListFilter) ([]*task.Entity, int64, error) {
+func (s *service) List(ctx context.Context, filter taskquery.ListFilter) ([]*task.Entity, int64, error) {
 	tasks, total, err := s.taskRepository.FindAll(ctx, filter)
 	if err != nil {
 		return nil, 0, apperror.Internal("failed to list tasks", err)

@@ -7,7 +7,7 @@ import (
 	"go-archetype/internal/pkg/apperror"
 )
 
-func (s *Service) BulkUpdateStatus(ctx context.Context, cmd taskcmd.BulkUpdateStatus) (*taskresult.BulkUpdateStatusResult, error) {
+func (s *service) BulkUpdateStatus(ctx context.Context, cmd taskcmd.BulkUpdateStatus) (*taskresult.BulkUpdateStatusResult, error) {
 	if len(cmd.PublicIDs) == 0 {
 		return nil, apperror.Validation("no task publicIDs provided", nil)
 	}

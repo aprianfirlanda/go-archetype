@@ -7,7 +7,7 @@ import (
 	"go-archetype/internal/pkg/apperror"
 )
 
-func (s *Service) DeleteByPublicID(ctx context.Context, publicID string) error {
+func (s *service) DeleteByPublicID(ctx context.Context, publicID string) error {
 	if publicID == "" {
 		return apperror.Validation("task publicID is required", nil)
 	}

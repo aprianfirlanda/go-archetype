@@ -22,7 +22,7 @@ func StartServer(deps bootstrap.HttpApp) error {
 
 	// Global middlewares
 	// 0. Health Check, live: is the application up, ready: is the application ready to accept traffic
-	app.Use(middleware.HealthCheck(log, deps.DBPinger))
+	app.Use(middleware.HealthCheck(log, deps.HealthService))
 	app.Get("/metrics", monitor.New())
 	// 1. Generate request ID first so everyone can use it
 	app.Use(requestid.New())

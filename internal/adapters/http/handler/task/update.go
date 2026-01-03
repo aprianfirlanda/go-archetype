@@ -57,7 +57,7 @@ func (h *Handler) Update(c *fiber.Ctx) error {
 		DueDate:     req.DueDate,
 		Tags:        req.Tags,
 	}
-	err = h.taskService.Update(c.Context(), cmd)
+	err = h.taskService.Update(c.UserContext(), cmd)
 	if err != nil {
 		return err
 	}
