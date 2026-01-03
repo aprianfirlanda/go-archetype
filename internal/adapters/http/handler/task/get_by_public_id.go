@@ -1,11 +1,9 @@
 package taskhandler
 
 import (
-	"errors"
 	"go-archetype/internal/adapters/http/context"
 	"go-archetype/internal/adapters/http/dto/response"
 	taskresp "go-archetype/internal/adapters/http/dto/response/task"
-	"go-archetype/internal/domain/task"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -34,13 +32,7 @@ func (h *Handler) GetByPublicID(c *fiber.Ctx) error {
 
 	taskEntity, err := h.taskService.GetByPublicID(c.Context(), publicID)
 	if err != nil {
-		switch {
-		case errors.Is(err, task.ErrNotFound):
-			return c.Status(fiber.StatusNotFound).JSON(response.FailMessage("task not found", rid))
-		default:
-			log.WithError(err).Error("failed to get task")
-			return c.Status(fiber.StatusInternalServerError).JSON(response.FailMessage("failed to get task", rid))
-		}
+		return err
 	}
 
 	dto := taskresp.ToDetail(taskEntity)

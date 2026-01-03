@@ -1,13 +1,11 @@
 package taskhandler
 
 import (
-	"errors"
 	"go-archetype/internal/adapters/http/context"
 	"go-archetype/internal/adapters/http/dto/request/task"
 	"go-archetype/internal/adapters/http/dto/response"
 	"go-archetype/internal/adapters/http/validation"
 	"go-archetype/internal/application/task/command"
-	"go-archetype/internal/domain/task"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -61,13 +59,7 @@ func (h *Handler) Update(c *fiber.Ctx) error {
 	}
 	err = h.taskService.Update(c.Context(), cmd)
 	if err != nil {
-		switch {
-		case errors.Is(err, task.ErrNotFound):
-			return c.Status(fiber.StatusNotFound).JSON(response.FailMessage("task not found", rid))
-		default:
-			log.WithError(err).Error("failed to update task")
-			return c.Status(fiber.StatusInternalServerError).JSON(response.FailMessage("failed to update task", rid))
-		}
+		return err
 	}
 
 	return c.SendStatus(fiber.StatusNoContent)

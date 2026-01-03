@@ -2,18 +2,18 @@ package tasksvc
 
 import (
 	"context"
-	"errors"
 	"go-archetype/internal/application/task/command"
 	taskresult "go-archetype/internal/application/task/result"
+	"go-archetype/internal/pkg/apperror"
 )
 
 func (s *Service) BulkUpdateStatus(ctx context.Context, cmd taskcmd.BulkUpdateStatus) (*taskresult.BulkUpdateStatusResult, error) {
 	if len(cmd.PublicIDs) == 0 {
-		return nil, errors.New("no task publicIDs provided")
+		return nil, apperror.Validation("no task publicIDs provided", nil)
 	}
 
 	if !cmd.Status.IsValid() {
-		return nil, errors.New("invalid status")
+		return nil, apperror.Validation("invalid status", nil)
 	}
 
 	result := &taskresult.BulkUpdateStatusResult{

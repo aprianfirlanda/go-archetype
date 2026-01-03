@@ -51,7 +51,7 @@ func (h *Handler) Create(c *fiber.Ctx) error {
 	}
 	publicID, err := h.taskService.Create(c.Context(), cmd)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(response.Fail("failed to create task", err, rid))
+		return err
 	}
 
 	return c.Status(fiber.StatusCreated).JSON(response.OK(response.IDResponse{ID: publicID}, rid))

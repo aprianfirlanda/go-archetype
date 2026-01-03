@@ -41,14 +41,9 @@ func (h *Handler) BulkUpdateStatus(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(response.Fail("validation failed", fieldErrors, rid))
 	}
 
-	status := task.Status(req.Status)
-	if !status.IsValid() {
-		log.WithField("status", status).Info("invalid status")
-		return c.Status(fiber.StatusBadRequest).JSON(response.OKMessage("invalid status", rid))
-	}
 	cmd := taskcmd.BulkUpdateStatus{
 		PublicIDs: req.IDs,
-		Status:    status,
+		Status:    task.Status(req.Status),
 	}
 	res, err := h.taskService.BulkUpdateStatus(c.Context(), cmd)
 	if err != nil {

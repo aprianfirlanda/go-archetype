@@ -2,14 +2,14 @@ package tasksvc
 
 import (
 	"context"
-	"errors"
 	"go-archetype/internal/application/task/command"
 	taskresult "go-archetype/internal/application/task/result"
+	"go-archetype/internal/pkg/apperror"
 )
 
 func (s *Service) BulkDelete(ctx context.Context, cmd taskcmd.BulkDelete) (*taskresult.BulkDeleteResult, error) {
 	if len(cmd.PublicIDs) == 0 {
-		return nil, errors.New("no task publicIDs provided")
+		return nil, apperror.Validation("no task publicIDs provided", nil)
 	}
 
 	result := &taskresult.BulkDeleteResult{

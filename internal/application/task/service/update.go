@@ -2,21 +2,31 @@ package tasksvc
 
 import (
 	"context"
+	"errors"
 	"go-archetype/internal/application/task/command"
+	"go-archetype/internal/domain/task"
+	"go-archetype/internal/pkg/apperror"
 )
 
 func (s *Service) Update(ctx context.Context, cmd taskcmd.Update) error {
-	task, err := s.taskRepository.FindByPublicID(ctx, cmd.PublicID)
+	taskEntity, err := s.taskRepository.FindByPublicID(ctx, cmd.PublicID)
 	if err != nil {
-		return err
+		if errors.Is(err, task.ErrNotFound) {
+			return apperror.NotFound("task not found", err)
+		}
+		return apperror.Internal("failed to get task", err)
 	}
 
-	task.Update(
+	taskEntity.Update(
 		cmd.Title,
 		cmd.Description,
 		cmd.Priority,
 		cmd.DueDate,
 		cmd.Tags,
 	)
-	return s.taskRepository.UpdateByPublicID(ctx, task)
+	if err := s.taskRepository.UpdateByPublicID(ctx, taskEntity); err != nil {
+		return apperror.Internal("failed to update task", err)
+	}
+
+	return nil
 }

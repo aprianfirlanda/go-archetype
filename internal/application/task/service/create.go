@@ -4,6 +4,7 @@ import (
 	"context"
 	"go-archetype/internal/application/task/command"
 	"go-archetype/internal/domain/task"
+	"go-archetype/internal/pkg/apperror"
 )
 
 func (s *Service) Create(ctx context.Context, cmd taskcmd.Create) (string, error) {
@@ -16,11 +17,11 @@ func (s *Service) Create(ctx context.Context, cmd taskcmd.Create) (string, error
 	)
 
 	if err := entity.Validate(); err != nil {
-		return "", err
+		return "", apperror.Validation(err.Error(), err)
 	}
 
 	if err := s.taskRepository.Create(ctx, entity); err != nil {
-		return "", err
+		return "", apperror.Internal("failed to create task", err)
 	}
 
 	return entity.PublicID, nil
