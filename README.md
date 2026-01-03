@@ -448,3 +448,15 @@ add lib for generate uuid v7
 ```shell
 go get -u github.com/google/uuid
 ```
+
+## Setup Migration (GOOSE - GORM)
+install goose cli
+```shell
+go install ariga.io/atlas/cmd/atlas@latest
+```
+
+
+## Next Steps
+- [ ] add goose migration
+- [ ] change health check to have endpoint, not middleware anymore
+- [ ] error centralize
