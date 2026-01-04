@@ -452,9 +452,93 @@ go get -u github.com/google/uuid
 ## Setup Migration (GOOSE - GORM)
 install goose cli
 ```shell
-go install ariga.io/atlas/cmd/atlas@latest
+go get -u github.com/pressly/goose/v3
 ```
 
+This project uses Goose for database migrations, integrated directly into the application CLI (Cobra).
 
-## Next Steps
-- [ ] add goose migration
+All migration commands are executed via:
+```shell
+go run . migrate <command>
+```
+⚠️ Important
+All migrate commands require a valid database connection, since the database is initialized when the application starts.
+
+⸻
+
+📁 Migration Directory
+
+Migration files are stored in:
+```text
+migrations/
+```
+Example:
+```text
+migrations/
+├── 20260104120000_init_tasks.sql
+├── 20260104123000_add_index.sql
+```
+
+✨ Migration Commands
+
+1️⃣ Create a New Migration
+```shell
+go run . migrate create <name>
+```
+Example:
+```shell
+go run . migrate create init_tasks
+```
+By default, this creates a SQL migration.
+
+Migration Type Options
+```shell
+go run . migrate create add_users_table --type sql
+go run . migrate create add_indexes --type go
+```
+
+2️⃣ Apply All Pending Migrations
+
+Runs all migrations that have not yet been applied:
+```shell
+go run . migrate up
+```
+
+3️⃣ Migrate Up to a Specific Version
+```shell
+go run . migrate up-to <version>
+```
+Example:
+```shell
+go run . migrate up-to 20260104120000
+```
+
+4️⃣ Roll Back the Last Migration
+```shell
+go run . migrate down
+```
+
+5️⃣ Roll Back to a Specific Version
+```shell
+go run . migrate down-to <version>
+```
+Example:
+```shell
+go run . migrate down-to 20260104120000
+```
+
+6️⃣ Show Migration Status
+
+Displays all migrations and their current status (applied / pending):
+```shell
+go run . migrate status
+```
+
+7️⃣ Show Current Database Version
+```shell
+go run . migrate version
+```
+Example output:
+```shell
+20260104120000
+```
