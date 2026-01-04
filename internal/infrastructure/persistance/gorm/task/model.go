@@ -6,8 +6,8 @@ import (
 	"time"
 )
 
-// Task is the GORM model (infrastructure concern)
-type Task struct {
+// Model is the GORM model (infrastructure concern)
+type Model struct {
 	ID          int64  `gorm:"primaryKey;autoIncrement"`
 	PublicID    string `gorm:"type:uuid;uniqueIndex"`
 	Title       string
@@ -21,13 +21,13 @@ type Task struct {
 	UpdatedAt   time.Time
 }
 
-func (Task) TableName() string {
+func (Model) TableName() string {
 	return "tasks"
 }
 
 // Convert domain entity → database model
-func toModel(t *task.Entity) *Task {
-	return &Task{
+func toModel(t *task.Entity) *Model {
+	return &Model{
 		ID:          t.ID,
 		Title:       t.Title,
 		Description: t.Description,
@@ -42,7 +42,7 @@ func toModel(t *task.Entity) *Task {
 }
 
 // Convert database model → domain entity
-func toEntity(m *Task) *task.Entity {
+func toEntity(m *Model) *task.Entity {
 	var tags []string
 	if m.Tags != "" {
 		tags = strings.Split(m.Tags, ",")

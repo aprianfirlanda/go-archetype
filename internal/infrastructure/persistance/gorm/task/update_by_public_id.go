@@ -7,7 +7,7 @@ import (
 
 func (r *repository) UpdateByPublicID(ctx context.Context, t *task.Entity) error {
 	result := r.db.WithContext(ctx).
-		Model(&Task{}).
+		Model(&Model{}).
 		Where("public_id = ?", t.PublicID).
 		Updates(toModel(t))
 

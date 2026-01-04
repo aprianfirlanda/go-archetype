@@ -7,7 +7,7 @@ import (
 )
 
 func (r *repository) FindAll(ctx context.Context, filter taskquery.ListFilter) ([]*task.Entity, int64, error) {
-	query := r.db.WithContext(ctx).Model(&Task{})
+	query := r.db.WithContext(ctx).Model(&Model{})
 
 	// Apply filters
 	if filter.Search != "" {
@@ -32,7 +32,7 @@ func (r *repository) FindAll(ctx context.Context, filter taskquery.ListFilter) (
 	query = query.Offset(offset).Limit(filter.Limit)
 
 	// Fetch
-	var models []Task
+	var models []Model
 	if err := query.Find(&models).Error; err != nil {
 		return nil, 0, err
 	}

@@ -9,7 +9,7 @@ import (
 )
 
 func (r *repository) FindByPublicID(ctx context.Context, publicID string) (*task.Entity, error) {
-	var model Task
+	var model Model
 	err := r.db.WithContext(ctx).First(&model, "public_id = ?", publicID).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
