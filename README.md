@@ -10,108 +10,179 @@ This project was created using Go version 1.25.4.
 Folder Structure
 ```text
 go-archetype/
-├── .idea/
 ├── bin/
 ├── cmd/
+│   ├── root.go
 │   ├── http.go
-│   └── root.go
+│   └── migrate.go
+│
 ├── config/
+│   ├── config.yaml
 │   └── example.config.yaml
+│
 ├── internal/
-│   └── adapter/
-│       ├── http/
-│       │   ├── context/
-│       │   │   └── logger.go
-│       │   ├── docs/
-│       │   │   ├── docs.go
-│       │   │   ├── swagger.json
-│       │   │   └── swagger.yaml
-│       │   ├── dto/
-│       │   │   ├── request/
-│       │   │   │   └── task.go
-│       │   │   └── response/
-│       │   │       ├── error.go
-│       │   │       ├── success.go
-│       │   │       └── task.go
-│       │   ├── handler/
-│       │   │   ├── DemoHandler.go
-│       │   │   └── TaskHandler.go
-│       │   ├── middleware/
-│       │   │   ├── any_auth.go
-│       │   │   ├── auth_api_key.go
-│       │   │   ├── auth_jwt.go
-│       │   │   ├── error_handler.go
-│       │   │   ├── health_check.go
-│       │   │   ├── logging.go
-│       │   │   ├── recover.go
-│       │   │   └── request_id.go
-│       │   ├── router/
-│       │   │   └── router.go
-│       │   └── server/
-│       │       └── fiber.go
-│       └── validation/
-├── application/
-│   └── task/
-│       └── service.go         // Application service (orchestration)
-├── bootstrap/
-│   └── http_app.go
-├── domain/
-│   ├── auth/
-│   │   ├── entity.go          // User, Credentials entities
-│   │   ├── service.go         // Auth business logic
-│   │   ├── repository.go      // Auth repository interface (port)
-│   │   └── custom_claims.go
-│   └── task/
-│       ├── entity.go          // Task entity
-│       ├── status.go          // Task status enum
-│       ├── service.go         // Task business logic
-│       └── repository.go      // Task repository interface (port)
-├── infrastructure/
-│   ├── config/
-│   │   ├── bootstrap.go
-│   │   ├── config.go
-│   │   └── schema.go
-│   ├── database/
-│   │   ├── ping.go
-│   │   ├── pool.go
-│   │   └── postgres.go
-│   ├── logging/
-│   │   ├── component.go
-│   │   ├── field.go
-│   │   ├── logger.go
-│   │   └── logrus.go
-│   └── persistence/
-│       └── gorm/
-│           ├── bootstrap.go
-│           ├── pinger.go
-│           ├── uow.go
-│           ├── uow_tx.go
-│           └── repository/
-│               ├── task_repository.go    // Implements domain/task/repository.go
-│               └── user_repository.go    // Implements domain/auth/repository.go
-├── ports/
-│   ├── input/                 // Driving ports (what drives the app)
-│   │   ├── task_service.go    // Interface for task service
-│   │   └── auth_service.go    // Interface for auth service
-│   └── output/                // Driven ports (what the app drives)
-│       ├── task_repository.go // Repository interface
-│       └── db_transaction.go  // Transaction interface
-├── utils/
-│   └── DBTransaction.go
-├── migration/
+│
+│   ├── adapters/
+│   │   └── http/
+│   │       ├── context/
+│   │       │   └── logger.go
+│   │       ├── docs/
+│   │       │   ├── docs.go
+│   │       │   ├── swagger.json
+│   │       │   └── swagger.yaml
+│   │       ├── dto/
+│   │       │   ├── request/
+│   │       │   │   └── task/
+│   │       │   │       ├── create.go
+│   │       │   │       ├── update.go
+│   │       │   │       ├── update_status.go
+│   │       │   │       ├── bulk_update_status.go
+│   │       │   │       ├── bulk_delete.go
+│   │       │   │       └── list.go
+│   │       │   └── response/
+│   │       │       ├── task/
+│   │       │       │   ├── create.go
+│   │       │       │   ├── update.go
+│   │       │       │   ├── update_status.go
+│   │       │       │   ├── bulk_update_status.go
+│   │       │       │   ├── bulk_delete.go
+│   │       │       │   ├── detail.go
+│   │       │       │   └── list.go
+│   │       │       ├── common.go
+│   │       │       ├── error.go
+│   │       │       ├── helper.go
+│   │       │       ├── meta.go
+│   │       │       └── success.go
+│   │       ├── handler/
+│   │       │   ├── demo/
+│   │       │   │   ├── generate_token.go
+│   │       │   │   ├── handler.go
+│   │       │   │   ├── panic.go
+│   │       │   │   ├── protected_by_api_key.go
+│   │       │   │   └── protected_by_jwt.go
+│   │       │   └── task/
+│   │       │       ├── handler.go
+│   │       │       ├── create.go
+│   │       │       ├── update.go
+│   │       │       ├── update_status.go
+│   │       │       ├── bulk_update_status.go
+│   │       │       ├── bulk_delete.go
+│   │       │       ├── list.go
+│   │       │       ├── get_by_public_id.go
+│   │       │       └── delete_by_public_id.go
+│   │       ├── middleware/
+│   │       │   ├── any_auth.go
+│   │       │   ├── auth_api_key.go
+│   │       │   ├── auth_jwt.go
+│   │       │   ├── error_handler.go
+│   │       │   ├── health_check.go
+│   │       │   ├── logging.go
+│   │       │   ├── recover.go
+│   │       │   └── request_id.go
+│   │       ├── router/
+│   │       │   └── router.go
+│   │       ├── server/
+│   │       │   └── fiber.go
+│   │       └── validation/
+│   │           ├── field.go
+│   │           ├── message.go
+│   │           └── validator.go
+│
+│   ├── application/
+│   │   ├── health/
+│   │   │   └── service/
+│   │   │       ├── service.go
+│   │   │       ├── liveness.go
+│   │   │       └── readiness.go
+│   │   └── task/
+│   │       ├── command/
+│   │       │   ├── create.go
+│   │       │   ├── update.go
+│   │       │   ├── update_status.go
+│   │       │   ├── bulk_update_status.go
+│   │       │   └── bulk_delete.go
+│   │       ├── query/
+│   │       │   └── list_filter.go
+│   │       ├── result/
+│   │       │   ├── bulk_update_status.go
+│   │       │   └── bulk_delete.go
+│   │       └── service/
+│
+│   ├── domain/
+│   │   ├── auth/
+│   │   │   └── custom_claims.go
+│   │   ├── identity/
+│   │   │   └── public_id.go
+│   │   └── task/
+│   │       ├── entity.go
+│   │       ├── status.go
+│   │       └── error.go
+│
+│   ├── infrastructure/
+│   │   ├── config/
+│   │   │   ├── bootstrap.go
+│   │   │   ├── config.go
+│   │   │   └── schema.go
+│   │   ├── db/
+│   │   │   ├── ping.go
+│   │   │   ├── pool.go
+│   │   │   └── postgres.go
+│   │   ├── logging/
+│   │   │   ├── component.go
+│   │   │   ├── field.go
+│   │   │   ├── logger.go
+│   │   │   └── logrus.go
+│   │   └── persistance/
+│   │       └── gorm/
+│   │           ├── migrate/
+│   │           │   └── goose.go
+│   │           ├── task/
+│   │           │   ├── model.go
+│   │           │   ├── repository.go
+│   │           │   ├── create.go
+│   │           │   ├── update_by_public_id.go
+│   │           │   ├── delete_by_public_id.go
+│   │           │   ├── find_all.go
+│   │           │   └── find_by_public_id.go
+│   │           ├── uow.go
+│   │           ├── uow_tx.go
+│   │           ├── bootstrap.go
+│   │           └── pinger.go
+│
+│   ├── ports/
+│   │   ├── input/
+│   │   │   ├── task_service.go
+│   │   │   └── health_service.go
+│   │   └── output/
+│   │       ├── repository.go
+│   │       ├── uow.go
+│   │       └── db_pinger.go
+│
+│   ├── bootstrap/
+│   │   └── http_app.go
+│
+│   └── pkg/
+│       └── apperror/
+│           ├── error.go
+│           └── helpers.go
+│
+├── migrations/
+│   └── 20260104053845_create_tasks_table.sql
+│
 ├── test/
 │   └── http/
 │       └── request/
 │           ├── demo.http
 │           ├── health_check.http
-│           ├── http-client.private.env.json
-│           └── task.http
-├── .gitignore
+│           ├── task.http
+│           └── http-client.private.env.json
+│
 ├── compose.yaml
-├── go.mod
-├── LICENSE
 ├── main.go
-└── README.md
+├── go.mod
+├── go.sum
+├── README.md
+└── LICENSE
 ```
 
 ⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻
