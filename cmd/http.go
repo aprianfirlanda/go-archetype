@@ -6,8 +6,8 @@ Copyright © 2025 APRIAN FIRLANDA IMANI <aprianfirlanda@gmail.com>
 
 import (
 	"go-archetype/internal/adapters/http/server"
-	healthsvc "go-archetype/internal/application/health/service"
-	taskapp "go-archetype/internal/application/task/service"
+	"go-archetype/internal/application/health/service"
+	"go-archetype/internal/application/task/service"
 	"go-archetype/internal/bootstrap"
 	"go-archetype/internal/infrastructure/persistance/gorm"
 	"go-archetype/internal/infrastructure/persistance/gorm/task"
@@ -49,7 +49,7 @@ to quickly create a Cobra application.`,
 
 		// Application
 		healthService := healthsvc.New(dbPinger)
-		taskService := taskapp.New(uow, taskRepo)
+		taskService := tasksvc.New(uow, taskRepo)
 
 		return server.StartServer(bootstrap.HttpApp{
 			Config:        cfg,
