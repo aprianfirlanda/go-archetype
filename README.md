@@ -10,179 +10,118 @@ This project was created using Go version 1.25.4.
 Folder Structure
 ```text
 go-archetype/
-├── bin/
-├── cmd/
-│   ├── root.go
-│   ├── http.go
-│   └── migrate.go
+├── bin/                          # Compiled binaries (optional, local use)
 │
-├── config/
-│   ├── config.yaml
-│   └── example.config.yaml
+├── cmd/                          # CLI entry points (Cobra commands)
+│   ├── root.go                   # Root command & global flags
+│   ├── http.go                   # Start HTTP server command
+│   └── migrate.go                # Run database migration command
 │
-├── internal/
+├── config/                       # Application configuration files
+│   ├── config.yaml               # Main configuration
+│   └── example.config.yaml       # Example / template configuration
 │
-│   ├── adapters/
-│   │   └── http/
-│   │       ├── context/
+├── internal/                     # Private application code (not importable outside)
+│
+│   ├── adapters/                 # Inbound adapters (how the app is called)
+│   │   └── http/                 # HTTP adapter (Fiber)
+│   │       ├── context/          # HTTP context helpers (logger, request-scoped data)
 │   │       │   └── logger.go
-│   │       ├── docs/
+│   │       │
+│   │       ├── docs/             # API documentation (Swagger / OpenAPI)
 │   │       │   ├── docs.go
 │   │       │   ├── swagger.json
 │   │       │   └── swagger.yaml
-│   │       ├── dto/
-│   │       │   ├── request/
+│   │       │
+│   │       ├── dto/              # Data Transfer Objects for HTTP
+│   │       │   ├── request/      # Incoming HTTP request payloads
 │   │       │   │   └── task/
-│   │       │   │       ├── create.go
-│   │       │   │       ├── update.go
-│   │       │   │       ├── update_status.go
-│   │       │   │       ├── bulk_update_status.go
-│   │       │   │       ├── bulk_delete.go
-│   │       │   │       └── list.go
-│   │       │   └── response/
+│   │       │   └── response/     # Outgoing HTTP response payloads
 │   │       │       ├── task/
-│   │       │       │   ├── create.go
-│   │       │       │   ├── update.go
-│   │       │       │   ├── update_status.go
-│   │       │       │   ├── bulk_update_status.go
-│   │       │       │   ├── bulk_delete.go
-│   │       │       │   ├── detail.go
-│   │       │       │   └── list.go
 │   │       │       ├── common.go
 │   │       │       ├── error.go
 │   │       │       ├── helper.go
 │   │       │       ├── meta.go
 │   │       │       └── success.go
-│   │       ├── handler/
-│   │       │   ├── demo/
-│   │       │   │   ├── generate_token.go
-│   │       │   │   ├── handler.go
-│   │       │   │   ├── panic.go
-│   │       │   │   ├── protected_by_api_key.go
-│   │       │   │   └── protected_by_jwt.go
-│   │       │   └── task/
-│   │       │       ├── handler.go
-│   │       │       ├── create.go
-│   │       │       ├── update.go
-│   │       │       ├── update_status.go
-│   │       │       ├── bulk_update_status.go
-│   │       │       ├── bulk_delete.go
-│   │       │       ├── list.go
-│   │       │       ├── get_by_public_id.go
-│   │       │       └── delete_by_public_id.go
-│   │       ├── middleware/
-│   │       │   ├── any_auth.go
-│   │       │   ├── auth_api_key.go
-│   │       │   ├── auth_jwt.go
-│   │       │   ├── error_handler.go
-│   │       │   ├── health_check.go
-│   │       │   ├── logging.go
-│   │       │   ├── recover.go
-│   │       │   └── request_id.go
-│   │       ├── router/
+│   │       │
+│   │       ├── handler/          # HTTP handlers (request → usecase → response)
+│   │       │   ├── demo/         # Demo / example endpoints
+│   │       │   └── task/         # Task-related HTTP handlers
+│   │       │
+│   │       ├── middleware/       # HTTP middleware (auth, logging, recovery, etc.)
+│   │       │
+│   │       ├── router/           # HTTP route definitions
 │   │       │   └── router.go
-│   │       ├── server/
+│   │       │
+│   │       ├── server/           # HTTP server setup (Fiber instance)
 │   │       │   └── fiber.go
-│   │       └── validation/
+│   │       │
+│   │       └── validation/       # Request validation logic
 │   │           ├── field.go
 │   │           ├── message.go
 │   │           └── validator.go
 │
-│   ├── application/
-│   │   ├── health/
+│   ├── application/              # Application layer (use cases)
+│   │   ├── health/               # Health check use cases
 │   │   │   └── service/
-│   │   │       ├── service.go
-│   │   │       ├── liveness.go
-│   │   │       └── readiness.go
-│   │   └── task/
-│   │       ├── command/
-│   │       │   ├── create.go
-│   │       │   ├── update.go
-│   │       │   ├── update_status.go
-│   │       │   ├── bulk_update_status.go
-│   │       │   └── bulk_delete.go
-│   │       ├── query/
-│   │       │   └── list_filter.go
-│   │       ├── result/
-│   │       │   ├── bulk_update_status.go
-│   │       │   └── bulk_delete.go
-│   │       └── service/
+│   │   │
+│   │   └── task/                 # Task-related use cases
+│   │       ├── command/          # Write operations (create, update, delete)
+│   │       ├── query/            # Read operations (list, filter)
+│   │       ├── result/           # Usecase result models
+│   │       └── service/          # Orchestration logic
 │
-│   ├── domain/
-│   │   ├── auth/
-│   │   │   └── custom_claims.go
-│   │   ├── identity/
-│   │   │   └── public_id.go
-│   │   └── task/
-│   │       ├── entity.go
-│   │       ├── status.go
-│   │       └── error.go
+│   ├── domain/                   # Core business rules (pure Go)
+│   │   ├── auth/                 # Authentication-related domain logic
+│   │   ├── identity/             # Identity concepts (public ID, etc.)
+│   │   └── task/                 # Task domain (entities, status, errors)
 │
-│   ├── infrastructure/
-│   │   ├── config/
-│   │   │   ├── bootstrap.go
-│   │   │   ├── config.go
-│   │   │   └── schema.go
-│   │   ├── db/
-│   │   │   ├── ping.go
-│   │   │   ├── pool.go
-│   │   │   └── postgres.go
-│   │   ├── logging/
-│   │   │   ├── component.go
-│   │   │   ├── field.go
-│   │   │   ├── logger.go
-│   │   │   └── logrus.go
-│   │   └── persistance/
-│   │       └── gorm/
-│   │           ├── migrate/
-│   │           │   └── goose.go
-│   │           ├── task/
-│   │           │   ├── model.go
-│   │           │   ├── repository.go
-│   │           │   ├── create.go
-│   │           │   ├── update_by_public_id.go
-│   │           │   ├── delete_by_public_id.go
-│   │           │   ├── find_all.go
-│   │           │   └── find_by_public_id.go
-│   │           ├── uow.go
-│   │           ├── uow_tx.go
-│   │           ├── bootstrap.go
-│   │           └── pinger.go
+│   ├── infrastructure/           # Outbound adapters & framework implementations
+│   │   ├── config/               # Configuration loading & schema
+│   │   │
+│   │   ├── db/                   # Database connection & pooling
+│   │   │
+│   │   ├── logging/              # Logging implementation (Logrus, fields, components)
+│   │   │
+│   │   └── persistance/          # Data persistence implementations
+│   │       └── gorm/             # GORM-based repository implementations
+│   │           ├── migrate/      # Database migration tooling (Goose)
+│   │           ├── task/         # Task repository implementation
+│   │           ├── uow.go        # Unit of Work implementation
+│   │           ├── uow_tx.go     # Transaction handling
+│   │           ├── bootstrap.go  # Persistence wiring
+│   │           └── pinger.go     # Database health check
 │
-│   ├── ports/
-│   │   ├── input/
+│   ├── ports/                    # Hexagonal ports (interfaces / contracts)
+│   │   ├── input/                # Inbound ports (usecase interfaces)
 │   │   │   ├── task_service.go
 │   │   │   └── health_service.go
-│   │   └── output/
+│   │   └── output/               # Outbound ports (DB, UoW, external systems)
 │   │       ├── repository.go
 │   │       ├── uow.go
 │   │       └── db_pinger.go
 │
-│   ├── bootstrap/
+│   ├── bootstrap/                # Dependency wiring (compose adapters & usecases)
 │   │   └── http_app.go
 │
-│   └── pkg/
+│   └── pkg/                      # Shared utilities (non-domain helpers)
 │       └── apperror/
 │           ├── error.go
 │           └── helpers.go
 │
-├── migrations/
+├── migrations/                   # SQL migration files
 │   └── 20260104053845_create_tasks_table.sql
 │
-├── test/
+├── test/                         # Test resources
 │   └── http/
-│       └── request/
-│           ├── demo.http
-│           ├── health_check.http
-│           ├── task.http
-│           └── http-client.private.env.json
+│       └── request/             # HTTP request collections (manual testing)
 │
-├── compose.yaml
-├── main.go
-├── go.mod
-├── go.sum
-├── README.md
-└── LICENSE
+├── compose.yaml                  # Docker Compose for local development
+├── main.go                       # Application entry point
+├── go.mod                        # Go module definition
+├── go.sum                        # Go dependencies checksum
+├── README.md                     # Project documentation
+└── LICENSE                       # License
 ```
 
 ⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻

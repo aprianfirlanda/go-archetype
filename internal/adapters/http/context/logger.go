@@ -36,7 +36,6 @@ func EnrichMeta(base *logrus.Entry, c *fiber.Ctx, latency int64) *logrus.Entry {
 		"method":     c.Method(),
 		"path":       c.Path(),
 		"ip":         c.IP(),
-		"status":     c.Response().StatusCode(),
 		"latency_ms": latency,
 	}))
 }

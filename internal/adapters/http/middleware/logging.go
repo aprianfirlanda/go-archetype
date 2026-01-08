@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"errors"
 	"time"
 
 	"go-archetype/internal/adapters/http/context"
@@ -22,14 +23,18 @@ func Logging(base *logrus.Entry) fiber.Handler {
 		log = httpctx.EnrichMeta(log, c, latency.Milliseconds())
 		log = httpctx.EnrichUserInfo(log, c)
 
+		status := resolveStatus(c, err)
+
 		if err != nil {
 			log = log.WithError(err)
 		}
 
+		log = log.WithField("status", status)
+
 		switch {
-		case c.Response().StatusCode() >= 500:
+		case status >= 500:
 			log.Error("http request completed")
-		case c.Response().StatusCode() >= 400:
+		case status >= 400:
 			log.Warn("http request completed")
 		default:
 			log.Info("http request completed")
@@ -37,4 +42,19 @@ func Logging(base *logrus.Entry) fiber.Handler {
 
 		return err
 	}
+}
+
+func resolveStatus(c *fiber.Ctx, err error) int {
+	if err == nil {
+		return c.Response().StatusCode()
+	}
+
+	// Fiber-native error
+	var fe *fiber.Error
+	if errors.As(err, &fe) {
+		return fe.Code
+	}
+
+	// Unknown error
+	return fiber.StatusInternalServerError
 }
