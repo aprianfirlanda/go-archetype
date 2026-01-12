@@ -10,6 +10,6 @@ type repository struct {
 	db *gorm.DB
 }
 
-func NewRepository(db *gorm.DB) portout.TaskRepository {
+func New(db *gorm.DB) portout.TaskRepository {
 	return &repository{db: db}
 }

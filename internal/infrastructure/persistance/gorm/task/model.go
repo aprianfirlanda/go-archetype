@@ -29,6 +29,7 @@ func (Model) TableName() string {
 func toModel(t *task.Entity) *Model {
 	return &Model{
 		ID:          t.ID,
+		PublicID:    t.PublicID,
 		Title:       t.Title,
 		Description: t.Description,
 		Status:      string(t.Status),
@@ -50,6 +51,7 @@ func toEntity(m *Model) *task.Entity {
 
 	return &task.Entity{
 		ID:          m.ID,
+		PublicID:    m.PublicID,
 		Title:       m.Title,
 		Description: m.Description,
 		Status:      task.Status(m.Status),

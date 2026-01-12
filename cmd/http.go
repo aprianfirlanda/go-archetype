@@ -44,7 +44,7 @@ to quickly create a Cobra application.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		// Infrastructure
 		dbPinger := gorm.NewPinger(dbConn)
-		taskRepo := taskgorm.NewRepository(dbConn)
+		taskRepo := taskgorm.New(dbConn)
 		uow := gorm.NewUnitOfWork(dbConn)
 
 		// Application
