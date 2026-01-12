@@ -4,7 +4,7 @@ import (
 	"context"
 	"go-archetype/internal/application/task/command"
 	"go-archetype/internal/application/task/query"
-	taskresult "go-archetype/internal/application/task/result"
+	"go-archetype/internal/application/task/result"
 	"go-archetype/internal/domain/task"
 )
 

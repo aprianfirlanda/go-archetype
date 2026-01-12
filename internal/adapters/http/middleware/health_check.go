@@ -2,7 +2,7 @@ package middleware
 
 import (
 	"go-archetype/internal/infrastructure/logging"
-	portin "go-archetype/internal/ports/input"
+	"go-archetype/internal/ports/input"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/sirupsen/logrus"

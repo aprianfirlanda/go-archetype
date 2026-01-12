@@ -3,7 +3,7 @@ package taskhandler
 import (
 	"go-archetype/internal/adapters/http/context"
 	"go-archetype/internal/adapters/http/dto/response"
-	taskresp "go-archetype/internal/adapters/http/dto/response/task"
+	"go-archetype/internal/adapters/http/dto/response/task"
 
 	"github.com/gofiber/fiber/v2"
 )

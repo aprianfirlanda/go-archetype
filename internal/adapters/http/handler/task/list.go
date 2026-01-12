@@ -4,7 +4,7 @@ import (
 	"go-archetype/internal/adapters/http/context"
 	"go-archetype/internal/adapters/http/dto/request/task"
 	"go-archetype/internal/adapters/http/dto/response"
-	taskresp "go-archetype/internal/adapters/http/dto/response/task"
+	"go-archetype/internal/adapters/http/dto/response/task"
 	"go-archetype/internal/adapters/http/validation"
 
 	"github.com/gofiber/fiber/v2"

@@ -2,8 +2,8 @@ package bootstrap
 
 import (
 	"go-archetype/internal/infrastructure/config"
-	portin "go-archetype/internal/ports/input"
-	portout "go-archetype/internal/ports/output"
+	"go-archetype/internal/ports/input"
+	"go-archetype/internal/ports/output"
 
 	"github.com/sirupsen/logrus"
 )
