@@ -43,9 +43,9 @@ This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		// Infrastructure
-		dbPinger := gorm.NewPinger(dbConn)
+		dbPinger := gorminfra.NewPinger(dbConn)
 		taskRepo := taskgorm.New(dbConn)
-		uow := gorm.NewUnitOfWork(dbConn)
+		uow := gorminfra.NewUnitOfWork(dbConn)
 
 		// Application
 		healthService := healthsvc.New(dbPinger)

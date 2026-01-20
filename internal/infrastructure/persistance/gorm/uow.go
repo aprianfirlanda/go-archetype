@@ -1,4 +1,4 @@
-package gorm
+package gorminfra
 
 import (
 	"context"
