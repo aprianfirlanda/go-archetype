@@ -15,7 +15,7 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/v1/api/tasks": {
+        "/api/v1/tasks": {
             "get": {
                 "security": [
                     {
@@ -244,7 +244,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/api/tasks/status": {
+        "/api/v1/tasks/status": {
             "patch": {
                 "security": [
                     {
@@ -312,7 +312,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/api/tasks/{public_id}": {
+        "/api/v1/tasks/{public_id}": {
             "get": {
                 "security": [
                     {
@@ -469,7 +469,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/api/tasks/{public_id}/status": {
+        "/api/v1/tasks/{public_id}/status": {
             "patch": {
                 "security": [
                     {

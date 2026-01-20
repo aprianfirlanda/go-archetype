@@ -23,7 +23,7 @@ import (
 // @Param        priority query int     false "Entity priority"
 // @Success      200 {object} response.Success{data=[]taskresp.ListItem, meta=response.PaginationMeta}
 // @Failure      400 {object} response.Error{errors=taskresp.ListValidateError}
-// @Router       /v1/api/tasks [get]
+// @Router       /api/v1/tasks [get]
 func (h *Handler) List(c *fiber.Ctx) error {
 	log := httpctx.Get(c, h.log)
 	rid := httpctx.GetRequestID(c)

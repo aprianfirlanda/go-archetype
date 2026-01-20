@@ -303,7 +303,7 @@ info:
   title: Go Archetype
   version: "1.0"
 paths:
-  /v1/api/tasks:
+  /api/v1/tasks:
     delete:
       consumes:
       - application/json
@@ -432,7 +432,7 @@ paths:
       summary: Create a task
       tags:
       - tasks
-  /v1/api/tasks/{public_id}:
+  /api/v1/tasks/{public_id}:
     delete:
       parameters:
       - description: Entity Public ID
@@ -525,7 +525,7 @@ paths:
       summary: Update task
       tags:
       - tasks
-  /v1/api/tasks/{public_id}/status:
+  /api/v1/tasks/{public_id}/status:
     patch:
       consumes:
       - application/json
@@ -564,7 +564,7 @@ paths:
       summary: Update task status
       tags:
       - tasks
-  /v1/api/tasks/status:
+  /api/v1/tasks/status:
     patch:
       consumes:
       - application/json

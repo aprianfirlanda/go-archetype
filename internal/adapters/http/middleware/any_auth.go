@@ -12,7 +12,7 @@ func AnyAuth(middlewares ...fiber.Handler) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		for _, mw := range middlewares {
 			if err := mw(c); err == nil {
-				return c.Next()
+				return nil
 			}
 		}
 

@@ -22,7 +22,7 @@ import (
 // @Success      204
 // @Failure      400  {object} response.Error{errors=taskresp.UpdateValidateError}
 // @Failure      404  {object} response.Error
-// @Router       /v1/api/tasks/{public_id} [put]
+// @Router       /api/v1/tasks/{public_id} [put]
 func (h *Handler) Update(c *fiber.Ctx) error {
 	log := httpctx.Get(c, h.log)
 	rid := httpctx.GetRequestID(c)

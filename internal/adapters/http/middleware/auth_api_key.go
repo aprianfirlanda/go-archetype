@@ -39,7 +39,7 @@ func AuthAPIKey(logger *logrus.Entry, apiKey string) fiber.Handler {
 
 		if validateAPIKey(c, apiKey) {
 			log.Info("API key validated successfully")
-			return nil // Success
+			return c.Next()
 		}
 
 		return fiber.NewError(fiber.StatusUnauthorized, "invalid API key")

@@ -14,7 +14,7 @@ import (
 // @Param        public_id   path     string  true  "Entity Public ID"
 // @Success      204
 // @Failure      400 {object} response.Error
-// @Router       /v1/api/tasks/{public_id} [delete]
+// @Router       /api/v1/tasks/{public_id} [delete]
 func (h *Handler) DeletePublicID(c *fiber.Ctx) error {
 	log := httpctx.Get(c, h.log)
 	rid := httpctx.GetRequestID(c)

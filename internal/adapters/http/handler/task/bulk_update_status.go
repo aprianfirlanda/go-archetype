@@ -20,7 +20,7 @@ import (
 // @Param        request body taskreq.BulkUpdateStatus true "Bulk Update Status"
 // @Success      200  {object} response.Success{data=taskresp.BulkUpdateStatus}
 // @Failure      400 {object} response.Error{errors=taskresp.BulkUpdateStatusValidateError}
-// @Router       /v1/api/tasks/status [patch]
+// @Router       /api/v1/tasks/status [patch]
 func (h *Handler) BulkUpdateStatus(c *fiber.Ctx) error {
 	log := httpctx.Get(c, h.log)
 	rid := httpctx.GetRequestID(c)

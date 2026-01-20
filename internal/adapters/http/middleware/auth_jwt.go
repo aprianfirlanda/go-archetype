@@ -54,7 +54,7 @@ func AuthJWT(logger *logrus.Entry, jwtSecret string) fiber.Handler {
 
 		if validateJWT(c, jwtSecret) {
 			log.Info("JWT validated successfully")
-			return nil // Success
+			return c.Next()
 		}
 
 		return fiber.NewError(fiber.StatusUnauthorized, "invalid JWT")

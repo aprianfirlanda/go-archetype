@@ -18,7 +18,7 @@ import (
 // @Param        request body taskreq.BulkDelete true "Bulk DeletePublicID Tasks"
 // @Success      200  {object} response.Success{data=taskresp.BulkDelete}
 // @Failure      400 {object} response.Error{errors=taskresp.BulkDeleteValidateError}
-// @Router       /v1/api/tasks [delete]
+// @Router       /api/v1/tasks [delete]
 func (h *Handler) BulkDelete(c *fiber.Ctx) error {
 	log := httpctx.Get(c, h.log)
 	rid := httpctx.GetRequestID(c)
