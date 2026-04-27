@@ -3,7 +3,7 @@ package tasksvc
 import (
 	"context"
 	"go-archetype/internal/application/task/command"
-	taskresult "go-archetype/internal/application/task/result"
+	"go-archetype/internal/application/task/result"
 	"go-archetype/internal/pkg/apperror"
 )
 
