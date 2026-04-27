@@ -40,6 +40,8 @@ var httpCmd = &cobra.Command{
   go-archetype http --http-port 9000
   go-archetype http --config ./config.yaml`,
 	RunE: func(cmd *cobra.Command, args []string) error {
+		cfg.Services.BuildAPIKeys()
+
 		// Infrastructure
 		dbPinger := gorminfra.NewPinger(dbConn)
 		taskRepo := taskgorm.New(dbConn)
@@ -71,5 +73,10 @@ func init() {
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
 	httpCmd.Flags().Int("http-port", 8080, "Port to run the server on")
+
 	httpCmd.Flags().String("jwt-secret", "your-jwt-secret", "Secret key used to sign and validate JWT tokens")
+
+	httpCmd.Flags().String("keycloak-issuerurl", "http://localhost:8080/realms/master", "Keycloak issuer URL")
+	httpCmd.Flags().String("keycloak-clientid", "client-id", "Keycloak client ID")
+	httpCmd.Flags().Bool("keycloak-insecureskipverify", true, "Keycloak skip verify insecure connection")
 }

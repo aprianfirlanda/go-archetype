@@ -7,6 +7,7 @@ type Config struct {
 	Http     Http     `mapstructure:"http"`
 	Log      Log      `mapstructure:"log"`
 	DB       Database `mapstructure:"db"`
+	Keycloak Keycloak `mapstructure:"keycloak"`
 	JWT      JWT      `mapstructure:"jwt"`
 	Services Services `mapstructure:"services"`
 }
@@ -38,12 +39,27 @@ type Database struct {
 	SlowThreshold time.Duration `mapstructure:"slowthreshold"`
 }
 
+type Keycloak struct {
+	IssuerURL          string `mapstructure:"issuerurl"`
+	ClientID           string `mapstructure:"clientid"`
+	InsecureSkipVerify bool   `mapstructure:"insecureskipverify"`
+}
+
 type JWT struct {
 	Secret string `mapstructure:"secret"`
 }
 
 type Services struct {
-	General Service `mapstructure:"general"`
+	General Service  `mapstructure:"general"`
+	APIKeys []string `mapstructure:"-"` // computed field
+}
+
+func (s *Services) BuildAPIKeys() {
+	s.APIKeys = []string{}
+
+	if s.General.APIKey != "" {
+		s.APIKeys = append(s.APIKeys, s.General.APIKey)
+	}
 }
 
 type Service struct {

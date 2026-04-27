@@ -15,7 +15,7 @@ func ErrorHandler() fiber.ErrorHandler {
 	return func(c *fiber.Ctx, err error) error {
 		rid := httpctx.GetRequestID(c)
 
-		// 1️⃣ Application-level error (AppError)
+		// Application-level error (AppError)
 		var appErr *apperror.AppError
 		if errors.As(err, &appErr) {
 			switch appErr.Code {
@@ -41,14 +41,14 @@ func ErrorHandler() fiber.ErrorHandler {
 			}
 		}
 
-		// 2️⃣ Fiber native error (from middleware like AuthJWT / AuthAPIKey)
+		// Fiber native error (from middleware like AuthJWT / AuthAPIKey)
 		var fe *fiber.Error
 		if errors.As(err, &fe) {
 			return c.Status(fe.Code).
 				JSON(response.FailMessage(fe.Message, rid))
 		}
 
-		// 3️⃣ Unknown / panic / raw error
+		// Unknown / panic / raw error
 		return c.Status(fiber.StatusInternalServerError).
 			JSON(response.FailMessage("internal server error", rid))
 	}

@@ -17,6 +17,10 @@ db:
   connMaxIdleTime: 15m
   logLevel: warn
   slowThreshold: 200ms
+keycloak:
+  issuerURL: http://localhost:8080/realms/log-management
+  clientID: log-management
+  insecureSkipVerify: false
 jwt:
   secret: your-jwt-secret
 services:

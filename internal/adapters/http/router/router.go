@@ -16,11 +16,13 @@ import (
 func RegisterRoutes(app *fiber.App, deps bootstrap.HttpApp) {
 	log := logging.WithComponent(deps.Log, "http.router")
 
+	// Swagger Docs
 	app.Get("/swagger/*", fiberSwagger.WrapHandler)
 
 	// Setup Auth Middlewares
-	apiKeyMiddleware := middleware.AuthAPIKey(log, deps.Config.Services.General.APIKey)
+	apiKeyMiddleware := middleware.AuthAPIKey(log, deps.Config.Services.APIKeys)
 	jwtMiddleware := middleware.AuthJWT(log, deps.Config.JWT.Secret)
+	keycloakMiddleware := middleware.AuthKeycloak(log, deps.Config.Keycloak)
 
 	api := app.Group("/api")
 
@@ -30,6 +32,7 @@ func RegisterRoutes(app *fiber.App, deps bootstrap.HttpApp) {
 	demoV1.Get("/protected-by-api-key", apiKeyMiddleware, demoHandler.ProtectedByAPIKey)
 	demoV1.Get("/generate-token", demoHandler.GenerateToken)
 	demoV1.Get("/protected-by-jwt", jwtMiddleware, demoHandler.ProtectedByJWT)
+	demoV1.Get("/protected-by-keycloak", keycloakMiddleware, demoHandler.ProtectedByKeycloak)
 	demoV1.Get("/panic", demoHandler.Panic)
 
 	// Task API

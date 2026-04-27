@@ -5,9 +5,9 @@ import (
 	"go-archetype/internal/ports/input"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/healthcheck"
 	"github.com/sirupsen/logrus"
 )
-import "github.com/gofiber/fiber/v2/middleware/healthcheck"
 
 func HealthCheck(logger *logrus.Entry, svc portin.HealthService) fiber.Handler {
 	log := logging.WithComponent(logger, "middleware.HealthCheck")
