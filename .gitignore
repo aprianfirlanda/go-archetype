@@ -2,4 +2,5 @@
 .idea
 
 # Config / Env File
+.env
 config/config.yaml
