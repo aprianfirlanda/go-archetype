@@ -7,7 +7,7 @@ Copyright © 2025 APRIAN FIRLANDA IMANI <aprianfirlanda@gmail.com>
 import (
 	"go-archetype/internal/infrastructure/config"
 	"go-archetype/internal/infrastructure/logging"
-	infragorm "go-archetype/internal/infrastructure/persistance/gorm"
+	"go-archetype/internal/infrastructure/persistance/gorm"
 	"os"
 	"time"
 
@@ -26,13 +26,15 @@ var (
 	// rootCmd represents the base command when called without any subcommands
 	rootCmd = &cobra.Command{
 		Use:   "go-archetype",
-		Short: "A brief description of your application",
-		Long: `A longer description that spans multiple lines and likely contains
-examples and usage of using your application. For example:
+		Short: "Modular backend service CLI",
+		Long: `Go Archetype is a backend service built with clean (hexagonal) architecture.
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+This CLI is used to run application components such as:
+- HTTP API server
+- Database migrations
+- (future) workers and consumers
+
+Configuration is loaded from flags, environment variables, or config file.`,
 		PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
 			err := config.Initialize(appName, cfgFile, cmd)
 			if err != nil {
@@ -50,7 +52,7 @@ to quickly create a Cobra application.`,
 				"config_value": cfg,
 			})).Trace("Configuration loaded")
 
-			dbConn, err = infragorm.InitPostgres(cfg.DB, logger, []any{})
+			dbConn, err = gorminfra.InitPostgres(cfg.DB, logger, []any{})
 			if err != nil {
 				return err
 			}

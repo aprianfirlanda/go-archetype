@@ -34,13 +34,11 @@ import (
 // httpCmd represents the http command
 var httpCmd = &cobra.Command{
 	Use:   "http",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "Run HTTP API server",
+	Long:  "Start the HTTP server with all dependencies (DB, services, logging).",
+	Example: `  go-archetype http
+  go-archetype http --http-port 9000
+  go-archetype http --config ./config.yaml`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		// Infrastructure
 		dbPinger := gorminfra.NewPinger(dbConn)
