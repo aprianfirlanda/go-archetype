@@ -552,3 +552,10 @@ Example output:
 ```shell
 20260104120000
 ```
+
+
+TODO:
+- [ ] implement http context get user's info
+- [ ] use domain auth custom claims for user's info if possible
+- [ ] create example extract username, permission, validate permission from c.Locals("user"). Combine with custom claims if posible
+
