@@ -74,11 +74,11 @@ GET {{baseUrl}}/api/v1/tasks?priority=10
 Authorization: Bearer {{jwt}}
 
 ### Get Task By ID
-GET {{baseUrl}}/api/v1/tasks/task-123
+GET {{baseUrl}}/api/v1/tasks/019bd978-5980-7ba0-ab10-20a3f650c1ff
 Authorization: Bearer {{jwt}}
 
 ### Update Task
-PUT {{baseUrl}}/api/v1/tasks/task-123
+PUT {{baseUrl}}/api/v1/tasks/019bd978-5980-7ba0-ab10-20a3f650c1ff
 Content-Type: application/json
 Authorization: Bearer {{jwt}}
 
@@ -89,18 +89,18 @@ Authorization: Bearer {{jwt}}
 }
 
 ### Update Task - Empty Body
-PUT {{baseUrl}}/api/v1/tasks/task-123
+PUT {{baseUrl}}/api/v1/tasks/019bd978-5980-7ba0-ab10-20a3f650c1ff
 Content-Type: application/json
 Authorization: Bearer {{jwt}}
 
 {}
 
 ### Update Task - Missing Body
-PUT {{baseUrl}}/api/v1/tasks/task-123
+PUT {{baseUrl}}/api/v1/tasks/019bd978-5980-7ba0-ab10-20a3f650c1ff
 Authorization: Bearer {{jwt}}
 
 ### Update Task Status
-PATCH {{baseUrl}}/api/v1/tasks/task-123/status
+PATCH {{baseUrl}}/api/v1/tasks/019bd978-5980-7ba0-ab10-20a3f650c1ff/status
 Content-Type: application/json
 Authorization: Bearer {{jwt}}
 
@@ -109,18 +109,18 @@ Authorization: Bearer {{jwt}}
 }
 
 ### Update Task - Empty Body
-PATCH {{baseUrl}}/api/v1/tasks/task-123/status
+PATCH {{baseUrl}}/api/v1/tasks/019bd978-5980-7ba0-ab10-20a3f650c1ff/status
 Content-Type: application/json
 Authorization: Bearer {{jwt}}
 
 {}
 
 ### Update Task - Missing Body
-PUT {{baseUrl}}/api/v1/tasks/task-123
+PUT {{baseUrl}}/api/v1/tasks/019bd978-5980-7ba0-ab10-20a3f650c1ff
 Authorization: Bearer {{jwt}}
 
 ### Update Task Status - Invalid Status
-PATCH {{baseUrl}}/api/v1/tasks/task-123/status
+PATCH {{baseUrl}}/api/v1/tasks/019bd978-5980-7ba0-ab10-20a3f650c1ff/status
 Content-Type: application/json
 Authorization: Bearer {{jwt}}
 
@@ -135,9 +135,8 @@ Authorization: Bearer {{jwt}}
 
 {
   "ids": [
-    "task-123",
-    "task-456",
-    "task-789"
+    "019bd978-5980-7ba0-ab10-20a3f650c1ff",
+    "019bd996-c9e6-7af0-9842-9e5ab3c01098"
   ],
   "status": "in_progress"
 }
@@ -162,7 +161,7 @@ Authorization: Bearer {{jwt}}
 }
 
 ### Delete Task
-DELETE {{baseUrl}}/api/v1/tasks/task-123
+DELETE {{baseUrl}}/api/v1/tasks/019bd998-e7c3-7d71-bd89-85f95be23be7
 Authorization: Bearer {{jwt}}
 
 ### Bulk Delete Tasks
@@ -172,9 +171,8 @@ Authorization: Bearer {{jwt}}
 
 {
   "ids": [
-    "task-123",
-    "task-456",
-    "task-789"
+    "019bd997-ee15-75ff-a4ae-a737d87f1a95",
+    "019bd997-f79f-7b75-8d18-cf5317a4d71f"
   ]
 }
 
