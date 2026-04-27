@@ -99,6 +99,7 @@ func init() {
 	rootCmd.PersistentFlags().Duration("db-connmaxlifetime", time.Hour, "Maximum amount of time a connection may be reused")
 	rootCmd.PersistentFlags().Duration("db-connmaxidletime", 15*time.Minute, "Maximum amount of time a connection may be idle")
 	rootCmd.PersistentFlags().String("db-loglevel", "", "GORM log level (silent|error|warn|info). Empty uses default (warn)")
+	rootCmd.PersistentFlags().Duration("db-slowthreshold", 200*time.Millisecond, "GORM warning threshold when query being slow")
 
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.

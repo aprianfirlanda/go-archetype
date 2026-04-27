@@ -34,7 +34,8 @@ type Database struct {
 	ConnMaxLifetime time.Duration `mapstructure:"connmaxlifetime"`
 	ConnMaxIdleTime time.Duration `mapstructure:"connmaxidletime"`
 
-	LogLevel string `mapstructure:"loglevel"`
+	LogLevel      string        `mapstructure:"loglevel"`
+	SlowThreshold time.Duration `mapstructure:"slowthreshold"`
 }
 
 type JWT struct {

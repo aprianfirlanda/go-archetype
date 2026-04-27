@@ -16,6 +16,7 @@ db:
   connMaxLifetime: 10h
   connMaxIdleTime: 15m
   logLevel: warn
+  slowThreshold: 200ms
 jwt:
   secret: your-jwt-secret
 services:
