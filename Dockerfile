@@ -17,7 +17,7 @@ RUN go mod download
 COPY . .
 
 # Build binary secara statis agar bisa jalan di distroless
-RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o clm-be ./main.go
+RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o go-archetype ./main.go
 
 # ========================
 # 2. Runtime stage
