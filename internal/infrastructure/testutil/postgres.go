@@ -3,9 +3,9 @@ package testutil
 import (
 	"context"
 	"fmt"
+	"go-archetype/internal/adapters/persistence/gorm/migrate"
 	"go-archetype/internal/infrastructure/config"
-	"go-archetype/internal/infrastructure/persistance/gorm"
-	"go-archetype/internal/infrastructure/persistance/gorm/migrate"
+	"go-archetype/internal/infrastructure/db"
 	"path/filepath"
 
 	"github.com/sirupsen/logrus"
@@ -29,12 +29,12 @@ func StartPostgres(ctx context.Context, migrationsDir string) (*TestDB, error) {
 		TimeZone: "UTC",
 	}
 
-	db, err := gorminfra.InitPostgres(cfg, logger, nil)
+	dbConn, err := db.NewPostgres(cfg, logger, nil)
 	if err != nil {
 		return nil, err
 	}
 
-	sqlDB, err := db.DB()
+	sqlDB, err := dbConn.DB()
 	if err != nil {
 		return nil, err
 	}
@@ -50,5 +50,5 @@ func StartPostgres(ctx context.Context, migrationsDir string) (*TestDB, error) {
 		return nil, fmt.Errorf("run migrations: %w", err)
 	}
 
-	return &TestDB{DB: db}, nil
+	return &TestDB{DB: dbConn}, nil
 }

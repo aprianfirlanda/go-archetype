@@ -5,10 +5,10 @@ Copyright © 2025 APRIAN FIRLANDA IMANI <aprianfirlanda@gmail.com>
 */
 
 import (
-	messagingrmq "go-archetype/internal/adapters/messaging/rabbitmq"
+	"go-archetype/internal/adapters/messaging/rabbitmq"
 	"go-archetype/internal/infrastructure/config"
+	"go-archetype/internal/infrastructure/db"
 	"go-archetype/internal/infrastructure/logging"
-	"go-archetype/internal/infrastructure/persistance/gorm"
 	"os"
 	"time"
 
@@ -54,7 +54,7 @@ Configuration is loaded from flags, environment variables, or config file.`,
 				"config_value": cfg,
 			})).Trace("Configuration loaded")
 
-			dbConn, err = gorminfra.InitPostgres(cfg.DB, logger, []any{})
+			dbConn, err = db.NewPostgres(cfg.DB, logger, []any{})
 			if err != nil {
 				return err
 			}

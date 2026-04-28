@@ -5,11 +5,11 @@ package cmd
 
 import (
 	"context"
-	taskhandlermq "go-archetype/internal/adapters/messaging/rabbitmq/handler/task"
-	tasksvc "go-archetype/internal/application/task/service"
+	"go-archetype/internal/adapters/messaging/rabbitmq/handler/task"
+	"go-archetype/internal/adapters/persistence/gorm"
+	"go-archetype/internal/adapters/persistence/gorm/task"
+	"go-archetype/internal/application/task/service"
 	"go-archetype/internal/bootstrap"
-	gorminfra "go-archetype/internal/infrastructure/persistance/gorm"
-	taskgorm "go-archetype/internal/infrastructure/persistance/gorm/task"
 
 	"github.com/spf13/cobra"
 )
@@ -34,7 +34,7 @@ This command runs continuously and should be deployed as a separate worker servi
 
 		// Infrastructure
 		taskRepo := taskgorm.New(dbConn)
-		uow := gorminfra.NewUnitOfWork(dbConn)
+		uow := gormadapter.NewUnitOfWork(dbConn)
 
 		// Application
 		taskService := tasksvc.New(uow, taskRepo, rmq.Publisher)

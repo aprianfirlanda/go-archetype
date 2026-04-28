@@ -7,7 +7,7 @@ Copyright © 2025 APRIAN FIRLANDA IMANI <aprianfirlanda@gmail.com>
 import (
 	"context"
 	"fmt"
-	"go-archetype/internal/infrastructure/persistance/gorm/migrate"
+	"go-archetype/internal/adapters/persistence/gorm/migrate"
 	"strconv"
 	"time"
 

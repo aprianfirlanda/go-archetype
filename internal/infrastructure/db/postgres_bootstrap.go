@@ -1,18 +1,17 @@
-package gorminfra
+package db
 
 import (
 	"context"
 	"fmt"
 
 	"go-archetype/internal/infrastructure/config"
-	"go-archetype/internal/infrastructure/db"
 	"go-archetype/internal/infrastructure/logging"
 
 	"github.com/sirupsen/logrus"
 	"gorm.io/gorm"
 )
 
-func InitPostgres(
+func NewPostgres(
 	cfg config.Database,
 	logger *logrus.Entry,
 	autoMigrateModels []any,
@@ -20,7 +19,7 @@ func InitPostgres(
 	log := logging.WithComponent(logger, "infrastructure.persistence.gorm.boostrap")
 
 	// 1. Open connection
-	gormDB, err := db.OpenPostgres(cfg, logger)
+	gormDB, err := OpenPostgres(cfg, logger)
 	if err != nil {
 		return nil, err
 	}
@@ -31,10 +30,10 @@ func InitPostgres(
 		log.WithError(err).Error("failed to get sql.DB")
 		return nil, err
 	}
-	db.ConfigurePool(sqlDB, cfg)
+	ConfigurePool(sqlDB, cfg)
 
 	// 3. Ping
-	if err := db.Ping(context.Background(), sqlDB); err != nil {
+	if err := Ping(context.Background(), sqlDB); err != nil {
 		log.WithError(err).Error("failed to ping postgres")
 		return nil, fmt.Errorf("ping postgres: %w", err)
 	}

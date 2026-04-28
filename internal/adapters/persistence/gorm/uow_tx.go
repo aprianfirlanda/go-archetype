@@ -1,4 +1,4 @@
-package gorminfra
+package gormadapter
 
 import "gorm.io/gorm"
 

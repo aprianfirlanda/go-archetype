@@ -6,11 +6,11 @@ Copyright © 2025 APRIAN FIRLANDA IMANI <aprianfirlanda@gmail.com>
 
 import (
 	"go-archetype/internal/adapters/http/server"
+	"go-archetype/internal/adapters/persistence/gorm"
+	"go-archetype/internal/adapters/persistence/gorm/task"
 	"go-archetype/internal/application/health/service"
 	"go-archetype/internal/application/task/service"
 	"go-archetype/internal/bootstrap"
-	"go-archetype/internal/infrastructure/persistance/gorm"
-	"go-archetype/internal/infrastructure/persistance/gorm/task"
 
 	"github.com/spf13/cobra"
 )
@@ -43,9 +43,9 @@ var httpCmd = &cobra.Command{
 		cfg.Services.BuildAPIKeys()
 
 		// Infrastructure
-		dbPinger := gorminfra.NewPinger(dbConn)
+		dbPinger := gormadapter.NewPinger(dbConn)
 		taskRepo := taskgorm.New(dbConn)
-		uow := gorminfra.NewUnitOfWork(dbConn)
+		uow := gormadapter.NewUnitOfWork(dbConn)
 
 		// Application
 		healthService := healthsvc.New(dbPinger)
