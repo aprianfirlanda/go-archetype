@@ -17,6 +17,9 @@ db:
   connMaxIdleTime: 15m
   logLevel: warn
   slowThreshold: 200ms
+messaging:
+  rabbitmq:
+    url: amqp://guest:guest@localhost:5672/
 keycloak:
   issuerURL: http://localhost:8080/realms/log-management
   clientID: log-management

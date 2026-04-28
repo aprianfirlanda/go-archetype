@@ -5,6 +5,7 @@ Copyright © 2025 APRIAN FIRLANDA IMANI <aprianfirlanda@gmail.com>
 */
 
 import (
+	messagingrmq "go-archetype/internal/adapters/messaging/rabbitmq"
 	"go-archetype/internal/infrastructure/config"
 	"go-archetype/internal/infrastructure/logging"
 	"go-archetype/internal/infrastructure/persistance/gorm"
@@ -23,6 +24,7 @@ var (
 	cfg     *config.Config
 	logger  *logrus.Entry
 	dbConn  *gorm.DB
+	rmq     *messagingrmq.RabbitMQ
 	// rootCmd represents the base command when called without any subcommands
 	rootCmd = &cobra.Command{
 		Use:   "go-archetype",
@@ -53,6 +55,11 @@ Configuration is loaded from flags, environment variables, or config file.`,
 			})).Trace("Configuration loaded")
 
 			dbConn, err = gorminfra.InitPostgres(cfg.DB, logger, []any{})
+			if err != nil {
+				return err
+			}
+
+			rmq, err = messagingrmq.NewRabbitMQ(cfg.Messaging.RabbitMQ.URL)
 			if err != nil {
 				return err
 			}
@@ -100,6 +107,8 @@ func init() {
 	rootCmd.PersistentFlags().Duration("db-connmaxidletime", 15*time.Minute, "Maximum amount of time a connection may be idle")
 	rootCmd.PersistentFlags().String("db-loglevel", "", "GORM log level (silent|error|warn|info). Empty uses default (warn)")
 	rootCmd.PersistentFlags().Duration("db-slowthreshold", 200*time.Millisecond, "GORM warning threshold when query being slow")
+
+	rootCmd.PersistentFlags().String("messaging-rabbitmq-url", "amqp://guest:guest@localhost:5672/", "RabbitMQ connection URL")
 
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.

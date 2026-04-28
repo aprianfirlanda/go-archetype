@@ -49,7 +49,7 @@ var httpCmd = &cobra.Command{
 
 		// Application
 		healthService := healthsvc.New(dbPinger)
-		taskService := tasksvc.New(uow, taskRepo)
+		taskService := tasksvc.New(uow, taskRepo, rmq.Publisher)
 
 		return server.StartServer(bootstrap.HttpApp{
 			Config:        cfg,

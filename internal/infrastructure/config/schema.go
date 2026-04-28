@@ -3,13 +3,14 @@ package config
 import "time"
 
 type Config struct {
-	AppName  string
-	Http     Http     `mapstructure:"http"`
-	Log      Log      `mapstructure:"log"`
-	DB       Database `mapstructure:"db"`
-	Keycloak Keycloak `mapstructure:"keycloak"`
-	JWT      JWT      `mapstructure:"jwt"`
-	Services Services `mapstructure:"services"`
+	AppName   string
+	Http      Http      `mapstructure:"http"`
+	Log       Log       `mapstructure:"log"`
+	DB        Database  `mapstructure:"db"`
+	Messaging Messaging `mapstructure:"messaging"`
+	Keycloak  Keycloak  `mapstructure:"keycloak"`
+	JWT       JWT       `mapstructure:"jwt"`
+	Services  Services  `mapstructure:"services"`
 }
 
 type Http struct {
@@ -37,6 +38,14 @@ type Database struct {
 
 	LogLevel      string        `mapstructure:"loglevel"`
 	SlowThreshold time.Duration `mapstructure:"slowthreshold"`
+}
+
+type Messaging struct {
+	RabbitMQ RabbitMQ `mapstructure:"rabbitmq"`
+}
+
+type RabbitMQ struct {
+	URL string `mapstructure:"url"`
 }
 
 type Keycloak struct {
