@@ -27,16 +27,13 @@ FROM alpine:3.23
 WORKDIR /app
 
 # Copy binary dari stage builder
-COPY --from=builder /app/clm-be /app/app
+COPY --from=builder /app/go-archetype /app/app
 
 # Copy folder migrations (pastikan folder ini ada di root project kamu)
 COPY --from=builder /app/migrations/ /app/migrations/
 
 # Copy dokumentasi Swagger
 COPY --from=builder /app/internal/adapters/http/docs /app/internal/adapters/http/docs
-
-# Create directory for file pipeline config
-RUN mkdir -p /data/pipeline-config
 
 # Expose port sesuai aplikasi
 EXPOSE 8080
