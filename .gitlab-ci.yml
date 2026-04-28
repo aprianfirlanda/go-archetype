@@ -1,0 +1,70 @@
+stages:
+    - build
+    - deploy
+
+variables:
+    DOCKER_VERSION: "stable"
+    DOCKER_DIND_VERSION: "18.09-dind"
+    DOCKER_CONFIG_FILE: "--config .docker"
+    PROJECT_GROUP_ID: "com.tabeldata.template"
+    PROJECT_NAME: "go-archetype"
+
+default:
+    tags:
+        - docker
+
+include:
+    - project: tabeldata.co.id/gitlab-cicd-templates
+      ref: main
+      file: build.docker.gitlab-ci.yml
+    - project: tabeldata.co.id/gitlab-cicd-templates
+      ref: main
+      file: trigger.deploy.gitlab-ci.yml
+
+build:docker:
+    stage: build
+    extends: .build-docker
+    variables:
+        DOCKER_BUILD_ARGS: ""
+        DOCKER_HOST: unix:///var/run/docker.sock
+    before_script:
+        - mkdir -p .docker/ && cat $DOCKER_CONF_JSON > .docker/config.json
+    rules:
+        - if: $CI_COMMIT_TAG =~ /^v\d+\.\d+\.\d+\.\d+\.\d+(-dev|-stg)?$/
+
+trigger:deploy:review:
+    stage: deploy
+    extends: .trigger_pipeline
+    variables:
+        CI_DEPLOYMENT_ENV: review
+        CI_DEFAULT_TRIGGER_BRANCH: master
+    needs:
+        - build:docker
+    rules:
+      - if: $CI_COMMIT_TAG =~ /^v\d+\.\d+\.\d+\.\d+\.\d+-dev$/
+
+# -------------------------
+# DEPLOY
+# -------------------------
+#
+#trigger:deploy:staging:
+#  stage: deploy
+#  extends: .trigger_pipeline
+#  variables:
+#    CI_DEPLOYMENT_ENV: review
+#    CI_TRIGGER_REF: staging
+#  needs:
+#    - docker:build
+#  rules:
+#    - if: $CI_COMMIT_TAG =~ /^v\d+\.\d+\.\d+\.\d+\.\d+-stg$/
+#
+#trigger:deploy:prod:
+#  stage: deploy
+#  extends: .trigger_pipeline
+#  variables:
+#    CI_DEPLOYMENT_ENV: review
+#    CI_TRIGGER_REF: main
+#  needs:
+#    - docker:build
+#  rules:
+#    - if: $CI_COMMIT_TAG =~ /^v\d+\.\d+\.\d+\.\d+\.\d+$/
