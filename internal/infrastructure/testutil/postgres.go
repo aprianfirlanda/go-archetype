@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"go-archetype/internal/infrastructure/config"
-	infragorm "go-archetype/internal/infrastructure/persistance/gorm"
+	"go-archetype/internal/infrastructure/persistance/gorm"
 	"go-archetype/internal/infrastructure/persistance/gorm/migrate"
 	"path/filepath"
 
@@ -29,7 +29,7 @@ func StartPostgres(ctx context.Context, migrationsDir string) (*TestDB, error) {
 		TimeZone: "UTC",
 	}
 
-	db, err := infragorm.InitPostgres(cfg, logger, nil)
+	db, err := gorminfra.InitPostgres(cfg, logger, nil)
 	if err != nil {
 		return nil, err
 	}

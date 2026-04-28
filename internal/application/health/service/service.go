@@ -1,8 +1,8 @@
 package healthsvc
 
 import (
-	portin "go-archetype/internal/ports/input"
-	portout "go-archetype/internal/ports/output"
+	"go-archetype/internal/ports/input"
+	"go-archetype/internal/ports/output"
 )
 
 type service struct {

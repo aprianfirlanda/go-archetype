@@ -2,7 +2,7 @@ package taskgorm
 
 import (
 	"context"
-	taskquery "go-archetype/internal/application/task/query"
+	"go-archetype/internal/application/task/query"
 	"go-archetype/internal/domain/identity"
 	"go-archetype/internal/domain/task"
 	"go-archetype/internal/infrastructure/testutil"
