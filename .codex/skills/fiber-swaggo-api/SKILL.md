@@ -1,0 +1,66 @@
+---
+name: fiber-swaggo-api
+description: Use when adding, updating, documenting, or debugging Fiber HTTP APIs in the go-archetype repo, including handlers, request DTOs, response DTOs, validation, route registration, auth middleware, request ID responses, and Swaggo docs.
+---
+
+# Fiber Swaggo API
+
+Use this skill for HTTP endpoint work.
+
+## Files And Packages
+
+- Handlers: `internal/adapters/http/handler/<domain>`; task package example is `taskhandler`.
+- Request DTOs: `internal/adapters/http/dto/request/<domain>`; task example is `taskreq`.
+- Response DTOs: `internal/adapters/http/dto/response/<domain>`; task example is `taskresp`.
+- Shared response helpers: `internal/adapters/http/dto/response`.
+- Routes: `internal/adapters/http/router/router.go`.
+- Validation: `internal/adapters/http/validation`.
+- Server setup and global middleware: `internal/adapters/http/server/fiber.go`.
+
+## Handler Pattern
+
+- Get logger and request ID at the top:
+
+```go
+log := httpctx.Get(c, h.log)
+rid := httpctx.GetRequestID(c)
+```
+
+- Parse body/query/params in the handler.
+- Validate DTOs with existing validation helpers.
+- Map DTOs into application `command` or `query` types.
+- Call input ports through the handler service field.
+- Return shared response wrappers and include `rid`.
+- Let application errors bubble to the global Fiber error handler when possible.
+
+## Auth
+
+Use existing middleware from `internal/adapters/http/middleware`:
+
+- API key: `middleware.AuthAPIKey`
+- JWT secret: `middleware.AuthJWT`
+- Keycloak: `middleware.AuthKeycloak`
+- Any accepted auth method: `middleware.AnyAuth(...)`
+
+Follow existing route examples in `router.go`.
+
+## Swagger
+
+When an API route, DTO, response shape, or auth requirement changes:
+
+1. Add/update Swaggo annotations on the handler.
+2. Keep `@Security` aligned with route middleware.
+3. Regenerate docs:
+
+```sh
+swag init -g cmd/http.go -o internal/adapters/http/docs
+```
+
+4. Inspect generated files in `internal/adapters/http/docs`.
+
+## Verification
+
+- Run `gofmt` on changed Go files.
+- Run focused tests when available.
+- Run `go test ./...` for broader confidence.
+

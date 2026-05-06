@@ -1,0 +1,4 @@
+interface:
+  display_name: "RabbitMQ Consumer Publisher"
+  short_description: "Add RabbitMQ publishers and consumers through ports."
+  default_prompt: "Add an asynchronous RabbitMQ publishing or consuming flow following the repo patterns."

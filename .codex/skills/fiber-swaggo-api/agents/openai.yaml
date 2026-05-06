@@ -1,0 +1,4 @@
+interface:
+  display_name: "Fiber Swaggo API"
+  short_description: "Build Fiber APIs with DTOs, auth, IDs, and Swagger."
+  default_prompt: "Add or update an HTTP API endpoint following the repo Fiber and Swaggo patterns."

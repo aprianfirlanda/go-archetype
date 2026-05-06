@@ -1,0 +1,4 @@
+interface:
+  display_name: "Cobra Viper Config"
+  short_description: "Add config with Cobra, Viper, YAML, and env vars."
+  default_prompt: "Add a new configuration value following the repo Cobra and Viper conventions."

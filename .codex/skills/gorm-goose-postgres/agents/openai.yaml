@@ -1,0 +1,4 @@
+interface:
+  display_name: "GORM Goose Postgres"
+  short_description: "Add GORM persistence and Goose migrations."
+  default_prompt: "Add or change persistence and migrations following the repo GORM and Goose patterns."

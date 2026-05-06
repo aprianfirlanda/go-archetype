@@ -1,0 +1,4 @@
+interface:
+  display_name: "Go Hexagonal Feature"
+  short_description: "Add features in this Go hexagonal architecture repo."
+  default_prompt: "Add a new domain feature following the repo hexagonal architecture."
