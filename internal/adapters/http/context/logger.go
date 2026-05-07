@@ -2,7 +2,6 @@ package httpctx
 
 import (
 	"go-archetype/internal/domain/auth"
-	"go-archetype/internal/infrastructure/logging"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/sirupsen/logrus"
@@ -27,27 +26,31 @@ func Get(c *fiber.Ctx, fallback *logrus.Entry) *logrus.Entry {
 
 // EnrichRequestID adds request id to a logger.
 func EnrichRequestID(base *logrus.Entry, c *fiber.Ctx) *logrus.Entry {
-	return base.WithFields(logging.Field("request_id", GetRequestID(c)))
+	rid := GetRequestID(c)
+	return base.WithFields(logrus.Fields{
+		"rid":        rid,
+		"request_id": rid,
+	})
 }
 
 // EnrichMeta adds request metadata to a logger.
 func EnrichMeta(base *logrus.Entry, c *fiber.Ctx, latency int64) *logrus.Entry {
-	return base.WithFields(logging.Fields(map[string]any{
+	return base.WithFields(logrus.Fields{
 		"method":     c.Method(),
 		"path":       c.Path(),
 		"ip":         c.IP(),
 		"latency_ms": latency,
-	}))
+	})
 }
 
 // EnrichUserInfo adds user info to a logger.
 func EnrichUserInfo(base *logrus.Entry, c *fiber.Ctx) *logrus.Entry {
 	if v := c.Locals("user"); v != nil {
 		if claims, ok := v.(*auth.CustomClaims); ok {
-			return base.WithFields(logging.Fields(map[string]any{
+			return base.WithFields(logrus.Fields{
 				"user_id": claims.Subject,
 				"roles":   claims.Roles,
-			}))
+			})
 		}
 	}
 	return base

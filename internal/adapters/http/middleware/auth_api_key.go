@@ -36,7 +36,7 @@ func validateAPIKey(c *fiber.Ctx, apiKeys []string) bool {
 
 // AuthAPIKey returns a handler for use with AnyAuth
 func AuthAPIKey(logger *logrus.Entry, apiKeys []string) fiber.Handler {
-	logWithComponent := logging.WithComponent(logger, "http.middleware.AuthAPIKey")
+	logWithComponent := logging.ComponentLogger(logger, "http.middleware.AuthAPIKey")
 
 	return func(c *fiber.Ctx) error {
 		log := httpctx.Get(c, logWithComponent)

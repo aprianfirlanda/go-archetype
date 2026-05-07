@@ -2,6 +2,7 @@ package messagingrmq
 
 import (
 	"context"
+	"go-archetype/internal/infrastructure/logging"
 
 	"github.com/rabbitmq/amqp091-go"
 )
@@ -19,15 +20,25 @@ func NewPublisher(conn *Connection) (*Publisher, error) {
 }
 
 func (p *Publisher) Publish(ctx context.Context, topic string, payload []byte) error {
-	return p.ch.PublishWithContext(
+	log := logging.ComponentLogger(logging.FromContext(ctx), "messaging.rabbitmq.publisher").WithField("topic", topic)
+	rid := logging.RequestIDFromContext(ctx)
+	if err := p.ch.PublishWithContext(
 		ctx,
 		"",    // default exchange
 		topic, // routing key = queue name
 		false,
 		false,
 		amqp091.Publishing{
-			ContentType: "application/json",
-			Body:        payload,
+			ContentType:   "application/json",
+			Body:          payload,
+			CorrelationId: rid,
+			MessageId:     rid,
 		},
-	)
+	); err != nil {
+		log.WithError(err).Error("failed to publish message")
+		return err
+	}
+
+	log.Info("message published")
+	return nil
 }

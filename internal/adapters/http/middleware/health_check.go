@@ -10,7 +10,7 @@ import (
 )
 
 func HealthCheck(logger *logrus.Entry, svc portin.HealthService) fiber.Handler {
-	log := logging.WithComponent(logger, "middleware.HealthCheck")
+	log := logging.ComponentLogger(logger, "middleware.HealthCheck")
 
 	return healthcheck.New(healthcheck.Config{
 		LivenessProbe: func(c *fiber.Ctx) bool {

@@ -14,7 +14,7 @@ import (
 )
 
 func StartServer(deps bootstrap.HttpApp) error {
-	log := logging.WithComponent(deps.Log, "http.server")
+	log := logging.ComponentLogger(deps.Log, "http.server")
 	app := fiber.New(fiber.Config{
 		AppName:      deps.Config.AppName,
 		ErrorHandler: middleware.ErrorHandler(),

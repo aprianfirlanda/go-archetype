@@ -12,7 +12,7 @@ import (
 )
 
 func Logging(base *logrus.Entry) fiber.Handler {
-	componentLog := logging.WithComponent(base, "http.middleware.logging")
+	componentLog := logging.ComponentLogger(base, "http.middleware.logging")
 
 	return func(c *fiber.Ctx) error {
 		start := time.Now()

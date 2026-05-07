@@ -2,22 +2,16 @@ package logging
 
 import "github.com/sirupsen/logrus"
 
-// WithComponent returns a logger entry with a fixed "component" field.
+// ComponentLogger returns the logger with a fixed "component" field.
 //
 // Example component values:
 //   - "http.server"
 //   - "http.middleware.auth_jwt"
 //   - "domain.user_service"
 //   - "infra.db"
-func WithComponent(logger *logrus.Entry, component string) *logrus.Entry {
-	return logger.WithField("component", component)
-}
-
-// WithComponentAndFields returns a logger entry with "component" and extra fields.
-func WithComponentAndFields(logger *logrus.Entry, component string, fields logrus.Fields) *logrus.Entry {
-	if fields == nil {
-		fields = logrus.Fields{}
+func ComponentLogger(logger *logrus.Entry, component string) *logrus.Entry {
+	if logger == nil {
+		logger = logrus.NewEntry(logrus.StandardLogger())
 	}
-	fields["component"] = component
-	return logger.WithFields(fields)
+	return logger.WithField("component", component)
 }

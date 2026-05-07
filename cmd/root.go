@@ -49,10 +49,10 @@ Configuration is loaded from flags, environment variables, or config file.`,
 
 			logger = logging.New(cfg.Log)
 
-			logger.WithFields(logging.Fields(map[string]any{
+			logger.WithFields(logrus.Fields{
 				"config_file":  viper.ConfigFileUsed(),
 				"config_value": cfg,
-			})).Trace("Configuration loaded")
+			}).Trace("Configuration loaded")
 
 			dbConn, err = db.NewPostgres(cfg.DB, logger, []any{})
 			if err != nil {

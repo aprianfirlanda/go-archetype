@@ -162,10 +162,16 @@ Request ID is mandatory for observability.
 - Request-scoped loggers are stored through `httpctx.Set` and read with `httpctx.Get`.
 - HTTP handlers should log with the request-scoped logger and include `rid` in responses.
 - Application services and repositories receive `context.Context`; do not replace it with `context.Background()` in request paths.
+- In service and port-out methods, derive logger from context with `logging.ComponentLogger(logging.FromContext(ctx), "<component>")`.
+- Do not pass `rid` manually to service/repository/publisher logs; use context-based logger enrichment.
 - GORM calls should use `db.WithContext(ctx)`.
 - RabbitMQ publish/consume paths should pass context through the port methods.
+- HTTP flow: request middleware puts request logger and `rid` into `c.UserContext()`, handlers call services with `c.UserContext()`, then service/repository/publisher logs use that context.
+- Consumer flow: consumer creates per-message context using `CorrelationId` or `MessageId` as `rid`, handlers call services with that context, then service/repository/publisher logs use that context.
+- Publisher should set AMQP `CorrelationId` and `MessageId` from context `rid`; consumer should read them to rehydrate context `rid`.
 - New logs should use Logrus structured fields and include the existing request/correlation ID whenever available.
-- Use `logging.WithComponent` or `logging.WithComponentAndFields` for stable component names.
+- Use `logging.ComponentLogger` or `logging.WithComponentAndFields` for stable component names.
+- Keep both `rid` and `request_id` fields in logs for compatibility.
 
 For HTTP handlers, the usual pattern is:
 

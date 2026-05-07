@@ -41,7 +41,17 @@ Prefer this order when implementing a feature:
 - Pass `context.Context` through service, repository, publisher, and consumer calls.
 - In HTTP paths, use `c.UserContext()` and keep request ID in responses.
 - Use request-scoped loggers from `httpctx.Get(c, h.log)` in handlers.
+- In services and port-out adapters, derive logger from context:
+
+```go
+log := logging.ComponentLogger(logging.FromContext(ctx), "<component>")
+```
+
+- Do not pass `rid` manually across service/repository/publisher calls; propagate by context.
 - Use `db.WithContext(ctx)` in GORM operations.
+- Verify `rid` continuity in both paths:
+  - HTTP: middleware -> handler (`c.UserContext`) -> service -> repo/publisher
+  - Consumer: message context (`CorrelationId`/`MessageId`) -> handler -> service -> repo/publisher
 
 ## Package Names To Remember
 
@@ -55,4 +65,3 @@ Prefer this order when implementing a feature:
 - GORM task repository: `taskgorm`
 - Application command/query/result/service: `taskcmd`, `taskquery`, `taskresult`, `tasksvc`
 - Ports: `portin`, `portout`
-

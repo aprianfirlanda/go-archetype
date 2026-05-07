@@ -7,6 +7,12 @@ import (
 )
 
 func (r *repository) FindAll(ctx context.Context, filter taskquery.ListFilter) ([]*task.Entity, int64, error) {
+	log := componentLog(ctx).WithFields(map[string]any{
+		"operation": "FindAll",
+		"page":      filter.Page,
+		"limit":     filter.Limit,
+	})
+
 	query := r.db.WithContext(ctx).Model(&Model{})
 
 	// Apply filters
@@ -24,6 +30,7 @@ func (r *repository) FindAll(ctx context.Context, filter taskquery.ListFilter) (
 	// Count total
 	var total int64
 	if err := query.Count(&total).Error; err != nil {
+		log.WithError(err).Error("failed to count tasks")
 		return nil, 0, err
 	}
 
@@ -34,6 +41,7 @@ func (r *repository) FindAll(ctx context.Context, filter taskquery.ListFilter) (
 	// Fetch
 	var models []Model
 	if err := query.Find(&models).Error; err != nil {
+		log.WithError(err).Error("failed to query tasks")
 		return nil, 0, err
 	}
 
@@ -43,5 +51,6 @@ func (r *repository) FindAll(ctx context.Context, filter taskquery.ListFilter) (
 		tasks[i] = toEntity(&m)
 	}
 
+	log.WithField("total", total).Info("tasks fetched")
 	return tasks, total, nil
 }

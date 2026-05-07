@@ -47,7 +47,7 @@ func validateJWT(c *fiber.Ctx, jwtSecret string) bool {
 
 // AuthJWT returns a handler for use with AnyAuth
 func AuthJWT(logger *logrus.Entry, jwtSecret string) fiber.Handler {
-	logWithComponent := logging.WithComponent(logger, "http.middleware.AuthJWT")
+	logWithComponent := logging.ComponentLogger(logger, "http.middleware.AuthJWT")
 
 	return func(c *fiber.Ctx) error {
 		log := httpctx.Get(c, logWithComponent)

@@ -10,6 +10,7 @@ import (
 	"go-archetype/internal/adapters/persistence/gorm/task"
 	"go-archetype/internal/application/task/service"
 	"go-archetype/internal/bootstrap"
+	"go-archetype/internal/infrastructure/logging"
 
 	"github.com/spf13/cobra"
 )
@@ -30,7 +31,8 @@ Consumers are typically used for:
 
 This command runs continuously and should be deployed as a separate worker service.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		ctx := context.Background()
+		log := logging.ComponentLogger(logger, "consumer.worker")
+		ctx := logging.WithLogger(context.Background(), log)
 
 		// Infrastructure
 		taskRepo := taskgorm.New(dbConn)

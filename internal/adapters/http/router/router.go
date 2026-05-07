@@ -14,7 +14,7 @@ import (
 )
 
 func RegisterRoutes(app *fiber.App, deps bootstrap.HttpApp) {
-	log := logging.WithComponent(deps.Log, "http.router")
+	log := logging.ComponentLogger(deps.Log, "http.router")
 
 	// Swagger Docs
 	app.Get("/swagger/*", fiberSwagger.WrapHandler)

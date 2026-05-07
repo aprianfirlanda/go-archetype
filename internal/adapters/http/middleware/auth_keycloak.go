@@ -16,7 +16,7 @@ import (
 
 func AuthKeycloak(logger *logrus.Entry, cfg config.Keycloak) fiber.Handler {
 
-	logWithComponent := logging.WithComponent(logger, "http.middleware.AuthKeycloak")
+	logWithComponent := logging.ComponentLogger(logger, "http.middleware.AuthKeycloak")
 
 	// Init OIDC provider once
 	insecureClient := &http.Client{

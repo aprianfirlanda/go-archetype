@@ -13,7 +13,7 @@ type Handler struct {
 }
 
 func NewHandler(handlerLog *logrus.Entry, taskService portin.TaskService) *Handler {
-	handlerLog = logging.WithComponent(handlerLog, "http.TaskHandler")
+	handlerLog = logging.ComponentLogger(handlerLog, "http.TaskHandler")
 	return &Handler{
 		log:         handlerLog,
 		taskService: taskService,

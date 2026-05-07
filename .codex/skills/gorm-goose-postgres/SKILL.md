@@ -23,6 +23,12 @@ Use this skill for database persistence and migration work.
 - Keep GORM models, table names, indexes, and domain mapping inside the GORM adapter.
 - Repository methods must accept `context.Context`.
 - Use `r.db.WithContext(ctx)` for queries.
+- Use context-based component logger inside repository methods:
+
+```go
+log := logging.ComponentLogger(logging.FromContext(ctx), "persistence.gorm.<domain>.repository")
+```
+
 - Return domain entities from repositories, not GORM models.
 - Wrap repository errors at application service level with `apperror` when appropriate.
 
@@ -60,4 +66,3 @@ When schema changes:
 - Run `gofmt` on changed Go files.
 - Run focused repository tests first.
 - Run `go test ./...` when database/test environment is available.
-

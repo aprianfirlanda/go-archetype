@@ -2,8 +2,9 @@ package messagingrmq
 
 import (
 	"context"
+	"fmt"
+	"go-archetype/internal/infrastructure/logging"
 	"go-archetype/internal/ports/input"
-	"log"
 
 	"github.com/rabbitmq/amqp091-go"
 )
@@ -53,12 +54,31 @@ func (c *Consumer) Consume(
 
 	go func() {
 		for msg := range msgs {
-			err := handler(ctx, msg.Body)
+			rid := msg.CorrelationId
+			if rid == "" {
+				rid = msg.MessageId
+			}
+			if rid == "" {
+				rid = fmt.Sprintf("msg-%d", msg.DeliveryTag)
+			}
+
+			messageLog := logging.ComponentLogger(logging.FromContext(ctx), "messaging.rabbitmq.consumer").
+				WithFields(map[string]any{
+					"topic":      topic,
+					"rid":        rid,
+					"request_id": rid,
+				})
+			msgCtx := logging.WithLogger(ctx, messageLog)
+			msgCtx = logging.WithRequestID(msgCtx, rid)
+
+			err := handler(msgCtx, msg.Body)
 			if err != nil {
-				log.Println("handler error:", err)
+				messageLog.WithError(err).Error("consumer handler error")
 				_ = msg.Nack(false, true) // retry
 				continue
 			}
+
+			messageLog.Info("message processed")
 			_ = msg.Ack(false)
 		}
 	}()

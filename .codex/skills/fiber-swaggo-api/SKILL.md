@@ -29,7 +29,7 @@ rid := httpctx.GetRequestID(c)
 - Parse body/query/params in the handler.
 - Validate DTOs with existing validation helpers.
 - Map DTOs into application `command` or `query` types.
-- Call input ports through the handler service field.
+- Call input ports through the handler service field using `c.UserContext()` (never replace with `context.Background()` in request path).
 - Return shared response wrappers and include `rid`.
 - Let application errors bubble to the global Fiber error handler when possible.
 
@@ -63,4 +63,3 @@ swag init -g cmd/http.go -o internal/adapters/http/docs
 - Run `gofmt` on changed Go files.
 - Run focused tests when available.
 - Run `go test ./...` for broader confidence.
-

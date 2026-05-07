@@ -16,7 +16,7 @@ func NewPostgres(
 	logger *logrus.Entry,
 	autoMigrateModels []any,
 ) (*gorm.DB, error) {
-	log := logging.WithComponent(logger, "infrastructure.persistence.gorm.boostrap")
+	log := logging.ComponentLogger(logger, "infrastructure.persistence.gorm.boostrap")
 
 	// 1. Open connection
 	gormDB, err := OpenPostgres(cfg, logger)

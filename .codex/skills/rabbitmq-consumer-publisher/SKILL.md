@@ -22,6 +22,8 @@ Use this skill for async messaging work.
 
 - Application services should depend on `portout.MessagePublisher`, not RabbitMQ directly.
 - Publish through the output port with `context.Context`.
+- Derive logger from context in publisher methods with `logging.ComponentLogger(logging.FromContext(ctx), "<component>")`.
+- Set AMQP `CorrelationId` and `MessageId` from context `rid` to preserve trace continuity.
 - Use JSON payloads unless an existing flow uses another format.
 - Keep topic names stable and centralized near wiring or domain-specific flow code.
 
@@ -32,6 +34,7 @@ Use this skill for async messaging work.
 3. Register the topic and handler in `cmd/consumer.go` via `bootstrap.NewConsumerRegistry()`.
 4. Let errors return to the consumer so it can `Nack`; successful handling should `Ack`.
 5. Preserve context propagation.
+6. For each consumed message, create/propagate context `rid` from `CorrelationId` (fallback `MessageId`) before calling handlers/services.
 
 ## Boundaries
 
@@ -44,4 +47,3 @@ Use this skill for async messaging work.
 - Run `gofmt` on changed Go files.
 - Run focused application and handler tests if present.
 - Run `go test ./...` when dependencies are available.
-
