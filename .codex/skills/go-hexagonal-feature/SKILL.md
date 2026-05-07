@@ -52,6 +52,7 @@ log := logging.ComponentLogger(logging.FromContext(ctx), "<component>")
 - Verify `rid` continuity in both paths:
   - HTTP: middleware -> handler (`c.UserContext`) -> service -> repo/publisher
   - Consumer: message context (`CorrelationId`/`MessageId`) -> handler -> service -> repo/publisher
+- When changing RabbitMQ consumers, preserve retry/backoff + DLQ behavior and ack/nack semantics.
 
 ## Package Names To Remember
 

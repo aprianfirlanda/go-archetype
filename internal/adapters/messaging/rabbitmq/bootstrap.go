@@ -1,12 +1,18 @@
 package messagingrmq
 
+import (
+	"go-archetype/internal/infrastructure/config"
+
+	"github.com/sirupsen/logrus"
+)
+
 type RabbitMQ struct {
 	Publisher *Publisher
 	Consumer  *Consumer
 }
 
-func NewRabbitMQ(url string) (*RabbitMQ, error) {
-	conn, err := NewConnection(url)
+func NewRabbitMQ(cfg config.RabbitMQ, logger *logrus.Entry) (*RabbitMQ, error) {
+	conn, err := NewConnection(cfg.URL)
 	if err != nil {
 		return nil, err
 	}
@@ -16,7 +22,7 @@ func NewRabbitMQ(url string) (*RabbitMQ, error) {
 		return nil, err
 	}
 
-	con, err := NewConsumer(conn)
+	con, err := NewConsumer(conn, logger, cfg.Consumer.Retry)
 	if err != nil {
 		return nil, err
 	}

@@ -45,7 +45,16 @@ type Messaging struct {
 }
 
 type RabbitMQ struct {
-	URL string `mapstructure:"url"`
+	URL      string           `mapstructure:"url"`
+	Consumer RabbitMQConsumer `mapstructure:"consumer"`
+}
+
+type RabbitMQConsumer struct {
+	Retry RabbitMQConsumerRetry `mapstructure:"retry"`
+}
+
+type RabbitMQConsumerRetry struct {
+	Backoff []time.Duration `mapstructure:"backoff"`
 }
 
 type Keycloak struct {

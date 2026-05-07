@@ -59,7 +59,7 @@ Configuration is loaded from flags, environment variables, or config file.`,
 				return err
 			}
 
-			rmq, err = messagingrmq.NewRabbitMQ(cfg.Messaging.RabbitMQ.URL)
+			rmq, err = messagingrmq.NewRabbitMQ(cfg.Messaging.RabbitMQ, logger)
 			if err != nil {
 				return err
 			}

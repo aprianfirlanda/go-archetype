@@ -20,6 +20,13 @@ db:
 messaging:
   rabbitmq:
     url: amqp://guest:guest@localhost:5672/
+    consumer:
+      retry:
+        backoff:
+          - 10s
+          - 30s
+          - 60s
+          - 120s
 keycloak:
   issuerURL: http://localhost:8080/realms/log-management
   clientID: log-management

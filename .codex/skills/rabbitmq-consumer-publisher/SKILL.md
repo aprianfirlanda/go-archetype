@@ -32,9 +32,27 @@ Use this skill for async messaging work.
 1. Add or update a message handler under `internal/adapters/messaging/rabbitmq/handler/<domain>`.
 2. Keep handlers thin: unmarshal payload, map to application command/query, call input port, return error.
 3. Register the topic and handler in `cmd/consumer.go` via `bootstrap.NewConsumerRegistry()`.
-4. Let errors return to the consumer so it can `Nack`; successful handling should `Ack`.
+4. Let errors return to the consumer so it can run retry/backoff and DLQ routing; successful handling should `Ack`.
 5. Preserve context propagation.
 6. For each consumed message, create/propagate context `rid` from `CorrelationId` (fallback `MessageId`) before calling handlers/services.
+
+## Retry Backoff And DLQ
+
+- Queue names:
+  - Main queue: `<topic>`
+  - Retry queue: `<topic>.retry`
+  - DLQ: `<topic>.dlq`
+- Retry queue must dead-letter to main queue (`x-dead-letter-exchange=""`, `x-dead-letter-routing-key=<topic>`).
+- Track retry state with header `x-retry-count`.
+- Track failure details with:
+  - `x-last-error` during retry scheduling
+  - `x-final-error` and `x-original-queue` when moving to DLQ
+- Use configured backoff list from `cfg.Messaging.RabbitMQ.Consumer.Retry.Backoff`.
+- Behavior:
+  - If retry slot exists: publish to retry queue with expiration delay, then `Ack` original.
+  - If retry slots exhausted: publish to DLQ, then `Ack` original.
+  - If publish retry/DLQ fails: `Nack(false, true)` original.
+- Preserve message metadata when republishing (`CorrelationId`, `MessageId`, headers, body, content metadata).
 
 ## Boundaries
 

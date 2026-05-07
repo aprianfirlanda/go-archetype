@@ -192,6 +192,23 @@ RabbitMQ adapter code lives in `internal/adapters/messaging/rabbitmq`.
 
 Keep message handlers thin: unmarshal payloads, map them to application commands, call input ports, and return errors so the consumer can ack/nack correctly.
 
+Consumer retry/backoff behavior:
+
+- Main queue name: `<topic>`
+- Retry queue name: `<topic>.retry`
+- DLQ name: `<topic>.dlq`
+- Retry queue should dead-letter back to main queue with:
+  - `x-dead-letter-exchange: ""`
+  - `x-dead-letter-routing-key: <topic>`
+- Retry count is tracked in message header `x-retry-count`.
+- Failure metadata should be tracked in headers:
+  - `x-last-error` for retry publish
+  - `x-final-error` and `x-original-queue` for DLQ publish
+- Backoff delays are taken from `cfg.Messaging.RabbitMQ.Consumer.Retry.Backoff`.
+- If `retry_count` exceeds configured backoff slots, message should be published to DLQ and original message acknowledged.
+- On retry publish failure or DLQ publish failure, `Nack(false, true)` the original message.
+- Preserve message metadata (`CorrelationId`, `MessageId`, headers, body, content type) when republishing.
+
 ## Persistence And Migrations
 
 GORM persistence implementations live under `internal/adapters/persistence/gorm`.
