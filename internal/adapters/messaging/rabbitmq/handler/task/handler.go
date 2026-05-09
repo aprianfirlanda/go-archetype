@@ -1,6 +1,6 @@
 package taskhandlermq
 
-import portin "go-archetype/internal/ports/input"
+import "go-archetype/internal/ports/input"
 
 type Handler struct {
 	service portin.TaskService

@@ -35,7 +35,9 @@ func StartServer(deps bootstrap.HttpApp) error {
 	app.Use(cors.New())
 
 	// Register routes
-	router.RegisterRoutes(app, deps)
+	if err := router.RegisterRoutes(app, deps); err != nil {
+		return fmt.Errorf("register routes: %w", err)
+	}
 
 	log.Infof("Starting HTTP server on port %d", deps.Config.Http.Port)
 	return app.Listen(fmt.Sprintf(":%d", deps.Config.Http.Port))

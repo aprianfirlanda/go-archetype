@@ -45,4 +45,3 @@ Nested config keys use underscores in env vars. Example: `http.port` becomes `<P
 - Check whether a flag is bound from `cmd.Flags()` or persistent flags before assuming Viper can read it.
 - Keep `mapstructure` names consistent with flag-derived keys.
 - Do not introduce package-level config reads inside domain or application code.
-

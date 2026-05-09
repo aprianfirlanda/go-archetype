@@ -983,7 +983,7 @@ const docTemplate = `{
     },
     "securityDefinitions": {
         "ApiKeyAuth": {
-            "description": "API Key Authorization header. Format: Bearer {api_key}",
+            "description": "API Key Authorization header. Format: ApiKey {api_key}",
             "type": "apiKey",
             "name": "Authorization",
             "in": "header"

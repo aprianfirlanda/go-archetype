@@ -603,7 +603,7 @@ paths:
       - tasks
 securityDefinitions:
   ApiKeyAuth:
-    description: 'API Key Authorization header. Format: Bearer {api_key}'
+    description: 'API Key Authorization header. Format: ApiKey {api_key}'
     in: header
     name: Authorization
     type: apiKey

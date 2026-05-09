@@ -2,9 +2,9 @@ package taskhandler
 
 import (
 	"go-archetype/internal/adapters/http/context"
+	"go-archetype/internal/adapters/http/dto/request"
 	"go-archetype/internal/adapters/http/dto/request/task"
 	"go-archetype/internal/adapters/http/dto/response"
-	"go-archetype/internal/adapters/http/validation"
 	"go-archetype/internal/application/task/command"
 	"go-archetype/internal/domain/task"
 
@@ -33,26 +33,15 @@ func (h *Handler) UpdateStatus(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(response.FailMessage("task publicID is required", rid))
 	}
 
-	var req taskreq.UpdateStatus
-	if err := c.BodyParser(&req); err != nil {
-		log.WithError(err).Error("failed to parse request body")
-		return c.Status(fiber.StatusBadRequest).JSON(response.FailMessage("failed to parse request body", rid))
-	}
-
-	fieldErrors, err := validation.ValidateStruct(req)
+	req, err := httpreq.ParseBody[taskreq.UpdateStatus](c, log, rid)
 	if err != nil {
-		log.WithError(err).Error("failed to validate request body")
-		return c.Status(fiber.StatusBadRequest).JSON(response.FailMessage("failed to validate request body", rid))
-	}
-	if fieldErrors != nil {
-		log.WithError(err).Error("validation failed")
-		return c.Status(fiber.StatusBadRequest).JSON(response.Fail("validation failed", fieldErrors, rid))
+		return err
 	}
 
 	status := task.Status(req.Status)
 	if !status.IsValid() {
 		log.WithField("status", status).Info("invalid status")
-		return c.Status(fiber.StatusBadRequest).JSON(response.OKMessage("invalid status", rid))
+		return c.Status(fiber.StatusBadRequest).JSON(response.FailMessage("invalid status", rid))
 	}
 	cmd := taskcmd.UpdateStatus{
 		PublicID: publicID,

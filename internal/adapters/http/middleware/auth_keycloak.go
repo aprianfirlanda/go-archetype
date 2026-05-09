@@ -3,6 +3,7 @@ package middleware
 import (
 	"context"
 	"crypto/tls"
+	"fmt"
 	"go-archetype/internal/adapters/http/context"
 	"go-archetype/internal/infrastructure/config"
 	"go-archetype/internal/infrastructure/logging"
@@ -14,8 +15,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-func AuthKeycloak(logger *logrus.Entry, cfg config.Keycloak) fiber.Handler {
-
+func AuthKeycloak(logger *logrus.Entry, cfg config.Keycloak) (fiber.Handler, error) {
 	logWithComponent := logging.ComponentLogger(logger, "http.middleware.AuthKeycloak")
 
 	// Init OIDC provider once
@@ -29,7 +29,7 @@ func AuthKeycloak(logger *logrus.Entry, cfg config.Keycloak) fiber.Handler {
 	ctx := oidc.ClientContext(context.Background(), insecureClient)
 	provider, err := oidc.NewProvider(ctx, cfg.IssuerURL)
 	if err != nil {
-		panic("failed to init keycloak oidc provider: " + err.Error())
+		return nil, fmt.Errorf("init keycloak oidc provider: %w", err)
 	}
 
 	verifier := provider.Verifier(&oidc.Config{
@@ -61,5 +61,5 @@ func AuthKeycloak(logger *logrus.Entry, cfg config.Keycloak) fiber.Handler {
 
 		log.Info("keycloak JWT validated successfully")
 		return c.Next()
-	}
+	}, nil
 }

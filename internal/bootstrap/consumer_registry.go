@@ -2,7 +2,7 @@ package bootstrap
 
 import (
 	"context"
-	portin "go-archetype/internal/ports/input"
+	"go-archetype/internal/ports/input"
 )
 
 type ConsumerRegistration struct {

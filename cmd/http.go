@@ -29,7 +29,7 @@ import (
 // @securityDefinitions.apikey ApiKeyAuth
 // @in header
 // @name Authorization
-// @description API Key Authorization header. Format: Bearer {api_key}
+// @description API Key Authorization header. Format: ApiKey {api_key}
 
 // httpCmd represents the http command
 var httpCmd = &cobra.Command{

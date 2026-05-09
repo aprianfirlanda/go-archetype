@@ -3,7 +3,7 @@ package taskhandlermq
 import (
 	"context"
 	"encoding/json"
-	taskcmd "go-archetype/internal/application/task/command"
+	"go-archetype/internal/application/task/command"
 )
 
 func (h *Handler) Create(ctx context.Context, payload []byte) error {

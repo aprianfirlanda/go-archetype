@@ -2,10 +2,10 @@ package taskhandler
 
 import (
 	"go-archetype/internal/adapters/http/context"
+	"go-archetype/internal/adapters/http/dto/request"
 	"go-archetype/internal/adapters/http/dto/request/task"
 	"go-archetype/internal/adapters/http/dto/response"
 	"go-archetype/internal/adapters/http/dto/response/task"
-	"go-archetype/internal/adapters/http/validation"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -28,20 +28,9 @@ func (h *Handler) List(c *fiber.Ctx) error {
 	log := httpctx.Get(c, h.log)
 	rid := httpctx.GetRequestID(c)
 
-	var q taskreq.List
-	if err := c.QueryParser(&q); err != nil {
-		log.WithError(err).Error("failed to parse query params")
-		return c.Status(fiber.StatusBadRequest).JSON(response.FailMessage("failed to parse query params", rid))
-	}
-
-	fieldErrors, err := validation.ValidateStruct(q)
+	q, err := httpreq.ParseQuery[taskreq.List](c, log, rid)
 	if err != nil {
-		log.WithError(err).Error("failed to validate query params")
-		return c.Status(fiber.StatusBadRequest).JSON(response.FailMessage("failed to validate query params", rid))
-	}
-	if fieldErrors != nil {
-		log.WithError(err).Error("validation failed")
-		return c.Status(fiber.StatusBadRequest).JSON(response.Fail("validation failed", fieldErrors, rid))
+		return err
 	}
 
 	q.Normalize()

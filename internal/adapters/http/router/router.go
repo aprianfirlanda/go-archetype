@@ -13,7 +13,7 @@ import (
 	fiberSwagger "github.com/swaggo/fiber-swagger"
 )
 
-func RegisterRoutes(app *fiber.App, deps bootstrap.HttpApp) {
+func RegisterRoutes(app *fiber.App, deps bootstrap.HttpApp) error {
 	log := logging.ComponentLogger(deps.Log, "http.router")
 
 	// Swagger Docs
@@ -22,7 +22,10 @@ func RegisterRoutes(app *fiber.App, deps bootstrap.HttpApp) {
 	// Setup Auth Middlewares
 	apiKeyMiddleware := middleware.AuthAPIKey(log, deps.Config.Services.APIKeys)
 	jwtMiddleware := middleware.AuthJWT(log, deps.Config.JWT.Secret)
-	keycloakMiddleware := middleware.AuthKeycloak(log, deps.Config.Keycloak)
+	keycloakMiddleware, err := middleware.AuthKeycloak(log, deps.Config.Keycloak)
+	if err != nil {
+		return err
+	}
 
 	api := app.Group("/api")
 
@@ -46,4 +49,6 @@ func RegisterRoutes(app *fiber.App, deps bootstrap.HttpApp) {
 	taskV1.Patch("/status", jwtMiddleware, taskHandler.BulkUpdateStatus)
 	taskV1.Delete("/:public_id", jwtMiddleware, taskHandler.DeletePublicID)
 	taskV1.Delete("/", jwtMiddleware, taskHandler.BulkDelete)
+
+	return nil
 }
