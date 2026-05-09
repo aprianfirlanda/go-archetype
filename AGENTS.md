@@ -113,7 +113,7 @@ HTTP adapter conventions:
 - Request DTOs: `internal/adapters/http/dto/request/<domain>`
 - Response DTOs: `internal/adapters/http/dto/response/<domain>`
 - Shared response wrappers: `internal/adapters/http/dto/response`
-- Shared request parsing helpers: `internal/adapters/http/request`
+- Shared request parsing helpers: `internal/adapters/http/dto/request` package `httpreq`
 - Routes: `internal/adapters/http/router/router.go`
 - Validation: `internal/adapters/http/validation`
 - Server/middleware setup: `internal/adapters/http/server/fiber.go`
@@ -121,7 +121,7 @@ HTTP adapter conventions:
 When adding or changing an API:
 
 - Keep Fiber-specific parsing and response formatting in handlers.
-- Use `request.ParseBody[T]` and `request.ParseQuery[T]` to avoid repeating parse/validation/error response boilerplate.
+- Use `httpreq.ParseBody[T]` and `httpreq.ParseQuery[T]` to avoid repeating parse/validation/error response boilerplate.
 - Convert request DTOs into application `command` or `query` types.
 - Return response DTOs, not domain entities, unless an existing endpoint already does so.
 - Use `response.OK`, `response.OKPaginate`, `response.OKMessage`, `response.Fail`, or `response.FailMessage`.

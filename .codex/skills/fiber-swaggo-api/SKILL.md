@@ -13,7 +13,7 @@ Use this skill for HTTP endpoint work.
 - Request DTOs: `internal/adapters/http/dto/request/<domain>`; task example is `taskreq`.
 - Response DTOs: `internal/adapters/http/dto/response/<domain>`; task example is `taskresp`.
 - Shared response helpers: `internal/adapters/http/dto/response`.
-- Shared request parsing helpers: `internal/adapters/http/request`.
+- Shared request parsing helpers: `internal/adapters/http/dto/request`, package `httpreq`.
 - Routes: `internal/adapters/http/router/router.go`.
 - Validation: `internal/adapters/http/validation`.
 - Server setup and global middleware: `internal/adapters/http/server/fiber.go`.
@@ -28,7 +28,7 @@ rid := httpctx.GetRequestID(c)
 ```
 
 - Parse path params in the handler.
-- Use `request.ParseBody[T]` and `request.ParseQuery[T]` for body/query DTO parsing, validation, and standard 400 responses.
+- Use `httpreq.ParseBody[T]` and `httpreq.ParseQuery[T]` for body/query DTO parsing, validation, and standard 400 responses.
 - Map DTOs into application `command` or `query` types.
 - Call input ports through the handler service field using `c.UserContext()` (never replace with `context.Background()` in request path).
 - Return shared response wrappers and include `rid`.
